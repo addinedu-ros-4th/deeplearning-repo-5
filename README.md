@@ -14,6 +14,10 @@
 
 ![Screenshot from 2024-03-20 13-38-51](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/8fc246e0-b344-4a6e-b9b7-cc85ba9a2b69)
 
+### 시나리오
+
+![DL_system-Page-2 drawio](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/0cf20ee5-39df-4bd9-8214-27218e4c6c95)
+
 ---
 
 ## 기능 리스트

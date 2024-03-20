@@ -21,7 +21,7 @@
 ---
 
 ## 기능 리스트
-![Screenshot from 2024-03-20 12-05-32](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/19fbb898-269c-4159-82ed-c2f40594ae29)
+![image](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/162243554/89b63cf4-aee2-4f1c-be44-438239de24d2)
 
 ## 시스템 구성도
-![DL_system](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/162243554/cbf0eed3-ad58-4cb6-8b19-25b0c0bc91a2)
+![image](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/162243554/7cf192ce-980b-4124-adb2-365c06622897)

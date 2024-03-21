@@ -66,15 +66,45 @@ def draw_landmarks(results_pose, results, image):
     return image
 
 
-def get_body_points(results_pose):
-    left_hand = [results_pose.pose_landmarks[15].x, results_pose.pose_landmarks[15].y, results_pose.pose_landmarks[15].z]
-    right_hand = [results_pose.pose_landmarks[16].x, results_pose.pose_landmarks[16].y, results_pose.pose_landmarks[16].z]
+def get_body_points(results_pose) :# 추후 코드 안정화 필요
+    left_hand = [999,999,999]
+    right_hand = [999,999,999]
+    if results_pose.pose_landmarks :
+        try :
+            left_hand = [results_pose.pose_landmarks.landmark[15].x,
+                        results_pose.pose_landmarks.landmark[15].y,
+                            results_pose.pose_landmarks.landmark[15].z]
+        except :
+            pass
+        try :
+            right_hand = [results_pose.pose_landmarks.landmark[16].x,
+                        results_pose.pose_landmarks.landmark[16].y,
+                            results_pose.pose_landmarks.landmark[16].z]
+        except :
+            pass
 
     return left_hand, right_hand
 
-def Distinction_hands_direction(results_pose, results):
-    left_hand, right_hand = get_body_points(results_pose)
+def hand_direction_detection(results_pose, results) :
+    right_hand_num = None
+    left_hand_num = None
+    if results.multi_hand_landmarks :
+        left_hand, right_hand = get_body_points(results_pose)
 
+
+        for idx, hand_landmarks in enumerate(results.multi_hand_landmarks):
+            hand = [hand_landmarks.landmark[0].x, hand_landmarks.landmark[0].y, hand_landmarks.landmark[0].z]
+
+            lenth_L = (abs(hand[0] - left_hand[0]) ** 2 + abs(hand[1] - left_hand[1]) ** 2 + abs(hand[2] - left_hand[2]) ** 2) ** 0.5
+            lenth_R = (abs(hand[0] - right_hand[0]) ** 2 + abs(hand[1] - right_hand[1]) ** 2 + abs(hand[2] - right_hand[2]) ** 2) ** 0.5
+            # print("L : ", lenth_L, "R : ", lenth_R)
+            if lenth_L < lenth_R :
+                left_hand_num = idx
+            else : 
+                right_hand_num = idx
+
+            
+    print(right_hand_num, left_hand_num)
     
 
 
@@ -86,11 +116,13 @@ with mp_hands.Hands(
     model_complexity=0,
     min_detection_confidence=0.7,
     min_tracking_confidence=0.7) as hands:
+
     with mp_pose.Pose(
         static_image_mode=True,
         model_complexity=2,
         enable_segmentation=True,
-        min_detection_confidence=0.5) as pose:
+        min_detection_confidence=0.4) as pose:
+
         while cap.isOpened():
             xyz_list = []
             success, image = cap.read()
@@ -109,8 +141,8 @@ with mp_hands.Hands(
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
             # new_image = np.copy(image)
 
-            # image = draw_landmarks(results_pose, results, image)
-            
+            image = draw_landmarks(results_pose, results, image)
+            hand_direction_detection(results_pose, results)
             if results.multi_hand_landmarks:
                 for hand_landmarks in results.multi_hand_landmarks:
                     mp_drawing.draw_landmarks(
@@ -129,7 +161,7 @@ with mp_hands.Hands(
                 arr = arr.reshape(1, 21, 3)
                 yhat = model.predict(arr, verbose=0)[0]
                 result = np.argmax(yhat)
-                print(data_dict[result])
+                # print(data_dict[result])
                 # cv2.putText(image, (data_dict[result]), (350, 40), font, font_scale, color, thickness=2)
 
                 

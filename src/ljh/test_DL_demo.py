@@ -15,21 +15,28 @@ mp_pose = mp.solutions.pose
 from tensorflow.keras.models import load_model
 
 # 저장된 모델 파일 경로
-model_path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/handModelDemo.h5"
+model_path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src/ljh/handModel.h5"
 
 # 모델 읽어오기
 model = load_model(model_path)
 
 print("test2")
 
-#ㄴ, ㄷ, ㄹ, ㅈ, ㅊ, ㅏ, ㅑ, ㅓ, ㅕ
-data_dict = {0 : "ㄱ", 1 : "ㄴ", 2 : "ㄷ", 3 : "ㄹ", 4 : "ㅁ", 
-             5 : "ㅂ", 6 : "ㅅ", 7 : "ㅇ", 8 : "ㅈ", 9 : "ㅊ",
-             10 : "ㅋ", 11 : "ㅌ", 12 : "ㅍ", 13 : "ㅎ", 14 : "ㅏ",
-             15 : "ㅑ", 16 : "ㅓ", 17 : "ㅕ", 18 : "ㅗ", 19 : "ㅛ",
-             20 : "ㅜ", 21 : "ㅠ", 22 : "ㅡ", 23 : "ㅣ", 24 : "ㅐ",
-             25 : "ㅔ", 26 : "ㅚ", 27 : "ㅟ", 28 : "ㅒ", 29 : "ㅖ",
-             30 : "ㅢ", 31 : "space", 32 : "?", 33 : "backspace", 34 : "된소리"}
+#'0', '1', '10', '11', '12', '13', '14', '15', '16', '17', 
+#'18', '19', '2', '20', '21', '22', '23', '24', '25', '26', 
+#'27', '28', '29', '3', '30', '4', '5', '6', '7', '8',
+# '9', 'backspace', 'question', 'shift', 'space'
+#ㄱ ㄴ ㅋ ㅌ ㅍ ㅎ ㅏ ㅑ ㅓ ㅕ
+#ㅗ ㅛ ㄷ ㅜ ㅠ ㅡ ㅣ ㅐ ㅔ ㅚ
+#ㅟ ㅒ ㅖ ㄹ ㅢ ㅁ ㅂ ㅅ ㅇ ㅈ
+#ㅊ 
+data_dict = {0 : "ㄱ", 1 : "ㄴ", 2 : "ㅋ", 3 : "ㅌ", 4 : "ㅍ", 
+             5 : "ㅎ", 6 : "ㅏ", 7 : "ㅑ", 8 : "ㅓ", 9 : "ㅕ",
+             10 : "ㅗ", 11 : "ㅛ", 12 : "ㄷ", 13 : "ㅜ", 14 : "ㅠ",
+             15 : "ㅡ", 16 : "ㅣ", 17 : "ㅐ", 18 : "ㅔ", 19 : "ㅚ",
+             20 : "ㅟ", 21 : "ㅒ", 22 : "ㅖ", 23 : "ㄹ", 24 : "ㅢ",
+             25 : "ㅁ", 26 : "ㅂ", 27 : "ㅅ", 28 : "ㅇ", 29 : "ㅈ",
+             30 : "ㅊ", 31 : "backspace", 32 : "question", 33 : "shift", 34 : "space"}
 cap = cv2.VideoCapture(0)
 count = 0
 old_key = 0
@@ -102,7 +109,7 @@ with mp_hands.Hands(
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
             # new_image = np.copy(image)
 
-            image = draw_landmarks(results_pose, results, image)
+            # image = draw_landmarks(results_pose, results, image)
             
             if results.multi_hand_landmarks:
                 for hand_landmarks in results.multi_hand_landmarks:

@@ -7,6 +7,7 @@ import pandas as pd
 from jamo import h2j, j2hcj
 from gtts import gTTS
 from playsound import playsound
+import speech_recognition as sr
 
 
 # UI 파일에서 생성된 클래스를 가져옴

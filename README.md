@@ -16,7 +16,7 @@
 
 ### 시나리오
 
-![DL_system-Page-2 drawio](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/0cf20ee5-39df-4bd9-8214-27218e4c6c95)
+![image](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/162243554/3fe574dc-1968-429c-97c9-a6974631065a)
 
 ---
 

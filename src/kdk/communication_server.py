@@ -1,95 +1,73 @@
-import sys
-from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel
-from PyQt6.QtGui import QImage, QPixmap
-from PyQt6 import uic
-from PyQt6.QtCore import QThread, pyqtSignal
-
+from vidstream import StreamingServer, AudioReceiver, CameraClient, AudioSender
+import tkinter as tk
 import socket
-import cv2
-import numpy as np
-import time
+import threading
 
-# Load UI file
-from_class = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/communication.ui")[0]
 
-def recvall(sock, count):
-    buf = b''
-    while count:
-        newbuf = sock.recv(count)
-        if not newbuf:
-            return None
-        buf += newbuf
-        count -= len(newbuf)
-    return buf
+class Server:
+    def __init__(self, window, client_ip):
+        self.local_ip_address = '192.168.0.15'
+        print(self.local_ip_address)
+        self.vid_recv_port = 5001
+        self.aud_recv_port = 5002
+        self.vid_send_port = 5003
+        self.aud_send_port = 5004
+        print(f"server ip: {self.local_ip_address}\nvid recv port:{self.vid_recv_port}, vid send port:{self.vid_send_port}\naud recv port:{self.aud_recv_port}, aud send port:{self.aud_send_port}")
 
-class VideoThread(QThread):
-    change_server_pixmap_signal = pyqtSignal(np.ndarray)
-    change_client_pixmap_signal = pyqtSignal(np.ndarray)
+        recvs = self.start_listening()
 
-    def run(self):
-        TCP_IP = '192.168.0.15'
-        TCP_PORT = 5005
+        self.client_ip = client_ip
 
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.bind((TCP_IP, TCP_PORT))
-        s.listen(True)
-        print("Waiting for connection...")
+        label_target_ip = tk.Label(window, text=f'상대 아이피: {client_ip}')
+        label_target_ip.pack()
 
-        conn, addr = s.accept()
-        print('Connected with', addr)
+        btn_camera = tk.Button(window, text='화상 전화 시작하기',
+                               width=30, command=self.start_camera_stream)
+        btn_camera.pack(anchor=tk.CENTER, expand=True)
 
-        cap = cv2.VideoCapture('/dev/video0')
+        window.protocol('WM_DELETE_WINDOW',
+                        lambda: self.exit_fn(window, recvs))
 
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
+    def exit_fn(self, window, recvs):
+        recvs[0].stop_server()
+        recvs[1].stop_server()
+        window.destroy()
 
-            frame_string = cv2.imencode('.jpg', frame)[1].tostring()
-            size = len(frame_string)
-            conn.sendall(str(size).ljust(16).encode())
-            conn.sendall(frame_string)
 
-            length = int(conn.recv(16).strip())
-            print("Receiving frame of size:", length)
-            
-            frame_string = recvall(conn, length)
-            
-            frame_array = np.frombuffer(frame_string, dtype=np.uint8)
-            frame = cv2.imdecode(frame_array, cv2.IMREAD_COLOR)
-            
-            self.change_server_pixmap_signal.emit(frame)  # Emit the frame to update server webcam label
-            
-            if cv2.waitKey(1) & 0xFF == 27:
-                break
+    # 음성 송수신
+    def start_listening(self):
+        stream_recv = StreamingServer(
+            self.local_ip_address, self.vid_recv_port)
+        audio_recv = AudioReceiver(self.local_ip_address, self.aud_recv_port)
+        t1 = threading.Thread(target=stream_recv.start_server)
+        t2 = threading.Thread(target=audio_recv.start_server)
+        t1.daemon = True
+        t2.daemon = True
+        t1.start()
+        t2.start()
+        return [stream_recv, audio_recv]
 
-        s.close()
-        cv2.destroyAllWindows()
+    # 카메라 송수신
+    def start_camera_stream(self):
+        camera_client = CameraClient(self.client_ip, self.vid_send_port)
+        t3 = threading.Thread(target=camera_client.start_stream)
+        t3.daemon = True
+        t3.start()
 
-class WindowClass(QMainWindow, from_class):
-    def __init__(self):
-        super().__init__()
-        self.setupUi(self)
+        audio_sender = AudioSender(self.client_ip, self.aud_send_port)
+        t4 = threading.Thread(target=audio_sender.start_stream)
+        t4.daemon = True
+        t4.start()
 
-        self.video_thread = VideoThread()
-        self.video_thread.change_server_pixmap_signal.connect(self.update_client_image)  # Updated connection
-        self.video_thread.change_client_pixmap_signal.connect(self.update_server_image)  # Updated connection
-        self.video_thread.start()
+# 
+def start_video_call(client_ip):
+    window = tk.Tk()
+    window.title('server video call')
+    window.geometry('350x100')
+    Server(window, client_ip)
+    window.mainloop()
 
-    def update_server_image(self, frame):
-        """Updates the image shown in the server webcam label."""
-        qt_img = QImage(frame.data, frame.shape[1], frame.shape[0], QImage.Format.Format_BGR888)
-        pixmap = QPixmap.fromImage(qt_img)
-        self.label2.setPixmap(pixmap)  # Updated label
 
-    def update_client_image(self, frame):
-        """Updates the image shown in the client webcam label."""
-        qt_img = QImage(frame.data, frame.shape[1], frame.shape[0], QImage.Format.Format_BGR888)
-        pixmap = QPixmap.fromImage(qt_img)
-        self.label.setPixmap(pixmap)  # Updated label
+if __name__ == '__main__':
+    start_video_call('192.168.0.31')
 
-if __name__ == "__main__":
-    app = QApplication(sys.argv)  # 프로그램 실행
-    myWindows = WindowClass()     # 화면 클래스 생성
-    myWindows.show()              # 프로그램 화면 보이기
-    sys.exit(app.exec())          # 프로그램을 종료까지 동작시킴

@@ -1,14 +1,17 @@
 import sys
 from PyQt6.QtWidgets import *
 from PyQt6 import uic
+from PyQt6.QtGui import QPixmap, QIcon
+from PyQt6.QtCore import Qt, QObject, pyqtSignal
+
 import socket
 import subprocess
 import re
 from threading import Thread
 import json
 
-SERVER_IP = '192.168.0.31'
-SERVER_PORT = 15030
+SERVER_IP = '192.168.0.15'
+SERVER_PORT = 15033
 
 # Function to get IP address from ifconfig command in terminal
 def get_ip_address(interface):
@@ -32,10 +35,22 @@ class LoginUI(QMainWindow, from_class_login):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle("login!")
+        self.setWindowTitle("WELCOME")
         # ip주소 표시
         self.hostIP = get_ip_address("wlo1")
         self.labelIP.setText(str(self.hostIP))
+
+        self.setWindowIcon(QIcon('/home/kkyu/amr_ws/DL/project_deep/face_communication/addinedu.png'))
+
+        pixmap = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/background.jpg')
+        self.labelpixmap.setPixmap(pixmap)
+
+        pixmap2 = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/client.png')
+        scaled_pixmap2 = pixmap2.scaled(self.label3.size(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio)
+        self.label3.setPixmap(scaled_pixmap2)
+
+        self.nameEdit.setStyleSheet("QLineEdit { border-radius: 6px; }")
+        self.labelIP.setStyleSheet("QLineEdit { border-radius: 6px; }")
 
         # 이벤트 설정 
         self.loginBtn.clicked.connect(self.connectServer)
@@ -62,7 +77,10 @@ class LoginUI(QMainWindow, from_class_login):
 # Client UI
 from_class_client = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/client_final.ui")[0]
 
+# Inside your ClientUI class
 class ClientUI(QDialog, from_class_client):
+    data_received = pyqtSignal(str)
+
     def __init__(self, userName, sock, serverIP):  
         super().__init__()
         self.setupUi(self)
@@ -76,13 +94,23 @@ class ClientUI(QDialog, from_class_client):
         self.receive_thread = Thread(target=self.receiveServerData)
         self.receive_thread.daemon = True
         self.receive_thread.start()
+        self.data_received.connect(self.updateTableWidget)
+
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        
+        self.setStyleSheet("""
+            QPushButton#connectButton {
+                background-color: #FFAAAA; /* slightly darker red */
+            }
+        """)
 
     def receiveServerData(self):
         while True:
             try:
                 data = self.sock.recv(1024).decode()
                 if data:
-                    self.updateTableWidget(data)
+                    # Emit the signal with the received data
+                    self.data_received.emit(data)
             except Exception as e:
                 print(f"Error receiving data: {e}")
                 break
@@ -97,11 +125,27 @@ class ClientUI(QDialog, from_class_client):
                 self.tableWidget.insertRow(row)
                 for column, value in enumerate(item):
                     self.tableWidget.setItem(row, column, QTableWidgetItem(str(value)))
+                
+                # 버튼 생성 및 삽입
+                button = QPushButton("Connect")
+                button.setObjectName("connectButton")  # Set object name for styling
+                button.clicked.connect(lambda _, row=row: self.connectButtonClicked(row))
+                self.tableWidget.setCellWidget(row, len(item), button)
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON data: {e}")
+
+    def connectButtonClicked(self, row):
+        # Get the IP address from the corresponding row
+        ip_address_item = self.tableWidget.item(row, 0) 
+        if ip_address_item is not None:
+            ip_address = ip_address_item.text()
+            self.clientip.setText(ip_address)
+        else:
+            print("No IP address found for this row.")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     myLogin = LoginUI()
     myLogin.show()
     sys.exit(app.exec())
+

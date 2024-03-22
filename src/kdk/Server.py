@@ -6,6 +6,24 @@ from PyQt6.QtGui import QIcon
 import socket
 from threading import Thread
 from datetime import datetime 
+import json 
+
+
+class ClientThread(Thread):
+    def __init__(self, client_socket, server_instance):
+        super().__init__()
+        self.client_socket = client_socket
+        self.server_instance = server_instance
+
+    def run(self):
+        while True:
+            data = self.client_socket.recv(1024).decode()
+            if not data:
+                break
+
+    def send_data(self, data):
+        self.client_socket.sendall(data.encode())
+
 
 class WindowClass(QDialog):
     def __init__(self):
@@ -27,43 +45,25 @@ class WindowClass(QDialog):
             elif button.objectName() == "btnClose":
                 button.setStyleSheet("background-color: #FF6666; color: black; font-weight: bold;")
 
-        self.setWindowTitle("관리자(Server) MODE")
+        self.setWindowTitle("관리자 Mode")
 
         self.lineEdit.setText("192.168.0.15")        
-        self.lineEdit2.setText("15018")
+        self.lineEdit2.setText("15033")
 
-        self.btnAdd.clicked.connect(self.Add)
         self.btnOpen.clicked.connect(self.StartServer)
         self.btnClose.clicked.connect(self.StopServer)
+        self.btnSend.clicked.connect(self.SendData)
 
         self.server_socket = None
         self.client_threads = []
 
-
-    def Add(self):
-        ip_address = self.lineEdit.text()
-        port = self.lineEdit2.text()
-        host_name = "김동규"  # You need to specify how to get host name
-        state = "ON"  # You need to specify how to get state
-        connect_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 접속 시간 기록
-
-        row = self.tableWidget.rowCount()
-        self.tableWidget.insertRow(row)
-        self.tableWidget.setItem(row, 0, QTableWidgetItem(ip_address))
-        self.tableWidget.setItem(row, 1, QTableWidgetItem(port))
-        self.tableWidget.setItem(row, 2, QTableWidgetItem(host_name))
-        self.tableWidget.setItem(row, 3, QTableWidgetItem(state))
-        self.tableWidget.setItem(row, 4, QTableWidgetItem(connect_time))  # 접속 시간 표시
-
     def StartServer(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind(('192.168.0.15', 15018))  # Adjust IP address and port
+        self.server_socket.bind(('192.168.0.15', 15033))  # Adjust IP address and port
         self.server_socket.listen(5)
 
         self.label.setText("Server Started")
-
         self.lineEdit.setEnabled(True)
-        self.btnAdd.setEnabled(True)
 
         # Start listening for incoming connections in a separate thread
         server_thread = Thread(target=self.AcceptClients)
@@ -73,7 +73,6 @@ class WindowClass(QDialog):
         for row in range(self.tableWidget.rowCount()):
             self.tableWidget.item(row, 3).setText("ON")
             self.tableWidget.item(row, 3).setForeground(Qt.GlobalColor.blue)
-
 
     def AcceptClients(self):
         while True:
@@ -90,8 +89,8 @@ class WindowClass(QDialog):
             # Add client information to the tableWidget
             self.AddClientToTable(ip_address, port, username, state="ON")
             
-            # Create a thread to handle each client separately
-            client_thread = Thread(target=self.HandleClient, args=(client_socket,))
+            # Create an instance of ClientThread to handle each client separately
+            client_thread = ClientThread(client_socket, self)
             client_thread.start()
             self.client_threads.append(client_thread)
 
@@ -105,6 +104,10 @@ class WindowClass(QDialog):
         # Receive data from the client (username)
         username = client_socket.recv(1024).decode("utf-8")
         self.AddClientToTable(ip_address, port, username, state="ON")
+
+        client_thread = ClientThread(client_socket, self)
+        client_thread.start()
+        self.client_threads.append(client_thread)
 
         while True:
             # Receive data from the client
@@ -180,6 +183,26 @@ class WindowClass(QDialog):
             thread.join()
 
         self.client_threads = []
+
+
+    def SendData(self):
+        # Filter table data for rows where State is "ON" and send it to the client
+        data = []
+        for row in range(self.tableWidget.rowCount()):
+            state_item = self.tableWidget.item(row, 3)
+            if state_item and state_item.text() == "ON":
+                row_data = []
+                for column in range(self.tableWidget.columnCount()):
+                    item = self.tableWidget.item(row, column)
+                    if item:
+                        row_data.append(item.text())
+                data.append(row_data)
+        
+        data_dict = {"items": data}
+        json_data = json.dumps(data_dict)
+        
+        for thread in self.client_threads:
+            thread.send_data(json_data)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)  

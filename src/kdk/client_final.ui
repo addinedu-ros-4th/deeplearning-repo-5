@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>566</width>
-    <height>461</height>
+    <width>731</width>
+    <height>467</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,9 +17,9 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>160</y>
-     <width>531</width>
-     <height>281</height>
+     <y>150</y>
+     <width>691</width>
+     <height>291</height>
     </rect>
    </property>
    <property name="title">
@@ -30,18 +30,18 @@
      <rect>
       <x>10</x>
       <y>40</y>
-      <width>511</width>
+      <width>611</width>
       <height>231</height>
      </rect>
     </property>
     <column>
      <property name="text">
-      <string>New Column</string>
+      <string>IP Address</string>
      </property>
     </column>
     <column>
      <property name="text">
-      <string>IP Address</string>
+      <string>Port</string>
      </property>
     </column>
     <column>
@@ -51,15 +51,35 @@
     </column>
     <column>
      <property name="text">
-      <string>New Column</string>
+      <string>접속시점</string>
      </property>
     </column>
     <column>
      <property name="text">
-      <string>접속시점</string>
+      <string>State</string>
+     </property>
+    </column>
+    <column>
+     <property name="text">
+      <string>CONNECT</string>
      </property>
     </column>
    </widget>
+   <widget class="QLabel" name="back">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>30</y>
+      <width>691</width>
+      <height>261</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <zorder>back</zorder>
+   <zorder>tableWidget</zorder>
   </widget>
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
@@ -95,6 +115,9 @@
       <height>25</height>
      </rect>
     </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
@@ -119,7 +142,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="callButton">
     <property name="geometry">
      <rect>
       <x>280</x>

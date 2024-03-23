@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>642</width>
-    <height>483</height>
+    <width>647</width>
+    <height>464</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>621</width>
-     <height>161</height>
+     <height>151</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -118,22 +118,6 @@
      <string>Stop Server</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnAdd">
-    <property name="geometry">
-     <rect>
-      <x>330</x>
-      <y>92</y>
-      <width>111</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(154, 153, 150);</string>
-    </property>
-    <property name="text">
-     <string>Add Info</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
@@ -147,15 +131,36 @@
      <enum>QFrame::Box</enum>
     </property>
    </widget>
+   <widget class="QPushButton" name="btnSend">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>95</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(51, 209, 122);</string>
+    </property>
+    <property name="text">
+     <string>Send Info</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>190</y>
+     <y>170</y>
      <width>621</width>
      <height>281</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="title">
     <string>Information </string>

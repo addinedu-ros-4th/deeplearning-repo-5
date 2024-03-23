@@ -16,12 +16,12 @@
 
 ### 시나리오
 
-![image](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/162243554/3fe574dc-1968-429c-97c9-a6974631065a)
+![DL_system-Page-2 drawio (1)](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/765a6fe3-8a87-4a34-96d7-dabd17e4e0fd)
 
 ---
 
 ## 기능 리스트
-![image](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/162243554/89b63cf4-aee2-4f1c-be44-438239de24d2)
+![Screenshot from 2024-03-23 13-21-43](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/688857a8-377a-4ab6-894c-53c0d00d7184)
 
 ## 시스템 구성도
 ![image](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/162243554/7cf192ce-980b-4124-adb2-365c06622897)

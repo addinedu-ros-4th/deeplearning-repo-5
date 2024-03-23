@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>731</width>
-    <height>467</height>
+    <width>662</width>
+    <height>494</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>150</y>
-     <width>691</width>
+     <y>190</y>
+     <width>641</width>
      <height>291</height>
     </rect>
    </property>
@@ -86,8 +86,8 @@
     <rect>
      <x>10</x>
      <y>20</y>
-     <width>501</width>
-     <height>121</height>
+     <width>511</width>
+     <height>161</height>
     </rect>
    </property>
    <property name="title">
@@ -96,7 +96,7 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>11</x>
       <y>40</y>
       <width>71</width>
       <height>17</height>
@@ -122,7 +122,7 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>13</x>
+      <x>11</x>
       <y>80</y>
       <width>71</width>
       <height>17</height>
@@ -151,8 +151,34 @@
       <height>51</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(143, 240, 164);</string>
+    </property>
     <property name="text">
      <string>화상 전화 시작하기</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="clientport">
+    <property name="geometry">
+     <rect>
+      <x>90</x>
+      <y>116</y>
+      <width>161</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>120</y>
+      <width>81</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>상대방 Port</string>
     </property>
    </widget>
   </widget>

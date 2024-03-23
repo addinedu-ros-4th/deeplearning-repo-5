@@ -10,8 +10,8 @@ import re
 from threading import Thread
 import json
 
-SERVER_IP = '192.168.0.15'
-SERVER_PORT = 15033
+SERVER_IP = '127.0.1.1'
+SERVER_PORT = 15004
 
 # Function to get IP address from ifconfig command in terminal
 def get_ip_address(interface):
@@ -29,7 +29,7 @@ def get_ip_address(interface):
         return None
 
 # Login UI
-from_class_login = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/login.ui")[0]
+from_class_login = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/login_final.ui")[0]
 
 class LoginUI(QMainWindow, from_class_login):
     def __init__(self):
@@ -97,7 +97,13 @@ class ClientUI(QDialog, from_class_client):
         self.data_received.connect(self.updateTableWidget)
 
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-        
+
+        self.tableWidget.setStyleSheet("QTableWidget { background-color: #f0f0f0; }"
+                                        "QTableWidget QTableWidget::item { color: #333333; }"
+                                        "QTableWidget QTableWidget::item:selected { background-color: #b8daff; }"
+                                        "QTableWidget QHeaderView::section { background-color: #007bff; color: white; }"
+                                        "QTableWidget QTableWidget::item { padding: 5px; }")
+
         self.setStyleSheet("""
             QPushButton#connectButton {
                 background-color: #FFAAAA; /* slightly darker red */
@@ -135,13 +141,19 @@ class ClientUI(QDialog, from_class_client):
             print(f"Error decoding JSON data: {e}")
 
     def connectButtonClicked(self, row):
-        # Get the IP address from the corresponding row
-        ip_address_item = self.tableWidget.item(row, 0) 
-        if ip_address_item is not None:
+        # Get the IP address and port number from the corresponding row
+        ip_address_item = self.tableWidget.item(row, 0)
+        port_item = self.tableWidget.item(row, 1)
+        
+        if ip_address_item is not None and port_item is not None:
             ip_address = ip_address_item.text()
+            port_number = port_item.text()
+            
+            # Update the clientip and clientport labels
             self.clientip.setText(ip_address)
+            self.clientport.setText(port_number)
         else:
-            print("No IP address found for this row.")
+            print("No IP address or port number found for this row.")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

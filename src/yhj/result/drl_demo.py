@@ -15,6 +15,7 @@ from gtts import gTTS
 from playsound import playsound
 import speech_recognition as sr
 from trie import Trie
+import time
 
 
 data_dict = {0 : "ㄱ", 1 : "ㄴ", 2 : "ㅋ", 3 : "ㅌ", 4 : "ㅍ", 
@@ -33,7 +34,7 @@ class CameraThread(QThread):
     def run(self):
         cap = cv2.VideoCapture(0)
         
-        model = load_model('/home/hj/amr_ws/ML_DL/src/project/ryh/handModelDemo.h5')  # 모델 경로 설정
+        model = load_model('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/handModel.h5')  # 모델 경로 설정
 
         with mp.solutions.hands.Hands(
             model_complexity=0,
@@ -88,7 +89,7 @@ class MyApp(QDialog):
     def __init__(self):
         super().__init__()
         # Qt Designer에서 만든 UI 파일 로드
-        uic.loadUi('/home/hj/amr_ws/ML_DL/src/project/ryh/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
+        uic.loadUi('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
 
         # 카메라 스레드 설정
         self.cam_thread = CameraThread()
@@ -121,7 +122,7 @@ class MyApp(QDialog):
         # QTimer 이벤트와 연결할 함수 설정
         self.timer.timeout.connect(self.update_word)
         # 0.5초마다 타이머를 시작
-        self.timer.start(1500)  # 500ms = 0.5초
+        self.timer.start(300)  # 500ms = 0.5초
         
         self.autoword_1.clicked.connect(self.changeText_1)
         self.autoword_2.clicked.connect(self.changeText_2)
@@ -129,23 +130,72 @@ class MyApp(QDialog):
         self.autoword_4.clicked.connect(self.changeText_4)
         self.autoword_5.clicked.connect(self.changeText_5)
         self.btn_reset.clicked.connect(self.reset_line)
-    
+        self.word_list = []
+        self.last_word_time = time.time()  # 초기화 시간 설정
+
     def receive_word(self, word):
+        # 이미 값을 읽었다면 더 이상 처리하지 않습니다.
+
         # 카메라 스레드에서 단어를 전달받는 함수
         self.word = word
-        print(self.word)
-
+        # 이미 값을 읽었음을 플래그로 표시합니다.
+        
     def update_image(self, qt_img):
         # QLabel에 이미지 표시
         self.camera_screen.setPixmap(QPixmap.fromImage(qt_img))  # 'camera_screen'은 QLabel의 objectName
-
+    
+    
     def update_word(self):
         if hasattr(self, 'word') and self.word:  # 단어가 존재하고 값이 비어있지 않은 경우에만 실행
-            # QLineEdit에 텍스트 업데이트
-            self.text += self.word
+            self.word_list.append(self.word)
             self.word = ""
+            print(self.word_list)
+
+            # 입력 리스트에 다섯 개의 값이 쌓였을 경우
+            if len(self.word_list) >= 5:
+                output = max(set(self.word_list), key=self.word_list.count)
+
+                self.word_list = []
             
-            self.input.setText(self.text)  # 'word'는 QLineEdit의 objectName
+                if output == 'space':
+                    self.text += " "
+                elif output == 'backspace':
+                    # 마지막 문자를 제거합니다.
+                    self.text = self.text[:-1]
+                elif output == "shift":
+                    self.flag = 1
+                    print(self.flag)
+
+                elif output == "question":
+                    self.text += "?"
+                # QLineEdit에 텍스트 업데이트
+                elif self.flag == 1 and output in ["ㄱ", "ㄷ", "ㅂ", "ㅅ", "ㅈ"]:
+                    # 적절한 된소리로 변경하는 처리를 수행합니다.
+                    if output == "ㄱ":
+                        self.text += "ㄲ"
+                    elif output == "ㄷ":
+                        self.text += "ㄸ"
+                    elif output == "ㅂ":
+                        self.text += "ㅃ"
+                    elif output == "ㅅ":
+                        self.text += "ㅆ"
+                    elif output == "ㅈ":
+                        self.text += "ㅉ"
+                    # flag를 다시 초기화합니다.
+                    self.flag = 0
+                else:
+                    self.text += output
+                    
+                    # 자음이 입력되었을 때도 flag를 0으로 설정합니다.
+                    if output in ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ", "ㄲ", "ㄸ", "ㅃ", "ㅆ", "ㅉ"]:
+                        self.flag = 0                                                                                                
+                    
+                self.input.setText(self.text)  # 'word'는 QLineEdit의 objectName
+        
+            self.last_word_time = time.time()
+
+        else:
+            self.word_list = []
             
         # def Merge
     def reset_line(self):
@@ -158,7 +208,7 @@ class MyApp(QDialog):
 
     def add_word(self, input_word):
         if input_word.strip():  # 입력된 단어가 공백이 아닌지 확인
-            word_df = pd.read_csv('/home/hj/amr_ws/ML_DL/src/project/ryh/autocorrect.csv')
+            word_df = pd.read_csv('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/autocorrect.csv')  # 여기서 CSV 파일 경로 수정
             if input_word in word_df['word'].values:
                 index = word_df.index[word_df['word'] == input_word].tolist()
                 word_df['frequency'][index] += 1
@@ -167,7 +217,7 @@ class MyApp(QDialog):
                 word_df.loc[len(word_df)] = [input_word, 1]
                 print("word")
 
-            word_df.to_csv('/home/hj/amr_ws/ML_DL/src/project/ryh/autocorrect.csv', index=False)
+            word_df.to_csv('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/autocorrect.csv', index=False)
 
     def changeText_1(self) :
         word = self.text.split()
@@ -217,7 +267,7 @@ class MyApp(QDialog):
     
             
     def on_text_changed(self):
-        self.word_df=pd.read_csv('/home/hj/amr_ws/ML_DL/src/project/ryh/autocorrect.csv')
+        self.word_df=pd.read_csv('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/autocorrect.csv')
         self.words = self.word_df['word']
         self.text = self.input.text()
         self.text = j2hcj(h2j(self.text))

@@ -30,6 +30,10 @@ data_dict = {0 : "ㄱ", 1 : "ㄴ", 2 : "ㅋ", 3 : "ㅌ", 4 : "ㅍ",
 class CameraThread(QThread):
     change_pixmap_signal = pyqtSignal(QImage)
     update_word_signal = pyqtSignal(str)
+    
+    def __init__(self, main_app):
+        super().__init__()
+        self.main_app = main_app
 
     def run(self):
         cap = cv2.VideoCapture(0)
@@ -69,21 +73,10 @@ class CameraThread(QThread):
                                 self.update_word_signal.emit(detected_word)
 
                         # QImage로 변환
-                        qt_img = self.convert_cv_qt(cv_img)
+                        qt_img = self.main_app.convert_cv_qt(cv_img)  # MyApp 클래스의 메서드 호출
                         self.change_pixmap_signal.emit(qt_img)
 
         cap.release()
-
-    @staticmethod
-    def convert_cv_qt(cv_img):
-        cv_img_flipped = cv2.flip(cv_img, 1)
-        
-        rgb_image = cv2.cvtColor(cv_img_flipped, cv2.COLOR_BGR2RGB)
-        h, w, ch = rgb_image.shape
-        bytes_per_line = ch * w
-        convert_to_Qt_format = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
-        p = convert_to_Qt_format.scaled(640, 480, Qt.AspectRatioMode.KeepAspectRatio)
-        return p
 
 class MyApp(QDialog):
     def __init__(self):
@@ -92,7 +85,7 @@ class MyApp(QDialog):
         uic.loadUi('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
 
         # 카메라 스레드 설정
-        self.cam_thread = CameraThread()
+        self.cam_thread = CameraThread(self)
         self.cam_thread.change_pixmap_signal.connect(self.update_image)
         self.cam_thread.update_word_signal.connect(self.receive_word)
         self.cam_thread.start()
@@ -263,8 +256,16 @@ class MyApp(QDialog):
             self.text = " ".join(word)
             self.text = self.text + " "
             self.input.setText(self.text)  
-
-    
+    #img update
+    def convert_cv_qt(self, cv_img):
+        cv_img_flipped = cv2.flip(cv_img, 1)
+        
+        rgb_image = cv2.cvtColor(cv_img_flipped, cv2.COLOR_BGR2RGB)
+        h, w, ch = rgb_image.shape
+        bytes_per_line = ch * w
+        convert_to_Qt_format = QImage(rgb_image.data, w, h, bytes_per_line, QImage.Format.Format_RGB888)
+        p = convert_to_Qt_format.scaled(640, 480, Qt.AspectRatioMode.KeepAspectRatio)
+        return p
             
     def on_text_changed(self):
         self.word_df=pd.read_csv('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/autocorrect.csv')

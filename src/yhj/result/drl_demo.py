@@ -257,8 +257,11 @@ class MyApp(QDialog):
             self.text = self.text + " "
             self.input.setText(self.text)  
     #img update
+
+
     def convert_cv_qt(self, cv_img):
-        cv_img_flipped = cv2.flip(cv_img, 1)
+
+2.flip(cv_img, 1)
         
         rgb_image = cv2.cvtColor(cv_img_flipped, cv2.COLOR_BGR2RGB)
         h, w, ch = rgb_image.shape
@@ -269,7 +272,7 @@ class MyApp(QDialog):
             
     def on_text_changed(self):
         self.word_df=pd.read_csv('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/autocorrect.csv')
-        self.words = self.word_df['word']
+        self.words = self.word_df['word'
         self.text = self.input.text()
         self.text = j2hcj(h2j(self.text))
         if len(self.text) >= 2 and self.text[-2] in double_cons:  # 인덱스 접근 전에 길이 확인

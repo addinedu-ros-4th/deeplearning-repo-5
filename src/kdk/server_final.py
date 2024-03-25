@@ -8,6 +8,8 @@ from threading import Thread
 from datetime import datetime 
 import json 
 
+SERVER_IP = "192.168.0.31"
+SERVER_PORT = 15010
 
 class ClientThread(Thread):
     def __init__(self, client_socket, server_instance):
@@ -28,7 +30,8 @@ class ClientThread(Thread):
 class WindowClass(QDialog):
     def __init__(self):
         super().__init__()
-        uic.loadUi("/home/kkyu/amr_ws/DL/project_deep/deeplearning-repo-5/src/kdk/server_final.ui", self)
+        # uic.loadUi("/home/kkyu/amr_ws/DL/project_deep/deeplearning-repo-5/src/kdk/server_final.ui", self)
+        uic.loadUi("/home/addinedu/dev_ws/deeplearning-repo-5/src/kdk/server_final.ui", self)
         
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.tableWidget.setStyleSheet("QTableWidget { background-color: #f0f0f0; }"
@@ -47,8 +50,8 @@ class WindowClass(QDialog):
 
         self.setWindowTitle("관리자 Mode")
 
-        self.lineEdit.setText("127.0.1.1")        
-        self.lineEdit2.setText("15004")
+        self.lineEdit.setText(SERVER_IP)        
+        self.lineEdit2.setText(str(SERVER_PORT))
 
         self.btnOpen.clicked.connect(self.StartServer)
         self.btnClose.clicked.connect(self.StopServer)
@@ -66,7 +69,7 @@ class WindowClass(QDialog):
 
     def StartServer(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_socket.bind(('127.0.1.1', 15004))  # Adjust IP address and port
+        self.server_socket.bind((SERVER_IP, SERVER_PORT))  # Adjust IP address and port
         self.server_socket.listen(5)
 
         self.label.setText("Server Started")

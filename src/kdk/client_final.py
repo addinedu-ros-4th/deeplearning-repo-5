@@ -10,8 +10,8 @@ import re
 from threading import Thread
 import json
 
-SERVER_IP = '127.0.1.1'
-SERVER_PORT = 15004
+SERVER_IP = "192.168.0.31"
+SERVER_PORT = 15010
 
 # Function to get IP address from ifconfig command in terminal
 def get_ip_address(interface):
@@ -29,7 +29,8 @@ def get_ip_address(interface):
         return None
 
 # Login UI
-from_class_login = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/login_final.ui")[0]
+# from_class_login = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/login_final.ui")[0]
+from_class_login = uic.loadUiType("/home/addinedu/dev_ws/deeplearning-repo-5/src/kdk/login_final.ui")[0]
 
 class LoginUI(QMainWindow, from_class_login):
     def __init__(self):
@@ -40,12 +41,16 @@ class LoginUI(QMainWindow, from_class_login):
         self.hostIP = get_ip_address("wlo1")
         self.labelIP.setText(str(self.hostIP))
 
-        self.setWindowIcon(QIcon('/home/kkyu/amr_ws/DL/project_deep/face_communication/addinedu.png'))
+        # self.setWindowIcon(QIcon('/home/kkyu/amr_ws/DL/project_deep/face_communication/addinedu.png'))
+        self.setWindowIcon(QIcon('/home/addinedu/dev_ws/deeplearning-repo-5/src/kdk/data/addinedu.png'))
 
-        pixmap = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/background.jpg')
+        # pixmap = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/background.jpg')
+        pixmap = QPixmap('/home/addinedu/dev_ws/deeplearning-repo-5/src/kdk/data/background.jpg')
+
         self.labelpixmap.setPixmap(pixmap)
 
-        pixmap2 = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/client.png')
+        # pixmap2 = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/client.png')
+        pixmap2 = QPixmap('/home/addinedu/dev_ws/deeplearning-repo-5/src/kdk/data/client.png')
         scaled_pixmap2 = pixmap2.scaled(self.label3.size(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio)
         self.label3.setPixmap(scaled_pixmap2)
 
@@ -75,7 +80,8 @@ class LoginUI(QMainWindow, from_class_login):
             QMessageBox.critical(self, "Error", "Please enter a username.")
 
 # Client UI
-from_class_client = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/client_final.ui")[0]
+# from_class_client = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/client_final.ui")[0]
+from_class_client = uic.loadUiType("/home/addinedu/dev_ws/deeplearning-repo-5/src/kdk/client_final.ui")[0]
 
 # Inside your ClientUI class
 class ClientUI(QDialog, from_class_client):

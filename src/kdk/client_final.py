@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import *
 from PyQt6 import uic
-from PyQt6.QtGui import QPixmap, QIcon
+from PyQt6.QtGui import QPixmap, QIcon, QImage
 from PyQt6.QtCore import Qt, QObject, pyqtSignal
 
 import socket
@@ -9,9 +9,11 @@ import subprocess
 import re
 from threading import Thread
 import json
+import cv2
+import numpy as np
 
-SERVER_IP = "192.168.0.31"
-SERVER_PORT = 15010
+SERVER_IP = '192.168.0.31'
+SERVER_PORT = 15017
 
 # Function to get IP address from ifconfig command in terminal
 def get_ip_address(interface):
@@ -29,8 +31,7 @@ def get_ip_address(interface):
         return None
 
 # Login UI
-# from_class_login = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/login_final.ui")[0]
-from_class_login = uic.loadUiType("/home/addinedu/dev_ws/deeplearning-repo-5/src/kdk/login_final.ui")[0]
+from_class_login = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/pyqt_socket/login_final.ui")[0]
 
 class LoginUI(QMainWindow, from_class_login):
     def __init__(self):
@@ -41,16 +42,12 @@ class LoginUI(QMainWindow, from_class_login):
         self.hostIP = get_ip_address("wlo1")
         self.labelIP.setText(str(self.hostIP))
 
-        # self.setWindowIcon(QIcon('/home/kkyu/amr_ws/DL/project_deep/face_communication/addinedu.png'))
-        self.setWindowIcon(QIcon('/home/addinedu/dev_ws/deeplearning-repo-5/src/kdk/data/addinedu.png'))
+        self.setWindowIcon(QIcon('/home/kkyu/amr_ws/DL/project_deep/face_communication/data_pic/addinedu.png'))
 
-        # pixmap = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/background.jpg')
-        pixmap = QPixmap('/home/addinedu/dev_ws/deeplearning-repo-5/src/kdk/data/background.jpg')
-
+        pixmap = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/data_pic/background.jpg')
         self.labelpixmap.setPixmap(pixmap)
 
-        # pixmap2 = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/client.png')
-        pixmap2 = QPixmap('/home/addinedu/dev_ws/deeplearning-repo-5/src/kdk/data/client.png')
+        pixmap2 = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/data_pic/client.png')
         scaled_pixmap2 = pixmap2.scaled(self.label3.size(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio)
         self.label3.setPixmap(scaled_pixmap2)
 
@@ -59,6 +56,7 @@ class LoginUI(QMainWindow, from_class_login):
 
         # 이벤트 설정 
         self.loginBtn.clicked.connect(self.connectServer)
+        self.nameEdit.returnPressed.connect(self.connectServer)
 
         # 소켓 생성
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -80,8 +78,7 @@ class LoginUI(QMainWindow, from_class_login):
             QMessageBox.critical(self, "Error", "Please enter a username.")
 
 # Client UI
-# from_class_client = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/client_final.ui")[0]
-from_class_client = uic.loadUiType("/home/addinedu/dev_ws/deeplearning-repo-5/src/kdk/client_final.ui")[0]
+from_class_client = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/pyqt_socket/client_final.ui")[0]
 
 # Inside your ClientUI class
 class ClientUI(QDialog, from_class_client):
@@ -116,6 +113,9 @@ class ClientUI(QDialog, from_class_client):
             }
         """)
 
+        self.callButton.clicked.connect(self.callButtonClicked)
+
+
     def receiveServerData(self):
         while True:
             try:
@@ -146,6 +146,7 @@ class ClientUI(QDialog, from_class_client):
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON data: {e}")
 
+
     def connectButtonClicked(self, row):
         # Get the IP address and port number from the corresponding row
         ip_address_item = self.tableWidget.item(row, 0)
@@ -160,6 +161,87 @@ class ClientUI(QDialog, from_class_client):
             self.clientport.setText(port_number)
         else:
             print("No IP address or port number found for this row.")
+
+
+    def callButtonClicked(self):
+        # IP 주소와 포트 번호를 가져옴
+        ip_address = self.clientip.text()
+        port_number = self.clientport.text()
+
+        # 가져온 정보를 바탕으로 소켓 통신 진행 
+        if ip_address and port_number:
+            try:
+                # 클라이언트와 소켓 연결
+                client_socket = socket.socket()
+                client_socket.connect((ip_address, int(port_number)))
+                
+                # 소켓이 연결되면 facechat UI를 띄우고 상대방의 얼굴 비디오를 표시
+                self.openFaceChatWindow(client_socket)
+
+                # 상대방이 통신을 끊거나 내가 통신을 끊으면 socket 종료 (연결 종료)
+                client_socket.close()
+            except Exception as e:
+                print(f"클라이언트에 연결하는 중 오류 발생: {e}")
+        else:
+            print("전화를 걸기 위한 IP 주소 또는 포트 번호를 찾을 수 없습니다.")
+
+    def openFaceChatWindow(self, client_socket):
+        # facechat UI 파일을 로드합니다.
+        # facechat.ui 파일에서 'chatpixmap' 웹캠 비디오를 표시하는 데 사용
+        facechat_window = uic.loadUi("/home/kkyu/amr_ws/DL/project_deep/face_communication/pyqt_socket/facechat.ui")
+
+        cap = cv2.VideoCapture('/dev/video0')
+
+        while True:
+            # 웹캠에서 프레임을 읽습니다.
+            ret, frame = cap.read()
+            if not ret:
+                print("Error: Failed to capture frame")
+                break
+
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame_string = cv2.imencode('.jpg', frame)[1].tostring()
+            size = len(frame_string)
+            client_socket.sendall(str(size).ljust(16).encode())
+            client_socket.sendall(frame_string)
+            length = int(client_socket.recv(16).strip())
+            frame_string = recvall(client_socket, length)
+            frame_array = np.frombuffer(frame_string, dtype=np.uint8)
+            frame = cv2.imdecode(frame_array, cv2.IMREAD_COLOR)
+            frame = cv2.cvtColor(frame, cv2.IMREAD_COLOR)
+
+            # QLabel에 QPixmap을 표시
+            facechat_window.chatpixmap.setPixmap(QPixmap.fromImage(QImage(frame, frame.shape[1], frame.shape[0], QImage.Format.Format_RGB888)))
+
+            # facechat 창의 제목을 설정하고 창을 표시합니다.
+            facechat_window.setWindowTitle("Face Chat")
+            facechat_window.show()
+
+            # 이벤트를 확인하고 창을 업데이트합니다.
+            QApplication.processEvents()
+
+            # # 소켓이 닫히면 루프를 종료합니다.
+            # if client_socket.fileno() == -1:
+            #     break
+            if cv2.waitKey(1) & 0xFF == 27:
+                break
+
+        # 카메라를 해제하고 창을 닫습니다.
+        cap.release()
+        facechat_window.close()
+
+
+
+def recvall(sock, count):
+    buf = b''
+
+    while count:
+        newbuf = sock.recv(count)
+        if not newbuf:
+            return None
+        buf += newbuf
+        count -= len(newbuf)
+    return buf
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

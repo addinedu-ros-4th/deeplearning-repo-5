@@ -117,8 +117,8 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>840</x>
-     <y>330</y>
+     <x>800</x>
+     <y>240</y>
      <width>131</width>
      <height>91</height>
     </rect>
@@ -152,6 +152,19 @@
      <string>Sound to Text</string>
     </property>
    </widget>
+  </widget>
+  <widget class="QPushButton" name="record_btn">
+   <property name="geometry">
+    <rect>
+     <x>800</x>
+     <y>340</y>
+     <width>111</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Click to Speech</string>
+   </property>
   </widget>
  </widget>
  <resources/>

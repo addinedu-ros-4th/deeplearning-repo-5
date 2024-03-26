@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import *
 from PyQt6 import uic
-from PyQt6.QtGui import QPixmap, QIcon, QImage
+from PyQt6.QtGui import QPixmap, QIcon, QImage, QFont
 from PyQt6.QtCore import Qt, QObject, pyqtSignal
 
 import socket
@@ -12,8 +12,11 @@ import json
 import cv2
 import numpy as np
 
+import pyaudio
+import threading
+
 SERVER_IP = '192.168.0.31'
-SERVER_PORT = 15017
+SERVER_PORT = 15030
 
 # Function to get IP address from ifconfig command in terminal
 def get_ip_address(interface):
@@ -100,7 +103,6 @@ class ClientUI(QDialog, from_class_client):
         self.data_received.connect(self.updateTableWidget)
 
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
-
         self.tableWidget.setStyleSheet("QTableWidget { background-color: #f0f0f0; }"
                                         "QTableWidget QTableWidget::item { color: #333333; }"
                                         "QTableWidget QTableWidget::item:selected { background-color: #b8daff; }"
@@ -113,8 +115,8 @@ class ClientUI(QDialog, from_class_client):
             }
         """)
 
+        
         self.callButton.clicked.connect(self.callButtonClicked)
-
 
     def receiveServerData(self):
         while True:
@@ -126,6 +128,7 @@ class ClientUI(QDialog, from_class_client):
             except Exception as e:
                 print(f"Error receiving data: {e}")
                 break
+
 
     def updateTableWidget(self, data):
         try:
@@ -189,7 +192,10 @@ class ClientUI(QDialog, from_class_client):
         # facechat UI 파일을 로드합니다.
         # facechat.ui 파일에서 'chatpixmap' 웹캠 비디오를 표시하는 데 사용
         facechat_window = uic.loadUi("/home/kkyu/amr_ws/DL/project_deep/face_communication/pyqt_socket/facechat.ui")
-
+        
+        # speakButton 클릭 이벤트에 대한 핸들러를 연결합니다.
+        facechat_window.speakButton.clicked.connect(lambda: self.handleSpeakButton(client_socket))
+        
         cap = cv2.VideoCapture('/dev/video0')
 
         while True:
@@ -208,10 +214,10 @@ class ClientUI(QDialog, from_class_client):
             frame_string = recvall(client_socket, length)
             frame_array = np.frombuffer(frame_string, dtype=np.uint8)
             frame = cv2.imdecode(frame_array, cv2.IMREAD_COLOR)
-            frame = cv2.cvtColor(frame, cv2.IMREAD_COLOR)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
             # QLabel에 QPixmap을 표시
-            facechat_window.chatpixmap.setPixmap(QPixmap.fromImage(QImage(frame, frame.shape[1], frame.shape[0], QImage.Format.Format_RGB888)))
+            facechat_window.chatpixmap.setPixmap(QPixmap.fromImage(QImage(frame, frame.shape[1], frame.shape[0], frame.strides[0], QImage.Format.Format_RGB888)))
 
             # facechat 창의 제목을 설정하고 창을 표시합니다.
             facechat_window.setWindowTitle("Face Chat")
@@ -221,8 +227,6 @@ class ClientUI(QDialog, from_class_client):
             QApplication.processEvents()
 
             # # 소켓이 닫히면 루프를 종료합니다.
-            # if client_socket.fileno() == -1:
-            #     break
             if cv2.waitKey(1) & 0xFF == 27:
                 break
 
@@ -230,6 +234,59 @@ class ClientUI(QDialog, from_class_client):
         cap.release()
         facechat_window.close()
 
+
+    def handleSpeakButton(self, client_socket):
+        # 오디오 송수신을 담당하는 함수와 스레드를 시작합니다.
+        audio_thread = threading.Thread(target=self.start_audio_communication, args=(client_socket,))
+        audio_thread.daemon = True
+        audio_thread.start()
+
+
+    def start_audio_communication(self, client_socket):
+        # PyAudio 설정
+        audio = pyaudio.PyAudio()
+        FORMAT = pyaudio.paInt16
+        CHANNELS = 1
+        RATE = 44100
+        CHUNK = 1024
+
+        # 오디오 스트림 열기
+        input_stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, input=True, frames_per_buffer=CHUNK)
+        output_stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True, frames_per_buffer=CHUNK)
+
+        # 오디오 수신 및 재생을 위한 함수
+        def receive_and_play():
+            try:
+                while True:
+                    # 서버로부터 오디오 데이터 수신
+                    data = client_socket.recv(CHUNK)
+                    if not data:
+                        break
+                    # 오디오 데이터 재생
+                    output_stream.write(data)
+            except KeyboardInterrupt:
+                pass
+
+        # 오디오 수신 및 재생을 위한 스레드 시작
+        receive_thread = threading.Thread(target=receive_and_play)
+        receive_thread.start()
+
+        try:
+            while True:
+                # 내 마이크에서 오디오 데이터 읽기
+                data = input_stream.read(CHUNK)
+                # 서버로 오디오 데이터 보내기
+                client_socket.sendall(data)
+        except KeyboardInterrupt:
+            pass
+        finally:
+            # 연결 종료
+            client_socket.close()
+            input_stream.stop_stream()
+            input_stream.close()
+            output_stream.stop_stream()
+            output_stream.close()
+            audio.terminate()
 
 
 def recvall(sock, count):
@@ -248,4 +305,3 @@ if __name__ == "__main__":
     myLogin = LoginUI()
     myLogin.show()
     sys.exit(app.exec())
-

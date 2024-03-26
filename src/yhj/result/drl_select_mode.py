@@ -1,5 +1,5 @@
 from PyQt6.QtWidgets import QApplication, QLabel, QVBoxLayout, QLineEdit,QDialog
-from PyQt6.QtCore import QThread, pyqtSignal, Qt, QTimer
+from PyQt6.QtCore import QThread, pyqtSignal, Qt, QTimer, QObject
 from PyQt6.QtGui import QPixmap, QImage
 import sys
 import cv2
@@ -104,25 +104,54 @@ class MediapipeThread(QThread):
     def stop(self):
         self._is_running = False
 
+class SpeechRecognitionThread(QThread):
+    recognition_result = pyqtSignal(str)
 
+    def __init__(self):
+        super().__init__()
+        self.r = sr.Recognizer()
+        self.audio_source = sr.Microphone()
+        self.is_running = False
 
+    def run(self):
+        self.is_running = True
+        while self.is_running:
+            with self.audio_source as source:
+                print("듣고있어요")
+                audio = self.r.listen(source)
+
+            try:
+                text = self.r.recognize_google(audio, language='ko')
+                self.recognition_result.emit(text)
+
+            except sr.UnknownValueError:
+                print("인식 실패")
+            except sr.RequestError as e:
+                print('요청 실패 : {0}'.format(e))    #api, network error
+    
+    def stop(self):
+        self.is_running = False
+   
+
+        
 class MyApp(QDialog):
     def __init__(self):
         super().__init__()
         # Qt Designer에서 만든 UI 파일 로드
-        uic.loadUi('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
+        uic.loadUi('/home/hj/amr_ws/ML_DL/src/project/yhj/result/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
+        self.speech_recognition_thread = SpeechRecognitionThread()
+        self.speech_recognition_thread.recognition_result.connect(self.on_recognition_result)
 
         # CameraThread 및 MediapipeThread 초기화
         self.camera_thread = CameraThread()
-        self.mediapipe_thread = MediapipeThread('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/handModel.h5')
+        self.mediapipe_thread = MediapipeThread('/home/hj/amr_ws/ML_DL/src/project/yhj/result/handModel.h5')
         # 카메라 이미지 업데이트 신호를 받으면 화면에 표시
         self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)
         # Mediapipe에서 업데이트된 단어를 받으면 해당 레이블에 표시
         self.mediapipe_thread.update_word_signal.connect(self.update_word_label)
-        
         # 카메라 및 Mediapipe 스레드 시작
         self.camera_thread.start()
-    
+        self.record_btn.setVisible(False)
         self.autoword_1.setVisible(False)
         self.autoword_2.setVisible(False)
         self.autoword_3.setVisible(False)
@@ -130,7 +159,7 @@ class MyApp(QDialog):
         self.autoword_5.setVisible(False)
         self.text = ""
         self.prefix = ""
-        self.csv_name = "/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/autocorrect.csv"
+        self.csv_name = "/home/hj/amr_ws/ML_DL/src/project/yhj/result/autocorrect.csv"
         self.file_name = "text_to_speech.mp3"
         self.trie = Trie()
         self.cons = cons
@@ -160,36 +189,37 @@ class MyApp(QDialog):
         
         self.HTT.toggled.connect(self.on_radio_toggled)
         self.STT.toggled.connect(self.on_radio_toggled)
+        self.record_btn.pressed.connect(self.start_recording)
+        self.record_btn.released.connect(self.stop_recording)
+        
+    def start_recording(self):
+        if not self.speech_recognition_thread.isRunning():  # 스레드가 실행 중이 아닌 경우에만 시작
+            self.speech_recognition_thread.start()
+    def stop_recording(self):
+        self.speech_recognition_thread.stop() 
 
-    def speech_to_text(self):
-            r = sr.Recognizer()
-            with sr.Microphone() as source:
-                print("듣고있어요")
-                audio = r.listen(source)
-                
-            try :
-                #text = r.recognize_google(audio, language='en-US')
-                text = r.recognize_google(audio, language='ko')
-                print(text)
-                self.input.setText(self.text)  # 'word'는 QLineEdit의 objectName
-                
-            except sr.UnknownValueError:
-                print("인식 실패")
-            except sr.RequestError as e:
-                print('요청 실패 : {0}'.format(e))
-
+    def on_recognition_result(self, text):
+        # 녹음된 텍스트를 처리하는 코드 작성
+        print("녹음된 텍스트:", text)
+        self.input.setText(text)
+        
     def on_radio_toggled(self):
         sender = self.sender()
         if sender.isChecked():
             if sender == self.HTT:
                 self.STT.setChecked(False)
+                self.record_btn.setVisible(False)
                 if not self.mediapipe_thread.isRunning():  # 스레드가 실행 중이 아닌 경우에만 시작
                     self.mediapipe_thread.start()
+                self.speech_recognition_thread.stop() 
+
             elif sender == self.STT:
                 self.HTT.setChecked(False)
                 self.mediapipe_thread.stop() 
-                self.speech_to_text()
-        
+                self.record_btn.setVisible(True)
+
+                    
+                    
     def on_key_press_event(self, event):
         if event.key() == Qt.Key.Key_Escape:
             # MediapipeThread 스레드 종료

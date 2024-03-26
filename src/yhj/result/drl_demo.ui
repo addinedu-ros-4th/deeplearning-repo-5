@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>842</width>
-    <height>511</height>
+    <width>1011</width>
+    <height>694</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,10 @@
   <widget class="QLabel" name="camera_screen">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>30</y>
-     <width>421</width>
-     <height>311</height>
+     <x>10</x>
+     <y>10</y>
+     <width>691</width>
+     <height>421</height>
     </rect>
    </property>
    <property name="text">
@@ -29,8 +29,8 @@
   <widget class="QLineEdit" name="input">
    <property name="geometry">
     <rect>
-     <x>560</x>
-     <y>310</y>
+     <x>730</x>
+     <y>490</y>
      <width>221</width>
      <height>41</height>
     </rect>
@@ -39,8 +39,8 @@
   <widget class="QPushButton" name="autoword_3">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>370</y>
+     <x>660</x>
+     <y>550</y>
      <width>101</width>
      <height>25</height>
     </rect>
@@ -52,8 +52,8 @@
   <widget class="QPushButton" name="autoword_2">
    <property name="geometry">
     <rect>
-     <x>380</x>
-     <y>370</y>
+     <x>550</x>
+     <y>550</y>
      <width>101</width>
      <height>25</height>
     </rect>
@@ -65,8 +65,8 @@
   <widget class="QPushButton" name="autoword_5">
    <property name="geometry">
     <rect>
-     <x>710</x>
-     <y>370</y>
+     <x>880</x>
+     <y>550</y>
      <width>101</width>
      <height>25</height>
     </rect>
@@ -78,8 +78,8 @@
   <widget class="QPushButton" name="autoword_1">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>370</y>
+     <x>440</x>
+     <y>550</y>
      <width>101</width>
      <height>25</height>
     </rect>
@@ -91,8 +91,8 @@
   <widget class="QPushButton" name="autoword_4">
    <property name="geometry">
     <rect>
-     <x>600</x>
-     <y>370</y>
+     <x>770</x>
+     <y>550</y>
      <width>101</width>
      <height>25</height>
     </rect>
@@ -104,8 +104,8 @@
   <widget class="QPushButton" name="btn_reset">
    <property name="geometry">
     <rect>
-     <x>690</x>
-     <y>270</y>
+     <x>860</x>
+     <y>450</y>
      <width>89</width>
      <height>25</height>
     </rect>
@@ -113,6 +113,45 @@
    <property name="text">
     <string>Reset</string>
    </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>840</x>
+     <y>330</y>
+     <width>131</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Select Mode</string>
+   </property>
+   <widget class="QRadioButton" name="HTT">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>112</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Hand to Text</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="STT">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>112</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Sound to Text</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

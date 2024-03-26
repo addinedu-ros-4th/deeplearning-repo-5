@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>678</width>
-    <height>551</height>
+    <width>676</width>
+    <height>379</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,15 +16,66 @@
   <widget class="QLabel" name="chatpixmap">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>30</y>
+     <x>10</x>
+     <y>10</y>
      <width>461</width>
-     <height>341</height>
+     <height>351</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    border: 2px solid rgb(237, 51, 59);
+    border-radius: 5px;
+    padding: 5px;
+    box-shadow: 3px 3px 5px rgba(0,0,0,0.5);
+</string>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
    </property>
    <property name="text">
     <string/>
    </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>20</y>
+     <width>171</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>주요 기능</string>
+   </property>
+   <widget class="QPushButton" name="gestureButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>141</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>수어 Mode</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="gestureButton_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>100</y>
+      <width>141</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>음성 Mode</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

@@ -21,13 +21,13 @@ from queue import Queue
 
 camera_image_queue = Queue(maxsize=1)  # 이미지를 저장하는 이미지 큐
 
-
 # 카메라 처리를 위한 별도의 스레드 클래스
 class CameraThread(QThread):
     change_pixmap_signal = pyqtSignal(QImage)
 
-    def __init__(self):
+    def __init__(self, HTT):
         super().__init__()
+        self.HTT = HTT  # HTT 객체를 CameraThread의 속성으로 전달받음
 
     def run(self):
         cap = cv2.VideoCapture(0)
@@ -39,11 +39,13 @@ class CameraThread(QThread):
                 current_time = time.time()
                 if not camera_image_queue.empty() :
                     camera_image_queue.get()
-
                 if current_time - last_image_time >= 0.05:
-
                     camera_image_queue.put(cv_img)
                     last_image_time = current_time
+                # if current_time - last_image_time >= 0.05:
+                #     if self.HTT.isChecked():  # HTT가 선택되었을 때만 이미지를 큐에 추가
+                #         camera_image_queue.put(cv_img)
+                #     last_image_time = current_time
                     
                 cv_img = cv2.flip(cv_img, 1)      
                 cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
@@ -63,6 +65,7 @@ class MediapipeThread(QThread):
         self._is_running = False  # 스레드 실행 여부를 나타내는 변수
         self.model = load_model(self.model_path)
         tf.device('/GPU:0')
+
     def draw_landmarks(self, results_pose, results, image):
         self.mp_drawing.draw_landmarks(
                     image,
@@ -122,9 +125,10 @@ class MediapipeThread(QThread):
         arr = np.array(xyz_list)
         arr = arr.reshape(1, 21, 3)
 
-        
+        start_time = time.time()
         yhat = self.model.predict(arr, verbose=0)[0]
-        
+        end_time = time.time()
+        print("오른손 작업에 소요된 시간:", end_time - start_time, "초")
 
         if np.max(yhat) > 0.7 : # 출력 문턱값
             try :
@@ -147,11 +151,11 @@ class MediapipeThread(QThread):
         
         arr = np.array(xyz_list)
         arr = arr.reshape(1, 21, 3)
-        # start_time = time.time()
+        start_time = time.time()
         
         yhat = self.model.predict(arr, verbose=0)[0]
-        # end_time = time.time()
-        # print("왼손 작업에 소요된 시간:", end_time - start_time, "초")
+        end_time = time.time()
+        print("왼손 작업에 소요된 시간:", end_time - start_time, "초")
 
         if np.max(yhat) > 0.9 : # 출력 문턱값
             try :
@@ -182,7 +186,7 @@ class MediapipeThread(QThread):
 
                 
         return left_hand_num, right_hand_num
-    def run(self):################
+    def run(self):####################################### 스레드 에러
         self._is_running = True  # 스레드가 시작될 때 실행 여부 변수를 True로 설정
         command1 = None
         command2 = None
@@ -196,40 +200,64 @@ class MediapipeThread(QThread):
                 enable_segmentation=True,
                 min_detection_confidence=0.5) as pose:
             while self._is_running:
-                start_time = time.time()
                 cv_img = camera_image_queue.get()
                 # 이미지 처리 로직
                 cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
-                
                 results = hands.process(cv_img)
                 results_pose = pose.process(cv_img)
-                
                 left_hand_num, right_hand_num = self.hand_direction_detection(results_pose, results)
+                
                 if results.multi_hand_landmarks and right_hand_num != None:
                     command1 = self.right_hand_command(results.multi_hand_landmarks[right_hand_num])
                     self.update_word_signal.emit(command1)
-                        
                 elif results.multi_hand_landmarks and left_hand_num != None:
                     command2 = self.left_hand_command(results.multi_hand_landmarks[left_hand_num])
                     self.update_word_signal.emit(command2)
                 end_time = time.time()
-                # print("작업에 소요된 시간:", end_time - start_time, "초")
         
 
     def stop(self):
         self._is_running = False
 
+class SpeechRecognitionThread(QThread):
+    recognition_result = pyqtSignal(str)
 
+    def __init__(self):
+        super().__init__()
+        self.r = sr.Recognizer()
+        self.audio_source = sr.Microphone()
+        self.is_running = False
+
+    def run(self):
+        self.is_running = True
+        while self.is_running:
+            with self.audio_source as source:
+                print("듣고있어요")
+                audio = self.r.listen(source)
+
+            try:
+                text = self.r.recognize_google(audio, language='ko')
+                self.recognition_result.emit(text)
+
+            except sr.UnknownValueError:
+                print("인식 실패")
+            except sr.RequestError as e:
+                print('요청 실패 : {0}'.format(e))    #api, network error
+    
+    def stop(self):
+        self.is_running = False
 
 class MyApp(QDialog):
     def __init__(self):
         super().__init__()
+        self.csv_path = "/home/hj/amr_ws/ML_DL/src/project/yhj/result/autocorrect.csv"
         # Qt Designer에서 만든 UI 파일 로드
         uic.loadUi('/home/hj/amr_ws/ML_DL/src/project/yhj/result/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
-
+        self.speech_recognition_thread = SpeechRecognitionThread()
+        self.speech_recognition_thread.recognition_result.connect(self.on_recognition_result)
         # CameraThread 및 MediapipeThread 초기화
-        self.camera_thread = CameraThread()
-        self.mediapipe_thread = MediapipeThread('/home/rds/Desktop/git_ws/deeplearning-repo-5/src/ljh/handModel_mini.h5')
+        self.camera_thread = CameraThread(self.HTT)      
+        self.mediapipe_thread = MediapipeThread('/home/hj/amr_ws/ML_DL/src/project/yhj/result/handModel.h5')
         # 카메라 이미지 업데이트 신호를 받으면 화면에 표시
         self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)
         # Mediapipe에서 업데이트된 단어를 받으면 해당 레이블에 표시
@@ -243,9 +271,10 @@ class MyApp(QDialog):
         self.autoword_3.setVisible(False)
         self.autoword_4.setVisible(False)
         self.autoword_5.setVisible(False)
+        self.record_btn.setVisible(False)
+        self.cache = self.load_csv()
         self.text = ""
         self.prefix = ""
-        self.csv_name = "/home/hj/amr_ws/ML_DL/src/project/yhj/result/autocorrect.csv"
         self.file_name = "text_to_speech.mp3"
         self.trie = Trie()
         self.cons = cons
@@ -276,6 +305,12 @@ class MyApp(QDialog):
         self.HTT.toggled.connect(self.on_radio_toggled)
         self.STT.toggled.connect(self.on_radio_toggled)
 
+    def load_csv(self):
+        try:
+            return pd.read_csv(self.csv_path)
+        except FileNotFoundError:
+            return pd.DataFrame(columns=['word', 'frequency'])
+        
     def speech_to_text(self):
             r = sr.Recognizer()
             with sr.Microphone() as source:
@@ -294,16 +329,28 @@ class MyApp(QDialog):
                 print('요청 실패 : {0}'.format(e))
 
     def on_radio_toggled(self):
-        sender = self.sender()
-        if sender.isChecked():
-            if sender == self.HTT:
-                self.STT.setChecked(False)
-                if not self.mediapipe_thread.isRunning():  # 스레드가 실행 중이 아닌 경우에만 시작
-                    self.mediapipe_thread.start()
-            elif sender == self.STT:
-                self.HTT.setChecked(False)
-                self.mediapipe_thread.stop() 
-                self.speech_to_text()
+        # while not camera_image_queue.empty() :
+        #     camera_image_queue.get()
+        if self.HTT.isChecked():
+            time.sleep(0.1)                         #delay를 줘서 인식 속도를 맞춘다
+            print("hi")
+            self.STT.setChecked(False)
+            self.record_btn.setVisible(False)
+            if not self.mediapipe_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
+                self.mediapipe_thread.start()
+            self.speech_recognition_thread.stop()
+             
+
+        elif self.STT.isChecked():
+            time.sleep(0.1)
+            self.HTT.setChecked(False)
+            self.mediapipe_thread.stop() 
+            self.record_btn.setVisible(True)
+
+    def on_recognition_result(self, text):
+        # 녹음된 텍스트를 처리하는 코드 작성
+        print("녹음된 텍스트:", text)
+        self.input.setText(text)
         
     def on_key_press_event(self, event):
         if event.key() == Qt.Key.Key_Escape:
@@ -322,7 +369,7 @@ class MyApp(QDialog):
             print(self.word_list)
 
             # 입력 리스트에 다섯 개의 값이 쌓였을 경우
-            if len(self.word_list) >= 5:
+            if len(self.word_list) >= 7:
                 output = max(set(self.word_list), key=self.word_list.count)
 
                 self.word_list = []
@@ -374,19 +421,31 @@ class MyApp(QDialog):
         tts_ko = gTTS(text=word_to_speech, lang='ko')
         tts_ko.save(self.file_name)
         playsound(self.file_name)
+        
+    def save_csv(self):
+        self.cache.to_csv(self.csv_path, index=False)
 
     def add_word(self, input_word):
         if input_word.strip():  # 입력된 단어가 공백이 아닌지 확인
-            word_df = pd.read_csv(self.csv_name)  # 여기서 CSV 파일 경로 수정
-            if input_word in word_df['word'].values:
-                index = word_df.index[word_df['word'] == input_word].tolist()
-                word_df['frequency'][index] += 1
-                print("fre")
+            if input_word in self.cache['word'].values:
+                index = self.cache.index[self.cache['word'] == input_word].tolist()
+                self.cache.loc[index, 'frequency'] += 1
             else:
-                word_df.loc[len(word_df)] = [input_word, 1]
-                print("word")
+                self.cache.loc[len(self.cache)] = [input_word, 1]
 
-            word_df.to_csv(self.csv_name, index=False)
+    # def add_word(self, input_word):                 #method 분리
+    #     time.sleep(0.1)
+    #     if input_word.strip():  # 입력된 단어가 공백이 아닌지 확인
+    #         word_df = pd.read_csv(self.csv_name)  # 여기서 CSV 파일 경로 수정
+    #         if input_word in word_df['word'].values:
+    #             index = word_df.index[word_df['word'] == input_word].tolist()
+    #             word_df['frequency'][index] += 1
+    #             print("fre")
+    #         else:
+    #             word_df.loc[len(word_df)] = [input_word, 1]
+    #             print("word")
+
+    #         word_df.to_csv(self.csv_name, index=False)
     
     def changeText_1(self) :
         word = self.text.split()
@@ -443,7 +502,7 @@ class MyApp(QDialog):
         self.word = word
 
     def on_text_changed(self):
-        self.word_df=pd.read_csv(self.csv_name)
+        self.word_df = self.cache
         self.words = self.word_df['word']
         self.text = self.input.text()
         self.text = j2hcj(h2j(self.text))

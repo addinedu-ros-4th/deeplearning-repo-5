@@ -6,7 +6,7 @@ import threading
 
 class Server:
     def __init__(self, window, client_ip):
-        self.local_ip_address = '192.168.0.31'
+        self.local_ip_address = '192.168.0.15'
         print(self.local_ip_address)
         self.vid_recv_port = 5003
         self.aud_recv_port = 5004
@@ -70,5 +70,5 @@ def start_video_call(client_ip):
 
 
 if __name__ == '__main__':
-    start_video_call('192.168.0.15')
+    start_video_call('192.168.0.31')
 

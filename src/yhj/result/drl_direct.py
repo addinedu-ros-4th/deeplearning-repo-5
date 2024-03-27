@@ -1,6 +1,6 @@
 from PyQt6.QtWidgets import QApplication, QLabel, QVBoxLayout, QLineEdit,QDialog
 from PyQt6.QtCore import QThread, pyqtSignal, Qt, QTimer
-from PyQt6.QtGui import QPixmap, QImage
+from PyQt6.QtGui import QPixmap, QImage, QKeyEvent
 import sys
 import cv2
 import numpy as np
@@ -19,6 +19,7 @@ from trie import Trie
 import time
 from queue import Queue
 import asyncio
+import qasync
 
 camera_image_queue = Queue(maxsize=1)  # 이미지를 저장하는 이미지 큐
 
@@ -229,36 +230,47 @@ class SpeechRecognitionThread(QThread):
         self.audio_source = sr.Microphone()
         self.is_running = False
 
-    def run(self):
-        self.is_running = True
+    async def async_listen(self):
         while self.is_running:
             with self.audio_source as source:
                 print("듣고있어요")
-                audio = self.r.listen(source)
+                audio = await qasync.await_(self.loop, self.r.listen)(source)
+                await asyncio.sleep(0.1)  # 잠시 대기 후 인식
 
             try:
-                text = self.r.recognize_google(audio, language='ko')
+                text = await qasync.await_(self.loop, self.r.recognize_google)(audio, language='ko')
                 self.recognition_result.emit(text)
 
             except sr.UnknownValueError:
                 print("인식 실패")
             except sr.RequestError as e:
                 print('요청 실패 : {0}'.format(e))    #api, network error
-    
+
+    def run(self):
+        self.is_running = True
+        self.loop = qasync.QEventLoop()
+        asyncio.set_event_loop(self.loop)
+        self.loop.run_until_complete(self.async_listen())
+
     def stop(self):
         self.is_running = False
 
 class MyApp(QDialog):
     def __init__(self):
         super().__init__()
-        self.csv_path = "/home/hj/amr_ws/ML_DL/src/project/yhj/result/autocorrect.csv"
+        self.csv_path = "/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/autocorrect.csv"
         # Qt Designer에서 만든 UI 파일 로드
-        uic.loadUi('/home/hj/amr_ws/ML_DL/src/project/yhj/result/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
+        uic.loadUi('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
         self.speech_recognition_thread = SpeechRecognitionThread()
         self.speech_recognition_thread.recognition_result.connect(self.on_recognition_result)
+        self.asyncio_loop = qasync.QEventLoop()
+        asyncio.set_event_loop(self.asyncio_loop)
+
+        asyncio.run_coroutine_threadsafe(self.speech_recognition_thread.async_listen(), self.asyncio_loop)
+
         # CameraThread 및 MediapipeThread 초기화
         self.camera_thread = CameraThread(self.HTT)      
-        self.mediapipe_thread = MediapipeThread('/home/hj/amr_ws/ML_DL/src/project/yhj/result/handModel.h5')
+        self.mediapipe_thread = MediapipeThread('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/handModel.h5')
         # 카메라 이미지 업데이트 신호를 받으면 화면에 표시
         self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)
         # Mediapipe에서 업데이트된 단어를 받으면 해당 레이블에 표시
@@ -275,6 +287,7 @@ class MyApp(QDialog):
         self.record_btn.setVisible(False)
         self.cache = self.load_csv()
         self.text = ""
+        self.sub = []
         self.prefix = ""
         self.file_name = "text_to_speech.mp3"
         self.trie = Trie()
@@ -284,7 +297,6 @@ class MyApp(QDialog):
         self.flag = 0
         self.mt = ""
         self.setWindowTitle("Autocorrect")
-
         self.input.textChanged.connect(self.on_text_changed)
         
         # QTimer 객체 생성
@@ -305,6 +317,13 @@ class MyApp(QDialog):
         
         self.HTT.toggled.connect(self.on_radio_toggled)
         self.STT.toggled.connect(self.on_radio_toggled)
+        
+        self.sub_timer = QTimer()
+        self.sub_timer.setInterval(3000)  # 3초마다 타이머 시그널 발생
+        self.sub_timer.timeout.connect(self.reset_sub)  # 타임아웃 시그널에 연결할 함수 설정
+        self.sub_timer.start()  # 타이머 시작
+
+        self.record_btn.clicked.connect(self.speech_to_text)
 
     def load_csv(self):
         try:
@@ -352,9 +371,10 @@ class MyApp(QDialog):
         # 녹음된 텍스트를 처리하는 코드 작성
         print("녹음된 텍스트:", text)
         self.input.setText(text)
-        
-    def on_key_press_event(self, event):
-        if event.key() == Qt.Key.Key_Escape:
+            
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key.Key_F1:
+            self.save_csv()
             # MediapipeThread 스레드 종료
             self.camera_thread.stop()
             self.mediapipe_thread.stop()
@@ -363,6 +383,9 @@ class MyApp(QDialog):
         else:
             # 다른 키가 눌렸을 때의 동작
             pass
+            
+    
+        
     def update_word(self):
         if hasattr(self, 'word') and self.word:  # 단어가 존재하고 값이 비어있지 않은 경우에만 실행
             self.word_list.append(self.word)
@@ -380,6 +403,12 @@ class MyApp(QDialog):
                 elif output == 'backspace':
                     # 마지막 문자를 제거합니다.
                     self.text = self.text[:-1]
+                    if self.text == "":
+                        self.autoword_1.setVisible(False)
+                        self.autoword_2.setVisible(False)
+                        self.autoword_3.setVisible(False)
+                        self.autoword_4.setVisible(False)
+                        self.autoword_5.setVisible(False)
                 elif output == "shift":
                     self.flag = 1
                     print(self.flag)
@@ -420,7 +449,7 @@ class MyApp(QDialog):
 
     def speech_word(self, word_to_speech):
         # 비동기 작업을 스케줄합니다.
-        asyncio.create_task(self.async_speech_word(word_to_speech))
+        asyncio.ensure_future(self.async_speech_word(word_to_speech))
 
     async def async_speech_word(self, word_to_speech):
         # gTTS 작업을 별도의 스레드에서 실행합니다.
@@ -432,17 +461,29 @@ class MyApp(QDialog):
     def create_speech_file(self, text):
         tts_ko = gTTS(text=text, lang='ko')
         tts_ko.save(self.file_name)
+        
     def save_csv(self):
         self.cache.to_csv(self.csv_path, index=False)
+        print("save")
+
 
     def add_word(self, input_word):
+        self.sub.append(input_word)
+        sub_text = ' '.join(self.sub)
+        self.sub_label.setText(sub_text)
         if input_word.strip():  # 입력된 단어가 공백이 아닌지 확인
             if input_word in self.cache['word'].values:
                 index = self.cache.index[self.cache['word'] == input_word].tolist()
                 self.cache.loc[index, 'frequency'] += 1
             else:
                 self.cache.loc[len(self.cache)] = [input_word, 1]
+        self.last_word_time = time.time()  # 마지막 입력 시간 갱신
 
+    def reset_sub(self):
+        # 마지막 입력된 단어가 없거나 마지막 입력 시간이 3초 이상 경과하면 sub 초기화
+        if not self.sub or time.time() - self.last_word_time >= 3:
+            self.sub = []
+            self.sub_label.setText("")
     # def add_word(self, input_word):                 #method 분리
     #     time.sleep(0.1)
     #     if input_word.strip():  # 입력된 단어가 공백이 아닌지 확인
@@ -519,9 +560,8 @@ class MyApp(QDialog):
         if len(self.text) >= 2 and self.text[-2] in double_cons:  # 인덱스 접근 전에 길이 확인
             # 새로운 문자열을 생성하여 할당
             self.text = self.text[:-2] + double_cons[self.text[-2]] + self.text[-1] 
-
         self.text = gesture2text(self.text)
-
+        
         for word in self.words:
             self.trie.insert(word)
         
@@ -532,12 +572,11 @@ class MyApp(QDialog):
                 print(self.prefix)
                 self.speech_word(self.prefix)
                 self.add_word(self.prefix)
+                self.text = ""
+                self.input.setText(self.text)
             else:
                 
-                self.prefix = self.text.split(" ")[-1]
-                #print(self.prefix)
-                
-                 
+                self.prefix = self.text.split(" ")[-1]                            
                 self.input.setText(self.text)
                 suggestions = self.trie.get_words_with_prefix(self.prefix)
                 indices = [self.word_df.index[self.word_df['word'] == item].tolist() for item in suggestions]
@@ -565,7 +604,8 @@ if __name__ == "__main__":
     widget = MyApp()
     widget.show()
 
-    loop = qasync.QEventLoop(app)
+    loop = qasync.QEventLoop(app)           #종료 권한 관리
     asyncio.set_event_loop(loop)
 
-    sys.exit(app.exec())
+    #sys.exit(app.exec())
+    loop.run_forever() 

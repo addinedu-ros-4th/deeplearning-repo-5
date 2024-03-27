@@ -39,7 +39,7 @@ class CameraThread(QThread):
                 current_time = time.time()
                 if not camera_image_queue.empty() :
                     camera_image_queue.get()
-                    
+
                 if current_time - last_image_time >= 0.05:
 
                     camera_image_queue.put(cv_img)
@@ -122,10 +122,9 @@ class MediapipeThread(QThread):
         arr = np.array(xyz_list)
         arr = arr.reshape(1, 21, 3)
 
-        start_time = time.time()
+        
         yhat = self.model.predict(arr, verbose=0)[0]
-        end_time = time.time()
-        print("오른손 작업에 소요된 시간:", end_time - start_time, "초")
+        
 
         if np.max(yhat) > 0.7 : # 출력 문턱값
             try :
@@ -148,11 +147,11 @@ class MediapipeThread(QThread):
         
         arr = np.array(xyz_list)
         arr = arr.reshape(1, 21, 3)
-        start_time = time.time()
+        # start_time = time.time()
         
         yhat = self.model.predict(arr, verbose=0)[0]
-        end_time = time.time()
-        print("왼손 작업에 소요된 시간:", end_time - start_time, "초")
+        # end_time = time.time()
+        # print("왼손 작업에 소요된 시간:", end_time - start_time, "초")
 
         if np.max(yhat) > 0.9 : # 출력 문턱값
             try :
@@ -183,7 +182,7 @@ class MediapipeThread(QThread):
 
                 
         return left_hand_num, right_hand_num
-    def run(self):####################################### 스레드 에러
+    def run(self):################
         self._is_running = True  # 스레드가 시작될 때 실행 여부 변수를 True로 설정
         command1 = None
         command2 = None
@@ -214,7 +213,7 @@ class MediapipeThread(QThread):
                     command2 = self.left_hand_command(results.multi_hand_landmarks[left_hand_num])
                     self.update_word_signal.emit(command2)
                 end_time = time.time()
-                print("작업에 소요된 시간:", end_time - start_time, "초")
+                # print("작업에 소요된 시간:", end_time - start_time, "초")
         
 
     def stop(self):
@@ -230,7 +229,7 @@ class MyApp(QDialog):
 
         # CameraThread 및 MediapipeThread 초기화
         self.camera_thread = CameraThread()
-        self.mediapipe_thread = MediapipeThread('/home/rds/Desktop/git_ws/deeplearning-repo-5/src/ljh/handModel.h5')
+        self.mediapipe_thread = MediapipeThread('/home/rds/Desktop/git_ws/deeplearning-repo-5/src/ljh/handModel_mini.h5')
         # 카메라 이미지 업데이트 신호를 받으면 화면에 표시
         self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)
         # Mediapipe에서 업데이트된 단어를 받으면 해당 레이블에 표시
@@ -323,7 +322,7 @@ class MyApp(QDialog):
             print(self.word_list)
 
             # 입력 리스트에 다섯 개의 값이 쌓였을 경우
-            if len(self.word_list) >= 15:
+            if len(self.word_list) >= 5:
                 output = max(set(self.word_list), key=self.word_list.count)
 
                 self.word_list = []

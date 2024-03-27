@@ -5,6 +5,7 @@ import os
 import cv2
 import mediapipe as mp
 import time
+from tensorflow.keras.models import load_model
 
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
@@ -12,7 +13,6 @@ mp_hands = mp.solutions.hands
 mp_pose = mp.solutions.pose
 
 
-from tensorflow.keras.models import load_model
 
 # 저장된 모델 파일 경로
 model_path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src/ljh/handModel.h5"
@@ -152,7 +152,7 @@ def hand_direction_detection(results_pose, results) : #손 방향 인식하고 �
     
     
 def main():
-    try :
+    try :# try except = 스래드 진행중 에러 발생시 확인용 지워도 무관
         with mp_hands.Hands(
             model_complexity=0,
             min_detection_confidence=0.4,
@@ -199,9 +199,9 @@ def main():
                         
                     
                             
-                    #보기 편하게 이미지를 좌우 반전합니다.
-                    cv2.imshow('Demo', cv2.flip(image, 1))
-                    if cv2.waitKey(1) & 0xFF == 27:
+                    
+                    cv2.imshow('Demo', cv2.flip(image, 1))#보기 편하게 이미지를 좌우 반전합니다.
+                    if cv2.waitKey(1) & 0xFF == 27:# esc
                         break
     except Exception as e:
         print(e)

@@ -226,7 +226,7 @@ class MyApp(QDialog):
     def __init__(self):
         super().__init__()
         # Qt Designer에서 만든 UI 파일 로드
-        uic.loadUi('/home/rds/Desktop/git_ws/deeplearning-repo-5/src/ljh/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
+        uic.loadUi('/home/hj/amr_ws/ML_DL/src/project/yhj/result/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
 
         # CameraThread 및 MediapipeThread 초기화
         self.camera_thread = CameraThread()
@@ -246,7 +246,7 @@ class MyApp(QDialog):
         self.autoword_5.setVisible(False)
         self.text = ""
         self.prefix = ""
-        self.csv_name = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src/yhj/result/autocorrect.csv"
+        self.csv_name = "/home/hj/amr_ws/ML_DL/src/project/yhj/result/autocorrect.csv"
         self.file_name = "text_to_speech.mp3"
         self.trie = Trie()
         self.cons = cons

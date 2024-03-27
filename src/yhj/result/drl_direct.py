@@ -18,6 +18,7 @@ import speech_recognition as sr
 from trie import Trie
 import time
 from queue import Queue
+import asyncio
 
 camera_image_queue = Queue(maxsize=1)  # 이미지를 저장하는 이미지 큐
 
@@ -417,11 +418,20 @@ class MyApp(QDialog):
     def reset_line(self):
         self.input.clear()  # Line edit의 문자열을 삭제합니다.
 
-    def speech_word(self, word_to_speech) :
-        tts_ko = gTTS(text=word_to_speech, lang='ko')
+    def speech_word(self, word_to_speech):
+        # 비동기 작업을 스케줄합니다.
+        asyncio.create_task(self.async_speech_word(word_to_speech))
+
+    async def async_speech_word(self, word_to_speech):
+        # gTTS 작업을 별도의 스레드에서 실행합니다.
+        loop = asyncio.get_event_loop()
+        await loop.run_in_executor(None, self.create_speech_file, word_to_speech)
+        # playsound 작업을 별도의 스레드에서 실행합니다.
+        await loop.run_in_executor(None, playsound, self.file_name)
+
+    def create_speech_file(self, text):
+        tts_ko = gTTS(text=text, lang='ko')
         tts_ko.save(self.file_name)
-        playsound(self.file_name)
-        
     def save_csv(self):
         self.cache.to_csv(self.csv_path, index=False)
 
@@ -554,4 +564,8 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     widget = MyApp()
     widget.show()
+
+    loop = qasync.QEventLoop(app)
+    asyncio.set_event_loop(loop)
+
     sys.exit(app.exec())

@@ -230,28 +230,23 @@ class SpeechRecognitionThread(QThread):
         self.audio_source = sr.Microphone()
         self.is_running = False
 
-    async def async_listen(self):
+    def run(self):
+        self.is_running = True
         while self.is_running:
             with self.audio_source as source:
                 print("듣고있어요")
-                audio = await qasync.await_(self.loop, self.r.listen)(source)
-                await asyncio.sleep(0.1)  # 잠시 대기 후 인식
+                audio = self.r.listen(source)
 
             try:
-                text = await qasync.await_(self.loop, self.r.recognize_google)(audio, language='ko')
+                text = self.r.recognize_google(audio, language='ko')
+                print(text)
                 self.recognition_result.emit(text)
 
             except sr.UnknownValueError:
                 print("인식 실패")
             except sr.RequestError as e:
                 print('요청 실패 : {0}'.format(e))    #api, network error
-
-    def run(self):
-        self.is_running = True
-        self.loop = qasync.QEventLoop()
-        asyncio.set_event_loop(self.loop)
-        self.loop.run_until_complete(self.async_listen())
-
+    
     def stop(self):
         self.is_running = False
 
@@ -263,11 +258,6 @@ class MyApp(QDialog):
         uic.loadUi('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
         self.speech_recognition_thread = SpeechRecognitionThread()
         self.speech_recognition_thread.recognition_result.connect(self.on_recognition_result)
-        self.asyncio_loop = qasync.QEventLoop()
-        asyncio.set_event_loop(self.asyncio_loop)
-
-        asyncio.run_coroutine_threadsafe(self.speech_recognition_thread.async_listen(), self.asyncio_loop)
-
         # CameraThread 및 MediapipeThread 초기화
         self.camera_thread = CameraThread(self.HTT)      
         self.mediapipe_thread = MediapipeThread('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/handModel.h5')
@@ -332,21 +322,7 @@ class MyApp(QDialog):
             return pd.DataFrame(columns=['word', 'frequency'])
         
     def speech_to_text(self):
-            r = sr.Recognizer()
-            with sr.Microphone() as source:
-                print("듣고있어요")
-                audio = r.listen(source)
-                
-            try :
-                #text = r.recognize_google(audio, language='en-US')
-                text = r.recognize_google(audio, language='ko')
-                print(text)
-                self.input.setText(self.text)  # 'word'는 QLineEdit의 objectName
-                
-            except sr.UnknownValueError:
-                print("인식 실패")
-            except sr.RequestError as e:
-                print('요청 실패 : {0}'.format(e))
+        self.speech_recognition_thread.start()
 
     def on_radio_toggled(self):
         # while not camera_image_queue.empty() :
@@ -369,8 +345,7 @@ class MyApp(QDialog):
 
     def on_recognition_result(self, text):
         # 녹음된 텍스트를 처리하는 코드 작성
-        print("녹음된 텍스트:", text)
-        self.input.setText(text)
+        self.sub_label.setText(text)
             
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_F1:

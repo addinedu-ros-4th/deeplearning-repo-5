@@ -4,6 +4,7 @@ from PyQt6.QtGui import QPixmap, QImage
 import sys
 import cv2
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras.models import load_model
 import mediapipe as mp
 from PyQt6 import uic
@@ -18,15 +19,8 @@ from trie import Trie
 import time
 from queue import Queue
 
-camera_image_queue = Queue()  # 이미지를 저장하는 이미지 큐
+camera_image_queue = Queue(maxsize=1)  # 이미지를 저장하는 이미지 큐
 
-data_dict = {0 : "ㄱ", 1 : "ㄴ", 2 : "ㅋ", 3 : "ㅌ", 4 : "ㅍ", 
-             5 : "ㅎ", 6 : "ㅏ", 7 : "ㅑ", 8 : "ㅓ", 9 : "ㅕ",
-             10 : "ㅗ", 11 : "ㅛ", 12 : "ㄷ", 13 : "ㅜ", 14 : "ㅠ",
-             15 : "ㅡ", 16 : "ㅣ", 17 : "ㅐ", 18 : "ㅔ", 19 : "ㅚ",
-             20 : "ㅟ", 21 : "ㅒ", 22 : "ㅖ", 23 : "ㄹ", 24 : "ㅢ",
-             25 : "ㅁ", 26 : "ㅂ", 27 : "ㅅ", 28 : "ㅇ", 29 : "ㅈ",
-             30 : "ㅊ", 31 : "backspace", 32 : "question", 33 : "shift", 34 : "space"}
 
 # 카메라 처리를 위한 별도의 스레드 클래스
 class CameraThread(QThread):
@@ -43,8 +37,11 @@ class CameraThread(QThread):
             ret, cv_img = cap.read()
             if ret:
                 current_time = time.time()
-                
+                if not camera_image_queue.empty() :
+                    camera_image_queue.get()
+                    
                 if current_time - last_image_time >= 0.05:
+
                     camera_image_queue.put(cv_img)
                     last_image_time = current_time
                     
@@ -65,7 +62,7 @@ class MediapipeThread(QThread):
         self.model_path = model_path
         self._is_running = False  # 스레드 실행 여부를 나타내는 변수
         self.model = load_model(self.model_path)
-
+        tf.device('/GPU:0')
     def draw_landmarks(self, results_pose, results, image):
         self.mp_drawing.draw_landmarks(
                     image,
@@ -200,21 +197,24 @@ class MediapipeThread(QThread):
                 enable_segmentation=True,
                 min_detection_confidence=0.5) as pose:
             while self._is_running:
+                start_time = time.time()
                 cv_img = camera_image_queue.get()
                 # 이미지 처리 로직
                 cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
+                
                 results = hands.process(cv_img)
                 results_pose = pose.process(cv_img)
+                
                 left_hand_num, right_hand_num = self.hand_direction_detection(results_pose, results)
-                if results.multi_hand_landmarks:
-                    if right_hand_num != None:
-                        command1 = self.right_hand_command(results.multi_hand_landmarks[right_hand_num])
-                        self.update_word_signal.emit(command1)
+                if results.multi_hand_landmarks and right_hand_num != None:
+                    command1 = self.right_hand_command(results.multi_hand_landmarks[right_hand_num])
+                    self.update_word_signal.emit(command1)
                         
-                    if left_hand_num != None:
-                        command2 = self.left_hand_command(results.multi_hand_landmarks[left_hand_num])
-                        self.update_word_signal.emit(command2)
-        
+                elif results.multi_hand_landmarks and left_hand_num != None:
+                    command2 = self.left_hand_command(results.multi_hand_landmarks[left_hand_num])
+                    self.update_word_signal.emit(command2)
+                end_time = time.time()
+                print("작업에 소요된 시간:", end_time - start_time, "초")
         
 
     def stop(self):

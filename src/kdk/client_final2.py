@@ -16,7 +16,7 @@ import pyaudio
 import threading
 
 SERVER_IP = '192.168.0.31'
-SERVER_PORT = 15030
+SERVER_PORT = 15031
 
 def recvall(sock, count):
     buf = b''
@@ -178,39 +178,41 @@ class ClientUI(QDialog, from_class_client):
 
 
     def callButtonClicked(self):
-        ip_address = self.clientip.text()
-        port_number = self.clientport.text()
+            ip_address = self.clientip.text()
+            port_number = self.clientport.text()
 
-        if ip_address and port_number:
-            try:
-                server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                server_socket.bind((ip_address, int(port_number)))
-                server_socket.listen(True) 
-                QMessageBox.information(self, "Connection", "Waiting for connection...")
+            if ip_address and port_number:
+                try:
+                    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    server_socket.bind((ip_address, int(port_number)))
+                    server_socket.listen(True) 
+                    QMessageBox.information(self, "Connection", "Waiting for connection...")
 
-                while True:
-                    client_socket, addr = server_socket.accept()
-                    QMessageBox.information(self, "Connection", f"Connected with {addr}")
+                    while True:
+                        client_socket, addr = server_socket.accept()
+                        QMessageBox.information(self, "Connection", f"Connected with {addr}")
 
-                    threading.Thread(target=self.openFaceChatWindow, args=(client_socket,)).start()
+                        threading.Thread(target=self.openFaceChatWindow, args=(client_socket,)).start()
 
-            except Exception as e:
-                print(f"Error while connecting to clients: {e}")
-        else:
-            print("IP address or port number not found.")
+                except Exception as e:
+                    print(f"Error while connecting to clients: {e}")
+            else:
+                print("IP address or port number not found.")
 
     def openFaceChatWindow(self, client_socket):
         self.facechat_window = FaceChatWindow(client_socket)
         self.facechat_window.show()
+        # speakButton을 찾아 연결
+        self.facechat_window.gestureButton_2 = self.facechat_window.findChild(QPushButton, "speakButton")
+        self.facechat_window.gestureButton_2.clicked.connect(self.facechat_window.handleSpeakButton)
             
 
 
-class FaceChatWindow(QMainWindow):
+class FaceChatWindow(QDialog):
     def __init__(self, client_socket):
         super().__init__()
-        uic.loadUi("/home/kkyu/amr_ws/DL/project_deep/face_communication/pyqt_socket/facechat.ui", self)
+        uic.loadUi("/home/addinedu/dev_ws/deeplearning-repo-5/src/kdk/facechat.ui", self)
         self.client_socket = client_socket
-        self.speakButton.clicked.connect(self.handleSpeakButton)
 
         self.frame_thread = Thread(target=self.send_frames)
         self.frame_thread.daemon = True

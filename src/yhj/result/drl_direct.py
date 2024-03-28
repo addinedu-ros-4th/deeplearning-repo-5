@@ -235,12 +235,13 @@ class SpeechRecognitionThread(QThread):
         while self.is_running:
             with self.audio_source as source:
                 print("듣고있어요")
-                audio = self.r.listen(source)
+                audio = self.r.record(source, duration=5)
 
             try:
                 text = self.r.recognize_google(audio, language='ko')
                 print(text)
-                self.recognition_result.emit(text)
+                if text != "":
+                    self.recognition_result.emit(text)
 
             except sr.UnknownValueError:
                 print("인식 실패")
@@ -253,14 +254,14 @@ class SpeechRecognitionThread(QThread):
 class MyApp(QDialog):
     def __init__(self):
         super().__init__()
-        self.csv_path = "/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/autocorrect.csv"
+        self.csv_path = "/home/hj/amr_ws/ML_DL/src/project/yhj/result/autocorrect.csv"
         # Qt Designer에서 만든 UI 파일 로드
-        uic.loadUi('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
+        uic.loadUi('/home/hj/amr_ws/ML_DL/src/project/yhj/result/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
         self.speech_recognition_thread = SpeechRecognitionThread()
         self.speech_recognition_thread.recognition_result.connect(self.on_recognition_result)
         # CameraThread 및 MediapipeThread 초기화
         self.camera_thread = CameraThread(self.HTT)      
-        self.mediapipe_thread = MediapipeThread('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/result/handModel.h5')
+        self.mediapipe_thread = MediapipeThread('/home/hj/amr_ws/ML_DL/src/project/yhj/result/handModel.h5')
         # 카메라 이미지 업데이트 신호를 받으면 화면에 표시
         self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)
         # Mediapipe에서 업데이트된 단어를 받으면 해당 레이블에 표시
@@ -288,6 +289,7 @@ class MyApp(QDialog):
         self.mt = ""
         self.setWindowTitle("Autocorrect")
         self.input.textChanged.connect(self.on_text_changed)
+        self.last_hand_time = 0
         
         # QTimer 객체 생성
         self.timer = QTimer(self)
@@ -313,24 +315,34 @@ class MyApp(QDialog):
         self.sub_timer.timeout.connect(self.reset_sub)  # 타임아웃 시그널에 연결할 함수 설정
         self.sub_timer.start()  # 타이머 시작
 
-        self.record_btn.clicked.connect(self.speech_to_text)
+        self.record_btn.clicked.connect(self.toggleRecording)
 
+    def toggleRecording(self):
+        if self.record_btn.isChecked():
+            self.record_btn.setText("Start Speech")
+            self.speech_recognition_thread.stop()
+            time.sleep(1)
+
+        else:
+            self.record_btn.setText("Stop Speech")
+            self.speech_recognition_thread.start()
+            time.sleep(0.1)
+            
     def load_csv(self):
         try:
             return pd.read_csv(self.csv_path)
         except FileNotFoundError:
             return pd.DataFrame(columns=['word', 'frequency'])
-        
-    def speech_to_text(self):
-        self.speech_recognition_thread.start()
+
 
     def on_radio_toggled(self):
         # while not camera_image_queue.empty() :
         #     camera_image_queue.get()
         if self.HTT.isChecked():
+            self.STT.setChecked(False)
             time.sleep(0.1)                         #delay를 줘서 인식 속도를 맞춘다
             print("hi")
-            self.STT.setChecked(False)
+
             self.record_btn.setVisible(False)
             if not self.mediapipe_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
                 self.mediapipe_thread.start()
@@ -344,9 +356,12 @@ class MyApp(QDialog):
             self.record_btn.setVisible(True)
 
     def on_recognition_result(self, text):
+        
         # 녹음된 텍스트를 처리하는 코드 작성
         self.sub_label.setText(text)
-            
+        time.sleep(0.1)
+        self.last_word_time = time.time()
+
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_F1:
             self.save_csv()
@@ -414,9 +429,9 @@ class MyApp(QDialog):
                     
                 self.input.setText(self.text)  # 'word'는 QLineEdit의 objectName
         
-            self.last_word_time = time.time()
+            self.last_hand_time = time.time()
         
-        elif time.time() - self.last_word_time >= 0.3:  # self.word가 0.3초 동안 존재하지 않으면
+        elif time.time() - self.last_hand_time >= 0.3:  # self.word가 0.3초 동안 존재하지 않으면
             self.word_list = []  
     
     def reset_line(self):

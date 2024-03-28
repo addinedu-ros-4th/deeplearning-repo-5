@@ -44,12 +44,9 @@ class CameraThread(QThread):
                 if current_time - last_image_time >= 0.05:
                     camera_image_queue.put(cv_img)
                     last_image_time = current_time
-                # if current_time - last_image_time >= 0.05:
-                #     if self.HTT.isChecked():  # HTT가 선택되었을 때만 이미지를 큐에 추가
-                #         camera_image_queue.put(cv_img)
-                #     last_image_time = current_time
+                    
+                cv_img = cv2.flip(cv_img, 1)      
 
-                cv_img = cv2.flip(cv_img, 1)
                 cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
                 
                 height, width, channel = cv_img.shape
@@ -90,7 +87,6 @@ class MediapipeThread(QThread):
                 self.mp_drawing_styles.get_default_hand_connections_style())
 
         return image
-
 
     def get_body_points(self, results_pose) :# pose에서 손목 좌표 반환
         noen_num = 999

@@ -48,11 +48,16 @@ class CameraThread(QThread):
                 #     if self.HTT.isChecked():  # HTT가 선택되었을 때만 이미지를 큐에 추가
                 #         camera_image_queue.put(cv_img)
                 #     last_image_time = current_time
-                    
-                cv_img = cv2.flip(cv_img, 1)      
+
+                cv_img = cv2.flip(cv_img, 1)
                 cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
+                
                 height, width, channel = cv_img.shape
-                qt_img = QImage(cv_img.data, width, height, QImage.Format.Format_RGB888)
+
+                aspect_ratio = 160 / width
+                resized_img = cv2.resize(cv_img, (160, int(height * aspect_ratio)))
+
+                qt_img = QImage(resized_img.data, 160, int(height * aspect_ratio), QImage.Format.Format_RGB888)
                 self.change_pixmap_signal.emit(qt_img)
                 
     def stop(self):
@@ -318,15 +323,17 @@ class MyApp(QDialog):
         self.record_btn.clicked.connect(self.toggleRecording)
 
     def toggleRecording(self):
-        if self.record_btn.isChecked():
-            self.record_btn.setText("Start Speech")
-            self.speech_recognition_thread.stop()
-            time.sleep(1)
-
-        else:
+        if self.record_btn.text() == "Start Speech":
             self.record_btn.setText("Stop Speech")
             self.speech_recognition_thread.start()
             time.sleep(0.1)
+            self.HTT.setEnabled(False)  # HTT 라디오 버튼 비활성화
+        else:
+            self.record_btn.setText("Start Speech")
+            self.speech_recognition_thread.stop()
+            time.sleep(1)
+            self.HTT.setEnabled(True)  # HTT 라디오 버튼 비활성화
+
             
     def load_csv(self):
         try:
@@ -352,7 +359,8 @@ class MyApp(QDialog):
         elif self.STT.isChecked():
             time.sleep(0.1)
             self.HTT.setChecked(False)
-            self.mediapipe_thread.stop() 
+            if self.mediapipe_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
+                self.mediapipe_thread.stop()
             self.record_btn.setVisible(True)
 
     def on_recognition_result(self, text):

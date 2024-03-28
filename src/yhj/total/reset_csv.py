@@ -1,12 +1,15 @@
+import pandas as pd
+
 daily_words = [
     "안녕하세요",
     "고마워요",
     "죄송합니다",
     "괜찮아요",
     "미안해요",
-    "잘 자요",
-    "안녕히 가세요",
-    "잘 부탁드려요",
+    "자요",
+    "안녕히",
+    "가세요",
+    "부탁드려요",
     "음료수",
     "메뉴판",
     "앉을게요",
@@ -23,7 +26,6 @@ daily_words = [
     "먹고",
     "음식점",
     "일정이",
-    "밥",
     "커피",
     "영화",
     "하루",
@@ -58,8 +60,6 @@ daily_words = [
     "현금으로",
     "계산서",
     "문을",
-    "몇",
-    "이",
     "내려주세요",
     "여기에서",
     "비상구가",
@@ -76,3 +76,6 @@ daily_words = [
     "어디서",
     "약국이"
 ]
+daily_words_df = pd.DataFrame({'word': daily_words, 'frequency': 0})
+daily_words_df.to_csv('/home/hj/amr_ws/ML_DL/src/project/deeplearning-repo-5/src/yhj/total/autocorrect.csv', index=False)
+print('Reset csv File')

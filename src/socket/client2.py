@@ -15,6 +15,8 @@ import numpy as np
 import threading
 import pickle
 import time
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide" 
 
 SERVER_IP = '192.168.0.31'
 SERVER_PORT = 15031
@@ -47,7 +49,7 @@ def get_ip_address(interface):
         return None
 
 # Login UI
-from_class_login = uic.loadUiType("login.ui")[0]
+from_class_login = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/final/login_final.ui")[0]
 
 class LoginUI(QMainWindow, from_class_login):
     def __init__(self):
@@ -58,12 +60,12 @@ class LoginUI(QMainWindow, from_class_login):
         self.hostIP = get_ip_address("wlo1")
         self.labelIP.setText(str(self.hostIP))
 
-        self.setWindowIcon(QIcon('addinedu.png'))
+        self.setWindowIcon(QIcon('/home/kkyu/amr_ws/DL/project_deep/face_communication/data_pic/addinedu.png'))
 
-        pixmap = QPixmap('background.jpg')
+        pixmap = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/data_pic/background.jpg')
         self.labelpixmap.setPixmap(pixmap)
 
-        pixmap2 = QPixmap('client.png')
+        pixmap2 = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/data_pic/client.png')
         scaled_pixmap2 = pixmap2.scaled(self.label3.size(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio)
         self.label3.setPixmap(scaled_pixmap2)
 
@@ -96,7 +98,7 @@ class LoginUI(QMainWindow, from_class_login):
 
 
 # Client UI
-from_class_client = uic.loadUiType("client.ui")[0]
+from_class_client = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/pyqt_socket/client_final.ui")[0]
 
 # Inside your ClientUI class
 class ClientUI(QDialog, from_class_client):
@@ -196,17 +198,15 @@ class ClientUI(QDialog, from_class_client):
 class FaceChatWindow(QDialog):
     def __init__(self, ip_address, port_number):
         super().__init__()
-        uic.loadUi("facechat.ui", self)
+        uic.loadUi("/home/kkyu/amr_ws/DL/project_deep/face_communication/final/facechat.ui", self)
 
         self.hostIP = get_ip_address("wlo1")
         self.local_ip_address = self.hostIP
         self.client_ip = ip_address
-        self.vid_recv_port = 8002
-        self.vid_send_port = 8001
-        self.aud_recv_port = 8004
-        self.aud_send_port = 8003
-
-        self.toggle = 0
+        self.vid_recv_port = 9002
+        self.vid_send_port = 9001
+        self.aud_recv_port = 9004
+        self.aud_send_port = 9003
 
         # vid recv (서버 설정)
         self.stream_recv = StreamingServerModified(self.local_ip_address, self.vid_recv_port)
@@ -217,24 +217,20 @@ class FaceChatWindow(QDialog):
         self.stream_recv_thread.start()
 
         # audio recv (서버설정)
-        self.audio_recv = AudioReceiver(self.local_ip_address, self.aud_recv_port)   
-        t2 = threading.Thread(target=self.audio_recv.start_server)
+        audio_recv = AudioReceiver(self.local_ip_address, self.aud_recv_port)   
+        t2 = threading.Thread(target=audio_recv.start_server)
         t2.daemon = True
         time.sleep(0.1)  # 1초 지연
         t2.start()
 
 
-        self.text_recv_port = 8006
-        self.text_send_port = 8005
+        self.text_recv_port = 9006
+        self.text_send_port = 9005
 
         # 이벤트 설정
         self.gestureButton.clicked.connect(self.startCommunication)
         self.inputButton.clicked.connect(self.sendMessage)
         self.lineEdit.returnPressed.connect(self.sendMessage)
-
-        if self.toggle == 1:
-            self.myvideo_thread.frame_updated.connect(self.updateMyImage)
-
 
         # text recv (서버설정)
         self.text_recv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -249,21 +245,21 @@ class FaceChatWindow(QDialog):
     def accept_client(self):
         self.client_socket, address = self.text_recv.accept()
         t5 = threading.Thread(target=self.handle_client, args=(self.client_socket, address))
+        time.sleep(0.1)
         t5.start()
 
 
     def startCommunication(self):
         # vid send
-        self.camera_client = CameraClient(self.client_ip, self.vid_send_port)
-        t3 = threading.Thread(target=self.camera_client.start_stream)
+        camera_client = CameraClient(self.client_ip, self.vid_send_port)
+        t3 = threading.Thread(target=camera_client.start_stream)
         t3.daemon = True
         time.sleep(0.1)  # 1초 지연
         t3.start()
-        self.toggle = 1
 
         # audio send
-        self.audio_sender = AudioSender(self.client_ip, self.aud_send_port)
-        t4 = threading.Thread(target=self.audio_sender.start_stream)
+        audio_sender = AudioSender(self.client_ip, self.aud_send_port)
+        t4 = threading.Thread(target=audio_sender.start_stream)
         t4.daemon = True
         time.sleep(0.1)  # 1초 지연
         t4.start()
@@ -271,16 +267,9 @@ class FaceChatWindow(QDialog):
         self.text_sender = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.text_sender.connect((self.client_ip, self.text_send_port))
 
-        self.myvideo_thread = VideoThread(self.camera_client)
-        self.myvideo_thread.daemon = True
-        time.sleep(0.1)
-        self.myvideo_thread.start()
 
     def update_pixmap(self, pixmap):
         self.chatpixmap.setPixmap(pixmap)
-
-    def updateMyImage(self, pixmap):
-        self.mypixmap.setPixmap(pixmap)
 
     def sendMessage(self):
         message = self.lineEdit.text()  # Get text from QTextEdit
@@ -395,19 +384,6 @@ class StreamingServerModified(QObject):
                 self.__used_slots -= 1
                 break
 
-class VideoThread(QThread):
-    frame_updated = pyqtSignal(QPixmap)
-
-    def __init__(self, client):
-        super().__init__()
-        self.client = client
-
-    def run(self):
-        while self.client.__running:
-            frame = self.client._get_frame()
-            qImg = QImage(frame.data, frame.shape[1], frame.shape[0], frame.strides[0], QImage.Format.Format_BGR888)
-            pixmap = QPixmap.fromImage(qImg)
-            self.frame_updated.emit(pixmap)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

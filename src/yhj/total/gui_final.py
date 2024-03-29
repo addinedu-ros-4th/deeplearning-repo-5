@@ -76,7 +76,6 @@ class MyApp(QDialog):
         # self.sub_timer.setInterval(3000)  # 3초마다 타이머 시그널 발생
         self.sub_timer.setSingleShot(True)
         self.sub_timer.timeout.connect(self.reset_sub)  # 타임아웃 시그널에 연결할 함수 설정
-          # 타이머 시작
 
         self.record_btn.clicked.connect(self.toggleRecording)
 
@@ -137,11 +136,14 @@ class MyApp(QDialog):
 
     def on_recognition_result(self, text):
         
-        # 녹음된 텍스트를 처리하는 코드 작성
-        self.sub.append(text)
-        sub_text = ' '.join(self.sub)
-        self.sub_label.setText(sub_text)
-        self.sub_timer.start(3000)
+        # self.sub.append(text)
+        # sub_text = ' '.join(self.sub)
+        sub_text = text + " "
+        self.input.setText(sub_text)
+        
+        #self.sub_timer.start(3000)
+
+
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_F1:
@@ -241,6 +243,7 @@ class MyApp(QDialog):
 
 
     def add_word(self, input_word):
+        self.sub_timer.start(3000)
         self.sub.append(input_word)
         sub_text = ' '.join(self.sub)
         self.sub_label.setText(sub_text)
@@ -254,7 +257,6 @@ class MyApp(QDialog):
     
     def reset_sub(self):
         # 마지막 입력된 단어가 없거나 마지막 입력 시간이 3초 이상 경과하면 sub 초기화
-        if not self.sub or time.time() - self.last_word_time >= 3:
             self.sub = []
             self.sub_label.setText("")
     # def add_word(self, input_word):                 #method 분리
@@ -340,13 +342,21 @@ class MyApp(QDialog):
         
         if self.text.strip():  # 입력이 공백이 아닌 경우에만 처리
             if self.text[-1] == " ":
-                print("Space 입력이 감지되었습니다.")
-                self.prefix = self.text.split(" ")[-2]
-                print(self.prefix)
-                self.speech_word(self.prefix)
-                self.add_word(self.prefix)
-                self.text = ""
-                self.input.setText(self.text)
+                if len(self.text.split(" ")) >= 3:
+                    print(self.text)
+                    self.speech_word(self.text)
+                    for word in self.text.split(" "):
+                        self.add_word(word)
+                    self.text = ""
+                    self.input.setText(self.text)
+                else:
+                    print("Space 입력이 감지되었습니다.")
+                    self.prefix = self.text.split(" ")[-2]
+                    print(self.prefix)
+                    self.speech_word(self.prefix)
+                    self.add_word(self.prefix)
+                    self.text = ""
+                    self.input.setText(self.text)
             else:
                 
                 self.prefix = self.text.split(" ")[-1]                            

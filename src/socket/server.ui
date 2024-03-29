@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>647</width>
-    <height>464</height>
+    <width>888</width>
+    <height>630</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>621</width>
+     <width>861</width>
      <height>151</height>
     </rect>
    </property>
@@ -153,8 +153,8 @@
     <rect>
      <x>10</x>
      <y>170</y>
-     <width>621</width>
-     <height>281</height>
+     <width>861</width>
+     <height>431</height>
     </rect>
    </property>
    <property name="font">
@@ -170,10 +170,15 @@
      <rect>
       <x>20</x>
       <y>36</y>
-      <width>581</width>
-      <height>231</height>
+      <width>801</width>
+      <height>371</height>
      </rect>
     </property>
+    <column>
+     <property name="text">
+      <string>Time</string>
+     </property>
+    </column>
     <column>
      <property name="text">
       <string>IP Address</string>
@@ -194,14 +199,10 @@
       <string>State</string>
      </property>
     </column>
-    <column>
-     <property name="text">
-      <string>접속 시점</string>
-     </property>
-    </column>
    </widget>
   </widget>
  </widget>
  <resources/>
  <connections/>
 </ui>
+

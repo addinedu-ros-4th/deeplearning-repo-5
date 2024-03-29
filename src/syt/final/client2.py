@@ -6,6 +6,7 @@ from PyQt6.QtCore import Qt, QObject, pyqtSignal, QThread
 from vidstream import StreamingServer, AudioReceiver, CameraClient, AudioSender
 import socket
 import subprocess
+import drl_direct
 import re
 import struct
 from threading import Thread
@@ -186,10 +187,15 @@ class ClientUI(QDialog, from_class_client):
 
 
     def openFaceChatWindow(self):
-        ip_address = self.clientip.text()
-        port_number = int(self.clientport.text())
-        self.facechat_window = FaceChatWindow(ip_address, port_number)
-        self.facechat_window.show()
+        app = QApplication(sys.argv)
+        widget = drl_direct.MyApp()
+        widget.show()
+
+        loop = qasync.QEventLoop(app)           #종료 권한 관리
+        asyncio.set_event_loop(loop)
+
+        #sys.exit(app.exec())
+        loop.run_forever() 
 
 
 

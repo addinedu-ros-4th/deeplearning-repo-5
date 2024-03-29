@@ -253,7 +253,7 @@ class SpeechRecognitionThread(QThread):
         self.is_running = False
 
 class MyApp(QDialog):
-    def __init__(self):
+    def __init__(self, ip_address, port_number):
         super().__init__()
         self.csv_path = "/home/hj/amr_ws/ML_DL/src/project/yhj/result/autocorrect.csv"
         # Qt Designer에서 만든 UI 파일 로드

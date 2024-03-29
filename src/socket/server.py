@@ -18,7 +18,7 @@ SERVER_PORT = 15031
 class WindowClass(QDialog):
     def __init__(self):
         super().__init__()
-        uic.loadUi("/home/addinedu/dev_ws/DLProject/final_src/final/server_final.ui", self)
+        uic.loadUi("server.ui", self)
         self.setWindowTitle("관리자 Mode")
         self.lineEdit.setText(SERVER_IP)        
         self.lineEdit2.setText(str(SERVER_PORT))

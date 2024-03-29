@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>662</width>
-    <height>494</height>
+    <width>853</width>
+    <height>592</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>10</x>
      <y>190</y>
-     <width>641</width>
-     <height>291</height>
+     <width>821</width>
+     <height>381</height>
     </rect>
    </property>
    <property name="title">
@@ -29,9 +29,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
-      <width>611</width>
-      <height>231</height>
+      <y>30</y>
+      <width>791</width>
+      <height>331</height>
      </rect>
     </property>
     <column>
@@ -51,11 +51,6 @@
     </column>
     <column>
      <property name="text">
-      <string>접속시점</string>
-     </property>
-    </column>
-    <column>
-     <property name="text">
       <string>State</string>
      </property>
     </column>
@@ -70,7 +65,7 @@
      <rect>
       <x>0</x>
       <y>30</y>
-      <width>691</width>
+      <width>1021</width>
       <height>261</height>
      </rect>
     </property>

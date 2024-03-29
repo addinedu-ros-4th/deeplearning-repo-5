@@ -10,7 +10,7 @@ from datetime import datetime
 import json
 import select
 import time
-
+path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src"
 # 서버 ip/port 설정
 SERVER_IP = "192.168.0.31"
 SERVER_PORT = 15031
@@ -18,7 +18,7 @@ SERVER_PORT = 15031
 class WindowClass(QDialog):
     def __init__(self):
         super().__init__()
-        uic.loadUi("/home/addinedu/dev_ws/DLProject/final_src/final/server_final.ui", self)
+        uic.loadUi(path + "/syt/final/server_final.ui", self)
         self.setWindowTitle("관리자 Mode")
         self.lineEdit.setText(SERVER_IP)        
         self.lineEdit2.setText(str(SERVER_PORT))

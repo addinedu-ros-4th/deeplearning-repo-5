@@ -19,7 +19,7 @@ import pickle
 import gui_final
 path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src"
 SERVER_IP = '192.168.0.31'
-SERVER_PORT = 15031
+SERVER_PORT = 15035
 
 
 def recvall(sock, count):
@@ -112,6 +112,7 @@ class ClientUI(QDialog, from_class_client):
         self.userName = userName
         self.server_ip = serverIP
         self.serverip.setText(self.server_ip)
+        _, self.myport= sock.getsockname()
 
         # 서버에서 전송한 데이터를 받기 위한 스레드 시작
         self.receive_thread = Thread(target=self.receiveServerData)
@@ -190,62 +191,75 @@ class ClientUI(QDialog, from_class_client):
     def openFaceChatWindow(self):
         ip_address = self.clientip.text()
         port_number = int(self.clientport.text())
+        
+        self.facechat_window = FaceChatWindow(ip_address, port_number, self.myport)
+        # sys.exit(app.exec())
+        
+
+
+
+class FaceChatWindow():
+    def __init__(self, ip_address, port_number, my_port):
+        
+        # Port number configuration
+        self.local_ip_address = self.extract_ip() #자기 ip
+        self.client_ip = ip_address #상대 ip
+        self.vid_recv_port = port_number + 1
+        self.vid_send_port = my_port + 1
+        self.aud_recv_port = port_number + 2
+        self.aud_send_port = my_port + 2
+        self.text_recv_port = port_number + 3
+        self.text_send_port = my_port + 3
+
+
+        
+        self.startCommunication()
+
+       
+        # self.stream_recv.frame_updated.connect(self.update_pixmap)
+        
+    def extract_ip(self): # 자기 ip 가져오기
+        st = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            st.connect(("10.255.255.255", 1))
+            IP = st.getsockname()[0]
+        except Exception:
+            IP = "127.0.0.1"
+        finally:
+            st.close()
+        return IP
+
+    def startCommunication(self):
+
+        port_number = 5000 # 이후 수정 필요
+
+         # vid recv 
+        self.stream_recv = StreamingServerModified(self.local_ip_address, self.vid_recv_port)
+
+
+        # audio recv
+        audio_recv = AudioReceiver(self.local_ip_address, self.aud_recv_port)
+        audio_recv.start_server()   
+        
+
+        # vid send
+        camera_sender = CameraClient(self.client_ip, self.vid_send_port)
+        camera_sender.start_stream()
+        
+
+        # audio send
+        audio_sender = AudioSender(self.client_ip, self.aud_send_port)
+        audio_sender.start_stream()
+        
+
         app = QApplication(sys.argv)
-        self.facechat_window = gui_final.MyApp(ip_address, port_number)
+        self.stream_recv.start_server()
+        self.facechat_window = gui_final.MyApp(self.client_ip, port_number, camera_sender, audio_sender)
         self.facechat_window.show()
 
         loop = qasync.QEventLoop(app)           #종료 권한 관리
         asyncio.set_event_loop(loop)
-
-        #sys.exit(app.exec())
         loop.run_forever() 
-        # self.facechat_window = FaceChatWindow(ip_address, port_number)
-        # self.facechat_window.show()
-
-
-
-class FaceChatWindow(QDialog):
-    def __init__(self, ip_address, port_number):
-        super().__init__()
-        uic.loadUi(path + "/syt/final/facechat.ui", self)
-
-        # Port number configuration
-        self.local_ip_address = '192.168.0.31'
-        self.client_ip = '192.168.0.15'
-        self.vid_recv_port = 6003
-        self.aud_recv_port = 6004
-        self.vid_send_port = 6001
-        self.aud_send_port = 6002
-
-        # 이벤트 설정 
-        self.gestureButton.clicked.connect(self.startCommunication)
-
-        # vid recv 
-        self.stream_recv = StreamingServerModified(self.local_ip_address, self.vid_recv_port)
-        self.stream_recv.frame_updated.connect(self.update_pixmap)
-        self.stream_recv_thread = QThread()
-        self.stream_recv.moveToThread(self.stream_recv_thread)
-        self.stream_recv_thread.started.connect(self.stream_recv.start_server)
-        self.stream_recv_thread.start()
-
-    def startCommunication(self):
-        # audio recv
-        audio_recv = AudioReceiver(self.local_ip_address, self.aud_recv_port)   
-        t2 = threading.Thread(target=audio_recv.start_server)
-        t2.daemon = True
-        t2.start()
-
-        # vid send
-        camera_client = CameraClient(self.client_ip, self.vid_send_port)
-        t3 = threading.Thread(target=camera_client.start_stream)
-        t3.daemon = True
-        t3.start()
-
-        # audio send
-        audio_sender = AudioSender(self.client_ip, self.aud_send_port)
-        t4 = threading.Thread(target=audio_sender.start_stream)
-        t4.daemon = True
-        t4.start()
 
 
 
@@ -254,11 +268,11 @@ class FaceChatWindow(QDialog):
 
 
 
-class StreamingServerModified(QObject):
-    frame_updated = pyqtSignal(QPixmap)
+class StreamingServerModified(FaceChatWindow):
+    # frame_updated = pyqtSignal(QPixmap)
 
     def __init__(self, host, port, slots=8, quit_key='q'):
-        super().__init__()
+        # super().__init__()
         self.__host = host
         self.__port = port
         self.__slots = slots
@@ -343,7 +357,11 @@ class StreamingServerModified(QObject):
             frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
             qImg = QImage(frame.data, frame.shape[1], frame.shape[0], frame.strides[0], QImage.Format.Format_BGR888)
             pixmap = QPixmap.fromImage(qImg)
-            self.frame_updated.emit(pixmap)
+            try:
+                self.facechat_window.update_recive_screen(pixmap)
+            except :
+                pass
+            # self.frame_updated.emit(pixmap)
             if cv2.waitKey(1) == ord(self.__quit_key):
                 connection.close()
                 self.__used_slots -= 1

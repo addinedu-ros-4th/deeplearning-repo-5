@@ -11,17 +11,18 @@ camera_image_queue = Queue(maxsize=1)  # 이미지를 저장하는 이미지 큐
 class CameraThread(QThread):
     change_pixmap_signal = pyqtSignal(QImage)
 
-    def __init__(self, HTT):
+    def __init__(self, HTT, camera_sender):
         super().__init__()
         self.HTT = HTT  # HTT 객체를 CameraThread의 속성으로 전달받음
+        self.camera_sender = camera_sender
 
     def run(self):
-        cap = cv2.VideoCapture(0)
+        # cap = cv2.VideoCapture(0)
         last_image_time = time.time()
 
         while True:
-            ret, cv_img = cap.read()
-            if ret:
+            cv_img = self.camera_sender._get_frame()
+            if 1:
                 current_time = time.time()
                 if not camera_image_queue.empty():
                     camera_image_queue.get()

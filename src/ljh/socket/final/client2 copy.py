@@ -8,16 +8,18 @@ import socket
 import subprocess
 import re
 import struct
+import asyncio
+import qasync
 from threading import Thread
 import json
 import cv2
 import numpy as np
 import threading
 import pickle
-
-
+import gui_final
+path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src"
 SERVER_IP = '192.168.0.31'
-SERVER_PORT = 15031
+SERVER_PORT = 15035
 
 
 def recvall(sock, count):
@@ -47,7 +49,7 @@ def get_ip_address(interface):
         return None
 
 # Login UI
-from_class_login = uic.loadUiType("/home/rds/Desktop/git_ws/deeplearning-repo-5/src/kdk/login_final.ui")[0]
+from_class_login = uic.loadUiType(path + "/kdk/login_final.ui")[0]
 
 class LoginUI(QMainWindow, from_class_login):
     def __init__(self):
@@ -58,12 +60,12 @@ class LoginUI(QMainWindow, from_class_login):
         self.hostIP = get_ip_address("wlo1")
         self.labelIP.setText(str(self.hostIP))
 
-        self.setWindowIcon(QIcon('/home/rds/Desktop/git_ws/deeplearning-repo-5/src/kdk/data/addinedu.png'))
+        self.setWindowIcon(QIcon(path + '/kdk/data/addinedu.png'))
 
-        pixmap = QPixmap('/home/rds/Desktop/git_ws/deeplearning-repo-5/src/kdk/data/background.jpg')
+        pixmap = QPixmap(path + '/kdk/data/background.jpg')
         self.labelpixmap.setPixmap(pixmap)
 
-        pixmap2 = QPixmap('/home/rds/Desktop/git_ws/deeplearning-repo-5/src/kdk/data/client.png')
+        pixmap2 = QPixmap(path + '/kdk/data/client.png')
         scaled_pixmap2 = pixmap2.scaled(self.label3.size(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio)
         self.label3.setPixmap(scaled_pixmap2)
 
@@ -96,7 +98,7 @@ class LoginUI(QMainWindow, from_class_login):
 
 
 # Client UI
-from_class_client = uic.loadUiType("/home/rds/Desktop/git_ws/deeplearning-repo-5/src/kdk/client_final.ui")[0]
+from_class_client = uic.loadUiType(path + "/kdk/client_final.ui")[0]
 
 # Inside your ClientUI class
 class ClientUI(QDialog, from_class_client):
@@ -188,56 +190,62 @@ class ClientUI(QDialog, from_class_client):
     def openFaceChatWindow(self):
         ip_address = self.clientip.text()
         port_number = int(self.clientport.text())
+        
         self.facechat_window = FaceChatWindow(ip_address, port_number)
-        self.facechat_window.show()
+        # sys.exit(app.exec())
+        
 
 
 
-class FaceChatWindow(QDialog):
+class FaceChatWindow():
     def __init__(self, ip_address, port_number):
-        super().__init__()
-        uic.loadUi("/home/rds/Desktop/git_ws/deeplearning-repo-5/src/ljh/socket/final/facechat.ui", self)
-
+        
         # Port number configuration
-        self.local_ip_address = '192.168.0.31'
-        self.client_ip = '192.168.0.15'
+        self.local_ip_address = '192.168.0.33' #자기 ip
+        self.client_ip = ip_address #상대 ip
         self.vid_recv_port = 6001
         self.aud_recv_port = 6002
         self.vid_send_port = 6003
         self.aud_send_port = 6004
 
-        # 이벤트 설정 
-        self.gestureButton.clicked.connect(self.startCommunication)
 
-        # vid recv 
-        self.stream_recv = StreamingServerModified(self.local_ip_address, self.vid_recv_port)
-        self.stream_recv.frame_updated.connect(self.update_pixmap)
-        self.stream_recv_thread = QThread()
-        self.stream_recv.moveToThread(self.stream_recv_thread)
-        self.stream_recv_thread.started.connect(self.stream_recv.start_server)
-        self.stream_recv_thread.start()
+        
+        self.startCommunication()
+
+       
+        # self.stream_recv.frame_updated.connect(self.update_pixmap)
+        
 
     def startCommunication(self):
+        port_number = 5000 # 이후 수정 필요
+
+         # vid recv 
+        self.stream_recv = StreamingServerModified(self.local_ip_address, self.vid_recv_port)
+        self.stream_recv.start_server()
+
+
         # audio recv
-        audio_recv = AudioReceiver(self.local_ip_address, self.aud_recv_port) 
-        audio_recv.start_server()
-        # t2 = threading.Thread(target=audio_recv.start_server)
-        # t2.daemon = True
-        # t2.start()
+        audio_recv = AudioReceiver(self.local_ip_address, self.aud_recv_port)
+        audio_recv.start_server()   
+        
 
         # vid send
-        camera_client = CameraClient(self.client_ip, self.vid_send_port)
-        camera_client.start_stream()
-        # t3 = threading.Thread(target=camera_client.start_stream)
-        # t3.daemon = True
-        # t3.start()
+        camera_sender = CameraClient(self.client_ip, self.vid_send_port)
+        camera_sender.start_stream()
+        
 
         # audio send
         audio_sender = AudioSender(self.client_ip, self.aud_send_port)
         audio_sender.start_stream()
-        # t4 = threading.Thread(target=audio_sender.start_stream)
-        # t4.daemon = True
-        # t4.start()
+        
+
+        app = QApplication(sys.argv)
+        self.facechat_window = gui_final.MyApp(self.client_ip, port_number, camera_sender, audio_sender)
+        self.facechat_window.show()
+
+        loop = qasync.QEventLoop(app)           #종료 권한 관리
+        asyncio.set_event_loop(loop)
+        loop.run_forever() 
 
 
 
@@ -246,8 +254,8 @@ class FaceChatWindow(QDialog):
 
 
 
-class StreamingServerModified(QObject):
-    frame_updated = pyqtSignal(QPixmap)
+class StreamingServerModified():
+    # frame_updated = pyqtSignal(QPixmap)
 
     def __init__(self, host, port, slots=8, quit_key='q'):
         super().__init__()
@@ -335,11 +343,12 @@ class StreamingServerModified(QObject):
             frame = cv2.imdecode(frame, cv2.IMREAD_COLOR)
             qImg = QImage(frame.data, frame.shape[1], frame.shape[0], frame.strides[0], QImage.Format.Format_BGR888)
             pixmap = QPixmap.fromImage(qImg)
-            self.frame_updated.emit(pixmap)
+            
             if cv2.waitKey(1) == ord(self.__quit_key):
                 connection.close()
                 self.__used_slots -= 1
                 break
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

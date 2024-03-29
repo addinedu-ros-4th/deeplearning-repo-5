@@ -18,7 +18,7 @@ from jamos import cons, vowels, cons_double, double_cons, gesture2text
 path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src"
 
 class MyApp(QDialog):
-    def __init__(self, ip_address, port_number):
+    def __init__(self, ip_address, port_number, camera_sender, audio_sender):
         super().__init__()
         self.csv_path = path + "/yhj/total/autocorrect.csv"
         uic.loadUi(path + '/yhj/total/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
@@ -27,7 +27,7 @@ class MyApp(QDialog):
         self.mediapipe_thread = MediapipeThread(path + '/yhj/total/handModel.h5')
         self.mediapipe_thread.update_word_signal.connect(self.update_word_label)
 
-        self.camera_thread = CameraThread(self.HTT)      
+        self.camera_thread = CameraThread(self.HTT, camera_sender)
         self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)
         self.camera_thread.start()
         self.last_word_time = 0
@@ -320,6 +320,10 @@ class MyApp(QDialog):
     def update_camera_screen(self, qt_img):
         # camera_screen QLabel에 이미지 표시
         self.camera_screen.setPixmap(QPixmap.fromImage(qt_img))
+
+    def update_recive_screen(self, pix_img):
+        # camera_screen QLabel에 이미지 표시
+        self.recive_screen.setPixmap(pix_img)
 
     def update_word_label(self, word):
         # detected_word_label QLabel에 단어 표시

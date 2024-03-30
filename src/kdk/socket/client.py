@@ -1,9 +1,10 @@
-import sys
 from PyQt6.QtWidgets import *
 from PyQt6 import uic
-from PyQt6.QtGui import QPixmap, QIcon, QImage, QFont
-from PyQt6.QtCore import Qt, QObject, pyqtSignal, QThread
-from vidstream import StreamingServer, AudioReceiver, CameraClient, AudioSender
+from PyQt6.QtGui import QPixmap, QImage
+from PyQt6.QtCore import QObject, pyqtSignal, QThread
+from vidstream import AudioReceiver, CameraClient, AudioSender
+
+import sys
 import socket
 import subprocess
 import re
@@ -11,16 +12,15 @@ import struct
 from threading import Thread
 import json
 import cv2
-import numpy as np
 import threading
 import pickle
-import time
-import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide" 
+import time 
+import os 
 
-SERVER_IP = '192.168.0.31'
-SERVER_PORT = 15031
+SERVER_IP = '192.168.0.29'
+SERVER_PORT = 15041
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 def recvall(sock, count):
     buf = b''
@@ -33,12 +33,9 @@ def recvall(sock, count):
         count -= len(newbuf)
     return buf
 
-# Function to get IP address from ifconfig command in terminal
 def get_ip_address(interface):
     try:
-        # ifconfig 명령어 실행
         output = subprocess.check_output(["ifconfig", interface]).decode()
-        # IP 주소 추출
         ip_match = re.search(r'inet (\d+\.\d+\.\d+\.\d+)', output)
         if ip_match:
             ip_address = ip_match.group(1)
@@ -49,37 +46,23 @@ def get_ip_address(interface):
         return None
 
 # Login UI
-from_class_login = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/final/login_final.ui")[0]
-
-class LoginUI(QMainWindow, from_class_login):
+class LoginUI(QDialog):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi(os.path.join(current_dir, "login.ui"), self)
         self.setWindowTitle("WELCOME")
-        # ip주소 표시
+
         self.hostIP = get_ip_address("wlo1")
         self.labelIP.setText(str(self.hostIP))
-
-        self.setWindowIcon(QIcon('/home/kkyu/amr_ws/DL/project_deep/face_communication/data_pic/addinedu.png'))
-
-        pixmap = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/data_pic/background.jpg')
-        self.labelpixmap.setPixmap(pixmap)
-
-        pixmap2 = QPixmap('/home/kkyu/amr_ws/DL/project_deep/face_communication/data_pic/client.png')
-        scaled_pixmap2 = pixmap2.scaled(self.label3.size(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio)
-        self.label3.setPixmap(scaled_pixmap2)
 
         self.nameEdit.setStyleSheet("QLineEdit { border-radius: 6px; }")
         self.labelIP.setStyleSheet("QLineEdit { border-radius: 6px; }")
 
-        # 이벤트 설정 
         self.loginBtn.clicked.connect(self.connectServer)
         self.nameEdit.returnPressed.connect(self.connectServer)
 
-        # 소켓 생성
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# data 보내는 함수
     def connectServer(self):
         self.userName = self.nameEdit.text()
         if self.userName:
@@ -87,33 +70,30 @@ class LoginUI(QMainWindow, from_class_login):
                 message = f"{self.userName}"
                 self.sock.connect((SERVER_IP, SERVER_PORT))
                 self.sock.sendall(message.encode())
-                self.clientUI = ClientUI(self.userName, self.sock, SERVER_IP)  # 수정된 부분: 서버 IP 전달
+                self.clientUI = ClientUI(self.userName, self.sock, SERVER_IP)  
                 self.clientUI.show()
-                self.close()  # Close the login dialog
+                self.close()  
             except Exception as e:
                 QMessageBox.critical(self, "Connection Error", f"{e}")
         else:
             QMessageBox.critical(self, "Error", "Please enter a username.")
 
 
-
 # Client UI
-from_class_client = uic.loadUiType("/home/kkyu/amr_ws/DL/project_deep/face_communication/pyqt_socket/client_final.ui")[0]
-
-# Inside your ClientUI class
-class ClientUI(QDialog, from_class_client):
+class ClientUI(QDialog):
     data_received = pyqtSignal(str)
 
     def __init__(self, userName, sock, serverIP):  
         super().__init__()
-        self.setupUi(self)
+        uic.loadUi(os.path.join(current_dir, "client.ui"), self)
+
         self.setWindowTitle("화상 채팅 인터페이스")
         self.sock = sock
         self.userName = userName
         self.server_ip = serverIP
         self.serverip.setText(self.server_ip)
+        _, self.myport= sock.getsockname()
 
-        # 서버에서 전송한 데이터를 받기 위한 스레드 시작
         self.receive_thread = Thread(target=self.receiveServerData)
         self.receive_thread.daemon = True
         self.receive_thread.start()
@@ -140,7 +120,6 @@ class ClientUI(QDialog, from_class_client):
             try:
                 data = self.sock.recv(1024).decode()
                 if data:
-                    # Emit the signal with the received data
                     self.data_received.emit(data)
             except Exception as e:
                 print(f"Error receiving data: {e}")
@@ -171,42 +150,61 @@ class ClientUI(QDialog, from_class_client):
             print(f"Error decoding JSON data: {e}")
 
 
+
     def connectButtonClicked(self, row):
-        # Get the IP address and port number from the corresponding row
         ip_address_item = self.tableWidget.item(row, 0)
         port_item = self.tableWidget.item(row, 1)
-        
-        if ip_address_item is not None and port_item is not None:
+        host_name_item = self.tableWidget.item(row, 2)
+        state_item = self.tableWidget.item(row, 3)
+
+        if all(item is not None for item in [ip_address_item, port_item, host_name_item, state_item]):
             ip_address = ip_address_item.text()
             port_number = port_item.text()
-            
-            # Update the clientip and clientport labels
-            self.clientip.setText(ip_address)
-            self.clientport.setText(port_number)
+            host_name = host_name_item.text()
+            state = state_item.text()
+
+            # Construct string data
+            string_data = f"Connecting|{host_name}"
+
+            try:
+                # Send string data to the server
+                self.sock.send(string_data.encode())
+                # Update the client IP and port labels
+                self.clientip.setText(ip_address)
+                self.clientport.setText(port_number)
+            except Exception as e:
+                print(f"Error sending data to server: {e}")
         else:
-            print("No IP address or port number found for this row.")
+            print("Some information is missing for this row.")
 
 
     def openFaceChatWindow(self):
+
         ip_address = self.clientip.text()
         port_number = int(self.clientport.text())
-        self.facechat_window = FaceChatWindow(ip_address, port_number)
+
+        string_data = f"Connected|{port_number}"
+
+        self.sock.send(string_data.encode())
+
+        self.facechat_window = FaceChatWindow(ip_address, port_number, self.myport)
         self.facechat_window.show()
 
 
-
 class FaceChatWindow(QDialog):
-    def __init__(self, ip_address, port_number):
+    def __init__(self, ip_address, port_number, my_port):
         super().__init__()
-        uic.loadUi("/home/kkyu/amr_ws/DL/project_deep/face_communication/final/facechat.ui", self)
+        uic.loadUi(os.path.join(current_dir, "facechat.ui"), self)
 
         self.hostIP = get_ip_address("wlo1")
         self.local_ip_address = self.hostIP
         self.client_ip = ip_address
-        self.vid_recv_port = 9002
-        self.vid_send_port = 9001
-        self.aud_recv_port = 9004
-        self.aud_send_port = 9003
+        self.vid_recv_port = port_number + 1
+        self.vid_send_port = my_port + 1
+        self.aud_recv_port = port_number + 2
+        self.aud_send_port = my_port + 2
+        self.text_recv_port = port_number + 3
+        self.text_send_port = my_port + 3
 
         # vid recv (서버 설정)
         self.stream_recv = StreamingServerModified(self.local_ip_address, self.vid_recv_port)
@@ -217,15 +215,11 @@ class FaceChatWindow(QDialog):
         self.stream_recv_thread.start()
 
         # audio recv (서버설정)
-        audio_recv = AudioReceiver(self.local_ip_address, self.aud_recv_port)   
-        t2 = threading.Thread(target=audio_recv.start_server)
+        self.audio_recv = AudioReceiver(self.local_ip_address, self.aud_recv_port)   
+        t2 = threading.Thread(target=self.audio_recv.start_server)
         t2.daemon = True
         time.sleep(0.1)  # 1초 지연
         t2.start()
-
-
-        self.text_recv_port = 9006
-        self.text_send_port = 9005
 
         # 이벤트 설정
         self.gestureButton.clicked.connect(self.startCommunication)
@@ -251,22 +245,22 @@ class FaceChatWindow(QDialog):
 
     def startCommunication(self):
         # vid send
-        camera_client = CameraClient(self.client_ip, self.vid_send_port)
-        t3 = threading.Thread(target=camera_client.start_stream)
+        self.camera_client = CameraClient(self.client_ip, self.vid_send_port)
+        t3 = threading.Thread(target=self.camera_client.start_stream)
         t3.daemon = True
         time.sleep(0.1)  # 1초 지연
         t3.start()
+        self.toggle = 1
 
         # audio send
-        audio_sender = AudioSender(self.client_ip, self.aud_send_port)
-        t4 = threading.Thread(target=audio_sender.start_stream)
+        self.audio_sender = AudioSender(self.client_ip, self.aud_send_port)
+        t4 = threading.Thread(target=self.audio_sender.start_stream)
         t4.daemon = True
         time.sleep(0.1)  # 1초 지연
         t4.start()
 
         self.text_sender = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.text_sender.connect((self.client_ip, self.text_send_port))
-
 
     def update_pixmap(self, pixmap):
         self.chatpixmap.setPixmap(pixmap)
@@ -383,7 +377,6 @@ class StreamingServerModified(QObject):
                 connection.close()
                 self.__used_slots -= 1
                 break
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

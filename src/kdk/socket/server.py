@@ -63,7 +63,6 @@ class WindowClass(QDialog):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.moveLabel)
         self.timer.start(10)  # 10 milliseconds
-        
         self.posX = self.width()
 
         # MySQL 연결 정보
@@ -81,6 +80,8 @@ class WindowClass(QDialog):
             self.posX = self.width()
         current_time = QDateTime.currentDateTime()
         self.timeEdit.setText(current_time.toString("yyyy-MM-dd hh:mm:ss"))
+
+        
 
     def StartServer(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

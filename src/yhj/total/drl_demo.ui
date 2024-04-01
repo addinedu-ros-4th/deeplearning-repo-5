@@ -181,8 +181,8 @@ border-color: rgb(38, 162, 105);</string>
   <widget class="QLabel" name="sub_label">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>380</y>
+     <x>50</x>
+     <y>580</y>
      <width>611</width>
      <height>17</height>
     </rect>
@@ -316,6 +316,19 @@ padding: 5px;</string>
    </property>
    <property name="text">
     <string>Slow</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="sub_label_2">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>390</y>
+     <width>611</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
    </property>
   </widget>
  </widget>

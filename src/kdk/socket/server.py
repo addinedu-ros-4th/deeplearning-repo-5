@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import QApplication, QDialog, QTableWidgetItem, QHeaderView
 from PyQt6.QtCore import Qt
 from PyQt6 import uic
 from PyQt6.QtGui import QIcon
-from PyQt6.QtCore import QThread, pyqtSignal,  QTimer
+from PyQt6.QtCore import QThread, pyqtSignal,  QTimer, QDateTime
 import socket
 from threading import Thread
 from datetime import datetime 
@@ -15,8 +15,8 @@ import mysql.connector
 import os 
 
 # 서버 ip/port 설정
-SERVER_IP = "192.168.0.29"
-SERVER_PORT = 15041
+SERVER_IP = "192.168.0.15"
+SERVER_PORT = 15043
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -24,8 +24,8 @@ class WindowClass(QDialog):
     def __init__(self):
         super().__init__()
         uic.loadUi(os.path.join(current_dir, "server.ui"), self)
-        self.setWindowTitle("Welcome to Server")
-        self.setFixedSize(880,675)
+        self.setWindowTitle("User Management System")
+        self.setFixedSize(880,965)
         self.lineEdit.setText(SERVER_IP)        
         self.lineEdit2.setText(str(SERVER_PORT))
 
@@ -39,6 +39,7 @@ class WindowClass(QDialog):
                                         "QTableWidget::item:selected { background-color: #b8daff; }"
                                         "QHeaderView::section { background-color: #007bff; color: white; }"
                                         "QTableWidget::item { padding: 5px; }")
+        
         for button in self.findChildren(QPushButton):
             if button.objectName() == "btnAdd":
                 button.setStyleSheet("background-color: #CCCCCC; color: black; font-weight: bold;")
@@ -47,11 +48,12 @@ class WindowClass(QDialog):
             elif button.objectName() == "btnClose":
                 button.setStyleSheet("background-color: #FF6666; color: black; font-weight: bold;")
 
+        self.userLogTable.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+
+
         # 이벤트 설정 
         self.btnOpen.clicked.connect(self.StartServer)
         self.btnClose.clicked.connect(self.StopServer)
-        self.btnExport.clicked.connect(self.ExportTable)
-        self.tableWidget.itemChanged.connect(self.updateDatabase)
         self.tableWidget.itemChanged.connect(self.SendTableUpdateToClients)
 
         self.infolabel = QLabel('༼๑◕ ◞◟ ◕๑༽ 서버에 오신 것을 환영합니다 ༼๑◕ ◞◟ ◕๑༽', self)
@@ -77,6 +79,8 @@ class WindowClass(QDialog):
         self.posX -= 1
         if self.posX + self.infolabel.width() < 0:
             self.posX = self.width()
+        current_time = QDateTime.currentDateTime()
+        self.timeEdit.setText(current_time.toString("yyyy-MM-dd hh:mm:ss"))
 
     def StartServer(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -104,59 +108,23 @@ class WindowClass(QDialog):
         self.lineEdit.setEnabled(False)
         self.infolabel.setText('¯\_(ツ)_/¯ 서버가 비활성화되었습니다. ¯\_(ツ)_/¯')
 
-    def ExportTable(self):
-        # Generate file name with today's date
-        today_date = datetime.now().strftime("%Y-%m-%d")
-        file_name = f"Client_information_{today_date}.csv"
 
-        file_path, _ = QFileDialog.getSaveFileName(self, 'Save CSV File', file_name, 'CSV Files (*.csv)')
-        if file_path:
-            headers = ["Connect Time", "IP", "Port", "Username", "State"]
-            with open(file_path, 'w', newline='') as csvfile:
-                csv_writer = csv.writer(csvfile)
-                csv_writer.writerow(headers)
-                for row in range(self.tableWidget.rowCount()):
-                    row_data = []
-                    for column in range(self.tableWidget.columnCount()):
-                        item = self.tableWidget.item(row, column)
-                        if item is not None:
-                            row_data.append(item.text())
-                        else:
-                            row_data.append("")  
-                    csv_writer.writerow(row_data)
-
-
-    def updateDatabase(self, item):
+    def updateDatabase(self):
         try:
-            # MySQL 데이터베이스 연결
             conn = mysql.connector.connect(**self.db_config)
             cursor = conn.cursor()
 
-            # 현재 시간을 가져와서 형식화
-            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-            # 변경된 셀의 정보 가져오기
-            row = item.row()
-            ip = self.tableWidget.item(row, 1).text()
-            port = int(self.tableWidget.item(row, 2).text())
-            username = self.tableWidget.item(row, 3).text()
-            state = self.tableWidget.item(row, 4).text()
-
-            # 데이터베이스에 삽입할 시간 표시
-            current_db_time = current_time
-
-            # 이전 접속 시간 가져오기
-            cursor.execute('SELECT connect_time FROM Client_info WHERE ip = %s AND port = %s AND username = %s', (ip, port, username))
-            previous_connect_time = cursor.fetchone()
-
-            # 만약 이전 접속 시간이 존재하고, 현재 시간과 같다면 '-'로 표시
-            if previous_connect_time and previous_connect_time[0] == current_db_time:
-                current_db_time = '-'  # 동일한 시간이면 특별한 표시
+            last_row = self.userLogTable.rowCount() - 1
+            time = self.userLogTable.item(last_row, 0).text()
+            ip = self.userLogTable.item(last_row, 1).text()
+            port = self.userLogTable.item(last_row, 2).text()
+            host = self.userLogTable.item(last_row, 3).text()
+            peer = self.userLogTable.item(last_row, 4).text()
+            state = self.userLogTable.item(last_row, 5).text()
 
             # 변경된 셀의 정보를 데이터베이스에 삽입
-            cursor.execute('INSERT INTO Client_info (connect_time, ip, port, username, state) VALUES (%s, %s, %s, %s, %s)',
-                        (current_db_time, ip, port, username, state))
-
+            cursor.execute('INSERT INTO Client_info (time, ip, port, host, peer, state) VALUES (%s, %s, %s, %s, %s, %s)',
+                        (time, ip, port, host, peer, state))
             conn.commit()
             conn.close()
 
@@ -181,6 +149,9 @@ class WindowClass(QDialog):
                     # 테이블에 클라이언트 정보 추가
                     self.AddClientToTable(ip, port, username, state='ON')
                     self.infolabel.setText(f"{username}님이 입장하셨습니다 (ू˃o˂ू)")
+
+                    self.AddUserLogsTable(ip, port, username, peer= '', state='ON', table_toggle=1)
+
                 else:
                     # 클라이언트로부터 데이터 수신
                     data = sock.recv(1024)
@@ -195,12 +166,14 @@ class WindowClass(QDialog):
                             print(ip, port)
                             table_toggle = 1
                             self.ModifyClientFromTable(table_toggle, ip, port, message)
-                            
+                            self.AddUserLogsTable(ip, port, username, message, state='Connecting',table_toggle=1)
+                           
                         elif id == 'Connected':
                             print(message)
                             print(ip, port)
                             table_toggle = 2
                             self.ModifyClientFromTable(table_toggle, ip, port, message)
+                            self.AddUserLogsTable(ip, port, username, message, state='Connected', table_toggle=2)
 
                         else:
                             pass
@@ -210,6 +183,9 @@ class WindowClass(QDialog):
                         sock.close()
                         client_info = self.clients_info.pop(sock)
                         self.RemoveClientFromTable(client_info[0], client_info[1])
+                        self.AddUserLogsTable(ip, port, username, peer= '', state='OFF', table_toggle=1)
+                        self.infolabel.setText(f"{username}님이 연결 종료 되었습니다.")
+
 
 
     def AddClientToTable(self, ip, port, username, state="ON"):
@@ -222,7 +198,25 @@ class WindowClass(QDialog):
         self.tableWidget.setItem(row, 3, QTableWidgetItem(username))
         self.tableWidget.setItem(row, 4, QTableWidgetItem(state))  # 접속 시간 표시
 
-
+    def AddUserLogsTable(self, ip, port, username, peer, state, table_toggle):
+        if table_toggle == 2:
+            for row in range(self.userLogTable.rowCount()):
+                    if self.userLogTable.item(row, 2).text() == peer:
+                        peer = self.userLogTable.item(row, 3).text()
+                        break
+    
+        
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+        row = self.userLogTable.rowCount()
+        self.userLogTable.insertRow(row)
+        self.userLogTable.setItem(row, 0, QTableWidgetItem(current_time))
+        self.userLogTable.setItem(row, 1, QTableWidgetItem(ip))
+        self.userLogTable.setItem(row, 2, QTableWidgetItem(str(port))) 
+        self.userLogTable.setItem(row, 3, QTableWidgetItem(username))
+        self.userLogTable.setItem(row, 4, QTableWidgetItem(peer))
+        self.userLogTable.setItem(row, 5, QTableWidgetItem(state))
+        self.userLogTable.scrollToBottom()
+        self.updateDatabase()
 
     def RemoveClientFromTable(self, ip, port):
         for row in range(self.tableWidget.rowCount()):
@@ -239,7 +233,8 @@ class WindowClass(QDialog):
                     if (self.tableWidget.item(row, 1).text() == ip and
                         self.tableWidget.item(row, 2).text() == str(port)):
                         self.tableWidget.setItem(row, 4, QTableWidgetItem(f"[{message}] Connecting"))
-                        self.infolabel.setText(f"{self.tableWidget.item(row, 3).text()}님이 연결 중입니다.")
+                        host = self.tableWidget.item(row, 3).text() 
+                        self.infolabel.setText(f"{host}님이 {message}님에게 연결 중입니다.")
 
                         return
                     
@@ -252,7 +247,8 @@ class WindowClass(QDialog):
                     if (self.tableWidget.item(row, 1).text() == ip and
                         self.tableWidget.item(row, 2).text() == str(port)):
                             self.tableWidget.setItem(row, 4, QTableWidgetItem(f"[{name}] Connected"))
-                            self.infolabel.setText(f"{name}님이 연결되었습니다.")
+                            host = self.tableWidget.item(row, 3).text() 
+                            self.infolabel.setText(f"{host}님과 {name}님이 연결되었습니다.")
 
                 return
 

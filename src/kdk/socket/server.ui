@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>884</width>
-    <height>672</height>
+    <width>903</width>
+    <height>970</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>-10</x>
      <y>0</y>
-     <width>1131</width>
-     <height>781</height>
+     <width>901</width>
+     <height>971</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -104,12 +104,15 @@ font-weight: bold;
      <property name="text">
       <string>IP</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit">
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>40</y>
+       <y>44</y>
        <width>241</width>
        <height>31</height>
       </rect>
@@ -136,12 +139,15 @@ font-weight: bold;
      <property name="text">
       <string>Port</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
     <widget class="QLineEdit" name="lineEdit2">
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>80</y>
+       <y>90</y>
        <width>241</width>
        <height>31</height>
       </rect>
@@ -157,7 +163,7 @@ font-weight: bold;
      <property name="geometry">
       <rect>
        <x>330</x>
-       <y>38</y>
+       <y>32</y>
        <width>111</width>
        <height>41</height>
       </rect>
@@ -166,14 +172,24 @@ font-weight: bold;
       <string notr="true">background-color: rgb(153, 193, 241);</string>
      </property>
      <property name="text">
-      <string>Start Server</string>
+      <string>Start </string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../../../../../Desktop/icons/start_FILL0_wght400_GRAD0_opsz24.svg</normaloff>../../../../../Desktop/icons/start_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>23</width>
+       <height>23</height>
+      </size>
      </property>
     </widget>
     <widget class="QPushButton" name="btnClose">
      <property name="geometry">
       <rect>
-       <x>460</x>
-       <y>38</y>
+       <x>330</x>
+       <y>91</y>
        <width>111</width>
        <height>41</height>
       </rect>
@@ -182,23 +198,99 @@ font-weight: bold;
       <string notr="true">background-color: rgb(246, 97, 81);</string>
      </property>
      <property name="text">
-      <string>Stop Server</string>
+      <string>Stop</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../../../../../Desktop/icons/close_FILL0_wght400_GRAD0_opsz24.svg</normaloff>../../../../../Desktop/icons/close_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>23</width>
+       <height>23</height>
+      </size>
      </property>
     </widget>
-    <widget class="QPushButton" name="btnExport">
+    <widget class="QPushButton" name="btnSearch">
      <property name="geometry">
       <rect>
-       <x>330</x>
-       <y>90</y>
-       <width>111</width>
-       <height>41</height>
+       <x>690</x>
+       <y>60</y>
+       <width>131</width>
+       <height>51</height>
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(171, 195, 198);</string>
+      <string notr="true">background-color: rgb(210, 241, 194);</string>
      </property>
      <property name="text">
-      <string>ExportCSV</string>
+      <string>Search</string>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>../../../../../Desktop/icons/search_FILL0_wght400_GRAD0_opsz24.svg</normaloff>../../../../../Desktop/icons/search_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>23</width>
+       <height>23</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="timeEdit">
+     <property name="geometry">
+      <rect>
+       <x>690</x>
+       <y>0</y>
+       <width>171</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>40</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_2">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>40</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_3">
+     <property name="geometry">
+      <rect>
+       <x>460</x>
+       <y>90</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_4">
+     <property name="geometry">
+      <rect>
+       <x>570</x>
+       <y>90</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
      </property>
     </widget>
    </widget>
@@ -250,7 +342,7 @@ font-weight: bold;
      </column>
      <column>
       <property name="text">
-       <string>IP Address</string>
+       <string>IP</string>
       </property>
       <property name="background">
        <color>
@@ -274,7 +366,114 @@ font-weight: bold;
      </column>
      <column>
       <property name="text">
-       <string>HOST NAME</string>
+       <string>User</string>
+      </property>
+      <property name="background">
+       <color>
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>State</string>
+      </property>
+      <property name="background">
+       <color>
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </property>
+     </column>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>690</y>
+      <width>861</width>
+      <height>261</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 2px solid black;
+color: rgb(0, 0, 0);
+font-weight: bold;
+</string>
+    </property>
+    <property name="title">
+     <string>User Log Information</string>
+    </property>
+    <widget class="QTableWidget" name="userLogTable">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>831</width>
+       <height>211</height>
+      </rect>
+     </property>
+     <property name="autoScroll">
+      <bool>true</bool>
+     </property>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>150</number>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Time</string>
+      </property>
+      <property name="background">
+       <color>
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>IP</string>
+      </property>
+      <property name="background">
+       <color>
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Port</string>
+      </property>
+      <property name="background">
+       <color>
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Host</string>
+      </property>
+      <property name="background">
+       <color>
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Peer</string>
       </property>
       <property name="background">
        <color>

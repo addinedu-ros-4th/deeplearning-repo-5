@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>903</width>
+    <width>904</width>
     <height>970</height>
    </rect>
   </property>
@@ -176,7 +176,7 @@ font-weight: bold;
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>../../../../../Desktop/icons/start_FILL0_wght400_GRAD0_opsz24.svg</normaloff>../../../../../Desktop/icons/start_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+       <normaloff>start_FILL0_wght400_GRAD0_opsz24.svg</normaloff>start_FILL0_wght400_GRAD0_opsz24.svg</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -202,7 +202,7 @@ font-weight: bold;
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>../../../../../Desktop/icons/close_FILL0_wght400_GRAD0_opsz24.svg</normaloff>../../../../../Desktop/icons/close_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+       <normaloff>close_FILL0_wght400_GRAD0_opsz24.svg</normaloff>close_FILL0_wght400_GRAD0_opsz24.svg</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -214,8 +214,8 @@ font-weight: bold;
     <widget class="QPushButton" name="btnSearch">
      <property name="geometry">
       <rect>
-       <x>690</x>
-       <y>60</y>
+       <x>730</x>
+       <y>100</y>
        <width>131</width>
        <height>51</height>
       </rect>
@@ -228,7 +228,7 @@ font-weight: bold;
      </property>
      <property name="icon">
       <iconset>
-       <normaloff>../../../../../Desktop/icons/search_FILL0_wght400_GRAD0_opsz24.svg</normaloff>../../../../../Desktop/icons/search_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+       <normaloff>search_FILL0_wght400_GRAD0_opsz24.svg</normaloff>search_FILL0_wght400_GRAD0_opsz24.svg</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -253,41 +253,44 @@ font-weight: bold;
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QComboBox" name="comboBox">
+    <widget class="QComboBox" name="checkHost">
      <property name="geometry">
       <rect>
-       <x>570</x>
-       <y>40</y>
+       <x>610</x>
+       <y>60</y>
        <width>101</width>
        <height>31</height>
       </rect>
      </property>
     </widget>
-    <widget class="QComboBox" name="comboBox_2">
+    <widget class="QComboBox" name="checkIP">
      <property name="geometry">
       <rect>
        <x>460</x>
-       <y>40</y>
-       <width>101</width>
+       <y>60</y>
+       <width>131</width>
        <height>31</height>
       </rect>
      </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
     </widget>
-    <widget class="QComboBox" name="comboBox_3">
+    <widget class="QComboBox" name="checkPort">
      <property name="geometry">
       <rect>
        <x>460</x>
-       <y>90</y>
+       <y>110</y>
        <width>101</width>
        <height>31</height>
       </rect>
      </property>
     </widget>
-    <widget class="QComboBox" name="comboBox_4">
+    <widget class="QComboBox" name="checkPeer">
      <property name="geometry">
       <rect>
-       <x>570</x>
-       <y>90</y>
+       <x>590</x>
+       <y>110</y>
        <width>101</width>
        <height>31</height>
       </rect>
@@ -311,9 +314,9 @@ font-weight: bold;
      </font>
     </property>
     <property name="styleSheet">
-     <string notr="true">border: 2px solid black;
-color: rgb(0, 0, 0);
+     <string notr="true">color: rgb(0, 0, 0);
 font-weight: bold;
+border: 2px solid black;
 </string>
     </property>
     <property name="title">
@@ -413,15 +416,18 @@ font-weight: bold;
       <rect>
        <x>20</x>
        <y>30</y>
-       <width>831</width>
+       <width>821</width>
        <height>211</height>
       </rect>
      </property>
      <property name="autoScroll">
       <bool>true</bool>
      </property>
+     <property name="sortingEnabled">
+      <bool>false</bool>
+     </property>
      <attribute name="horizontalHeaderDefaultSectionSize">
-      <number>150</number>
+      <number>100</number>
      </attribute>
      <column>
       <property name="text">

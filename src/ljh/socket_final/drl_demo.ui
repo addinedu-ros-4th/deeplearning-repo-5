@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>942</width>
-    <height>559</height>
+    <width>1041</width>
+    <height>639</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,6 +22,14 @@
      <height>421</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">    background-color: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    border: 2px solid rgb(237, 51, 59);
+    border-radius: 5px;
+    padding: 5px;
+</string>
+   </property>
    <property name="text">
     <string/>
    </property>
@@ -29,9 +37,9 @@
   <widget class="QLineEdit" name="input">
    <property name="geometry">
     <rect>
-     <x>350</x>
+     <x>420</x>
      <y>470</y>
-     <width>221</width>
+     <width>271</width>
      <height>41</height>
     </rect>
    </property>
@@ -117,8 +125,8 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>730</x>
-     <y>20</y>
+     <x>720</x>
+     <y>130</y>
      <width>131</width>
      <height>91</height>
     </rect>
@@ -156,8 +164,8 @@
   <widget class="QPushButton" name="record_btn">
    <property name="geometry">
     <rect>
-     <x>730</x>
-     <y>120</y>
+     <x>720</x>
+     <y>230</y>
      <width>111</width>
      <height>25</height>
     </rect>
@@ -169,8 +177,8 @@
   <widget class="QLabel" name="sub_label">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>380</y>
+     <x>10</x>
+     <y>590</y>
      <width>611</width>
      <height>17</height>
     </rect>
@@ -182,11 +190,18 @@
   <widget class="QLabel" name="camera_screen">
    <property name="geometry">
     <rect>
-     <x>720</x>
-     <y>200</y>
-     <width>160</width>
-     <height>90</height>
+     <x>710</x>
+     <y>330</y>
+     <width>311</width>
+     <height>221</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(0, 0, 0);
+color: rgb(255, 255, 255);
+border: 2px solid rgb(0, 0, 255); /* 바깥 테두리 색상을 파란색(Blue)으로 변경 */
+border-radius: 5px;
+padding: 5px;</string>
    </property>
    <property name="text">
     <string/>
@@ -195,8 +210,8 @@
   <widget class="QSlider" name="hand_speed">
    <property name="geometry">
     <rect>
-     <x>770</x>
-     <y>320</y>
+     <x>960</x>
+     <y>150</y>
      <width>16</width>
      <height>160</height>
     </rect>
@@ -221,10 +236,91 @@
   <widget class="QLabel" name="speed_label">
    <property name="geometry">
     <rect>
-     <x>820</x>
-     <y>320</y>
+     <x>1000</x>
+     <y>150</y>
      <width>31</width>
      <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>720</x>
+     <y>10</y>
+     <width>161</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>화상 채팅 모드 활성화</string>
+   </property>
+   <widget class="QPushButton" name="gestureButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>40</y>
+      <width>141</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(246, 97, 81);</string>
+    </property>
+    <property name="text">
+     <string>Face Chat</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>920</x>
+     <y>120</y>
+     <width>91</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>수어 인식 속도</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>920</x>
+     <y>160</y>
+     <width>31</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Fast</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>920</x>
+     <y>270</y>
+     <width>31</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Slow</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="sub_label_2">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>450</y>
+     <width>611</width>
+     <height>17</height>
     </rect>
    </property>
    <property name="text">

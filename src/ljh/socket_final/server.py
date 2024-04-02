@@ -10,15 +10,15 @@ from datetime import datetime
 import json
 import select
 import time
-path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src"
-# 서버 ip/port 설정
-SERVER_IP = "192.168.0.31"
-SERVER_PORT = 15031
 
+# 서버 ip/port 설정
+SERVER_IP = "192.168.0.33"
+SERVER_PORT = 15035
+path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src/ljh/socket_final/"
 class WindowClass(QDialog):
     def __init__(self):
         super().__init__()
-        uic.loadUi(path + "/syt/final/server_final.ui", self)
+        uic.loadUi(path + "server.ui", self)
         self.setWindowTitle("관리자 Mode")
         self.lineEdit.setText(SERVER_IP)        
         self.lineEdit2.setText(str(SERVER_PORT))
@@ -74,53 +74,95 @@ class WindowClass(QDialog):
                     username = client_socket.recv(1024).decode("utf-8")
                     # 클라이언트 정보를 딕셔너리에 추가
                     self.clients_info[client_socket] = [ip, port, username, "ON", datetime.now()]
-                    print(self.clients_info)
+                    # print(self.clients_info)
                     # 테이블에 클라이언트 정보 추가
                     self.AddClientToTable(ip, port, username, state='ON')
                 else:
                     # 클라이언트로부터 데이터 수신
                     data = sock.recv(1024)
                     if data:
-                        pass
-                        # # 수신한 데이터를 해당 클라이언트에게만 전송
-                        # for client_sock, _ in self.clients_info.items():
-                        #     if client_sock != sock:
-                        #         client_sock.sendall(data)
+                        string_data = data.decode('utf-8')
+                        ip, port = sock.getpeername()
+                        id = string_data.split('|')[0]
+                        message = string_data.split('|')[1]
+
+                        if id == 'Connecting':
+                            print(message)
+                            print(ip, port)
+                            table_toggle = 1
+                            self.ModifyClientFromTable(table_toggle, ip, port, message)
+                            
+                        elif id == 'Connected':
+                            print(message)
+                            print(ip, port)
+                            table_toggle = 2
+                            self.ModifyClientFromTable(table_toggle, ip, port, message)
+
+                        else:
+                            pass
+                    
                     else:
                         # 클라이언트 연결 종료
+                        sock.close()
                         client_info = self.clients_info.pop(sock)
                         self.RemoveClientFromTable(client_info[0], client_info[1])
-
 
 
     def AddClientToTable(self, ip, port, username, state="ON"):
         connect_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # 접속 시간 기록
         row = self.tableWidget.rowCount()
         self.tableWidget.insertRow(row)
-        self.tableWidget.setItem(row, 0, QTableWidgetItem(ip))
-        self.tableWidget.setItem(row, 1, QTableWidgetItem(str(port))) 
-        self.tableWidget.setItem(row, 2, QTableWidgetItem(username))
-        self.tableWidget.setItem(row, 3, QTableWidgetItem(connect_time))
+        self.tableWidget.setItem(row, 0, QTableWidgetItem(connect_time))
+        self.tableWidget.setItem(row, 1, QTableWidgetItem(ip))
+        self.tableWidget.setItem(row, 2, QTableWidgetItem(str(port))) 
+        self.tableWidget.setItem(row, 3, QTableWidgetItem(username))
         self.tableWidget.setItem(row, 4, QTableWidgetItem(state))  # 접속 시간 표시
 
 
 
     def RemoveClientFromTable(self, ip, port):
         for row in range(self.tableWidget.rowCount()):
-            if (self.tableWidget.item(row, 0).text() == ip and
-                self.tableWidget.item(row, 1).text() == str(port)):
+            if (self.tableWidget.item(row, 1).text() == ip and
+                self.tableWidget.item(row, 2).text() == str(port)):
                 self.tableWidget.removeRow(row)
+                self.SendTableUpdateToClients()
                 return
             
 
+    def ModifyClientFromTable(self, table_toggle, ip, port, message):
+            if table_toggle == 1:
+                for row in range(self.tableWidget.rowCount()):
+                    if (self.tableWidget.item(row, 1).text() == ip and
+                        self.tableWidget.item(row, 2).text() == str(port)):
+                        self.tableWidget.setItem(row, 4, QTableWidgetItem(f"[{message}] Connecting"))
+                        return
+                    
+            elif table_toggle == 2:
+                for row in range(self.tableWidget.rowCount()):
+                    if self.tableWidget.item(row, 2).text() == message:
+                        name = self.tableWidget.item(row, 3).text()
+
+                for row in range(self.tableWidget.rowCount()):
+                    if (self.tableWidget.item(row, 1).text() == ip and
+                        self.tableWidget.item(row, 2).text() == str(port)):
+                            self.tableWidget.setItem(row, 4, QTableWidgetItem(f"[{name}] Connected"))
+                return
+
+
+                
     def SendTableUpdateToClients(self):
         time.sleep(0.2)
         data = []
         for row in range(self.tableWidget.rowCount()):
             state_item = self.tableWidget.item(row, 4)
-            if state_item and state_item.text() == "ON":
+            
+            if state_item and (state_item.text() == "ON" 
+                or "Connecting" in state_item.text()
+                or "Connected" in state_item.text()):
+
                 row_data = []
-                for column in range(self.tableWidget.columnCount()):
+
+                for column in range(1, self.tableWidget.columnCount()):
                     item = self.tableWidget.item(row, column)
                     if item:
                         row_data.append(item.text())

@@ -9,27 +9,28 @@ import pandas as pd
 import time
 import asyncio
 import qasync
+import client
 from trie import Trie
 from jamo import j2hcj, h2j
 from gtts import gTTS
 from playsound import playsound
 from jamos import cons, vowels, cons_double, double_cons, gesture2text
 
-path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src"
+path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src/ljh/socket/"
 
 class MyApp(QDialog):
-    def __init__(self, ip_address, port_number, camera_sender, audio_sender):
+    def __init__(self, ip_address, port_number, myport):
         super().__init__()
-        self.csv_path = path + "/yhj/total/autocorrect.csv"
-        uic.loadUi(path + '/yhj/total/drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
+        self.csv_path = path + "autocorrect.csv"
+        uic.loadUi(path + 'drl_demo.ui', self)  # .ui 파일 경로를 여기에 적어주세요
         self.speech_recognition_thread = SpeechRecognitionThread()
         self.speech_recognition_thread.recognition_result.connect(self.on_recognition_result)
-        self.mediapipe_thread = MediapipeThread(path + '/yhj/total/handModel.h5')
+        self.mediapipe_thread = MediapipeThread(path + 'handModel.h5')
         self.mediapipe_thread.update_word_signal.connect(self.update_word_label)
-
-        self.camera_thread = CameraThread(self.HTT, camera_sender)
-        self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)
-        self.camera_thread.start()
+        self.client = client.FaceChatWindow(ip_address, port_number, myport, self)
+        
+        
+        
         self.last_word_time = 0
         self.autoword_1.setVisible(False)
         self.autoword_2.setVisible(False)
@@ -59,6 +60,7 @@ class MyApp(QDialog):
         # 0.5초마다 타이머를 시작
         self.timer.start(1)  # 500ms = 0.5초
         
+        self.gestureButton.clicked.connect(self.start_face_chat)
         self.autoword_1.clicked.connect(self.changeText_1)
         self.autoword_2.clicked.connect(self.changeText_2)
         self.autoword_3.clicked.connect(self.changeText_3)
@@ -76,7 +78,6 @@ class MyApp(QDialog):
         # self.sub_timer.setInterval(3000)  # 3초마다 타이머 시그널 발생
         self.sub_timer.setSingleShot(True)
         self.sub_timer.timeout.connect(self.reset_sub)  # 타임아웃 시그널에 연결할 함수 설정
-          # 타이머 시작
 
         self.record_btn.clicked.connect(self.toggleRecording)
 
@@ -87,7 +88,11 @@ class MyApp(QDialog):
         self.hand_speed.valueChanged.connect(self.sliderValueChanged)
         self.speed_label.setText(str(self.speed)) 
 
-        self.show()
+    def start_face_chat(self) :
+        self.client.startCommunication()
+        self.camera_thread = CameraThread(self.HTT, self.client.camera_client)      
+        self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)
+        self.camera_thread.start()
 
     def sliderValueChanged(self, value):
         # 슬라이더 값(value)을 self.speed에 반영
@@ -137,11 +142,14 @@ class MyApp(QDialog):
 
     def on_recognition_result(self, text):
         
-        # 녹음된 텍스트를 처리하는 코드 작성
-        self.sub.append(text)
-        sub_text = ' '.join(self.sub)
-        self.sub_label.setText(sub_text)
-        self.sub_timer.start(3000)
+        # self.sub.append(text)
+        # sub_text = ' '.join(self.sub)
+        sub_text = text + " "
+        self.input.setText(sub_text)
+        
+        #self.sub_timer.start(3000)
+
+
 
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_F1:
@@ -241,6 +249,7 @@ class MyApp(QDialog):
 
 
     def add_word(self, input_word):
+        self.sub_timer.start(3000)
         self.sub.append(input_word)
         sub_text = ' '.join(self.sub)
         self.sub_label.setText(sub_text)
@@ -254,22 +263,9 @@ class MyApp(QDialog):
     
     def reset_sub(self):
         # 마지막 입력된 단어가 없거나 마지막 입력 시간이 3초 이상 경과하면 sub 초기화
-        if not self.sub or time.time() - self.last_word_time >= 3:
             self.sub = []
             self.sub_label.setText("")
-    # def add_word(self, input_word):                 #method 분리
-    #     time.sleep(0.1)
-    #     if input_word.strip():  # 입력된 단어가 공백이 아닌지 확인
-    #         word_df = pd.read_csv(self.csv_name)  # 여기서 CSV 파일 경로 수정
-    #         if input_word in word_df['word'].values:
-    #             index = word_df.index[word_df['word'] == input_word].tolist()
-    #             word_df['frequency'][index] += 1
-    #             print("fre")
-    #         else:
-    #             word_df.loc[len(word_df)] = [input_word, 1]
-    #             print("word")
 
-    #         word_df.to_csv(self.csv_name, index=False)
     
     def changeText_1(self) :
         word = self.text.split()
@@ -321,10 +317,6 @@ class MyApp(QDialog):
         # camera_screen QLabel에 이미지 표시
         self.camera_screen.setPixmap(QPixmap.fromImage(qt_img))
 
-    def update_recive_screen(self, pix_img):
-        # camera_screen QLabel에 이미지 표시
-        self.recive_screen.setPixmap(pix_img)
-
     def update_word_label(self, word):
         # detected_word_label QLabel에 단어 표시
         self.word = word
@@ -344,13 +336,21 @@ class MyApp(QDialog):
         
         if self.text.strip():  # 입력이 공백이 아닌 경우에만 처리
             if self.text[-1] == " ":
-                print("Space 입력이 감지되었습니다.")
-                self.prefix = self.text.split(" ")[-2]
-                print(self.prefix)
-                self.speech_word(self.prefix)
-                self.add_word(self.prefix)
-                self.text = ""
-                self.input.setText(self.text)
+                if len(self.text.split(" ")) >= 3:
+                    print(self.text)
+                    self.speech_word(self.text)
+                    for word in self.text.split(" "):
+                        self.add_word(word)
+                    self.text = ""
+                    self.input.setText(self.text)
+                else:
+                    print("Space 입력이 감지되었습니다.")
+                    self.prefix = self.text.split(" ")[-2]
+                    print(self.prefix)
+                    self.speech_word(self.prefix)
+                    self.add_word(self.prefix)
+                    self.text = ""
+                    self.input.setText(self.text)
             else:
                 
                 self.prefix = self.text.split(" ")[-1]                            
@@ -384,5 +384,4 @@ if __name__ == "__main__":
     loop = qasync.QEventLoop(app)           #종료 권한 관리
     asyncio.set_event_loop(loop)
 
-    # sys.exit(app.exec())
     loop.run_forever() 

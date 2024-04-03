@@ -342,7 +342,7 @@ class FaceChatWindow(QDialog):
         self.camera_client.condition = text
 
     def change_guide(self):
-        if self.width()== 725 and self.height() == 750 :
+        if self.width()== 725 and self.height() == 760 :
             self.setFixedSize(1547, 760)
         else :
             self.setFixedSize(725, 760)

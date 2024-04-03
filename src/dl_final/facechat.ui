@@ -105,6 +105,9 @@ padding: 5px;</string>
      <height>40</height>
     </size>
    </property>
+   <property name="default">
+    <bool>false</bool>
+   </property>
   </widget>
   <widget class="QPushButton" name="tts_btn">
    <property name="geometry">
@@ -116,8 +119,7 @@ padding: 5px;</string>
     </rect>
    </property>
    <property name="styleSheet">
-    <string notr="true">
-background-color: rgb(248, 228, 92);</string>
+    <string notr="true">background-color: rgb(98, 160, 234);</string>
    </property>
    <property name="text">
     <string/>

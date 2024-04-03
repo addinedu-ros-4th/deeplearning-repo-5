@@ -27,8 +27,8 @@ from gtts import gTTS
 import pandas as pd
 import os 
 
-SERVER_IP = '192.168.0.31'
-SERVER_PORT = 14000
+SERVER_IP = '192.168.0.18'
+SERVER_PORT = 15033
 
 # 실행파일의 경로를 가져옴.
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -223,7 +223,7 @@ class FaceChatWindow(QDialog):
         self.zzoomLabel.setPixmap(zzoom)
         scaled_zzoom = zzoom.scaled(self.zzoomLabel.size(), aspectRatioMode=Qt.AspectRatioMode.IgnoreAspectRatio)
         self.zzoomLabel.setPixmap(scaled_zzoom)
-        guide = QPixmap(os.path.join(current_dir, "facechatui_data/guide.png"))
+        guide = QPixmap(os.path.join(current_dir, "facechatui_data/guide_hand.png"))
         self.guideLabel.setPixmap(guide)
         scaled_guide = guide.scaled(self.guideLabel.size(), aspectRatioMode=Qt.AspectRatioMode.IgnoreAspectRatio)
         self.guideLabel.setPixmap(scaled_guide)
@@ -294,7 +294,7 @@ class FaceChatWindow(QDialog):
         self.cons_double = cons_double
         self.flag = 0
         self.mt = ""
-        self.setWindowTitle("Autocorrect")
+        self.setWindowTitle("FaceChat")
         self.input.textChanged.connect(self.on_text_changed)
         self.last_hand_time = 0
 
@@ -343,6 +343,8 @@ class FaceChatWindow(QDialog):
     def HTT_option(self):
         if self.htt_toggle == 0:
             self.htt_toggle = 1
+            self.HTT.setStyleSheet("QPushButton { background-color: rgb(248, 228, 92); }")
+            self.STT.setStyleSheet("QPushButton { background-color: rgb(98, 160, 234); }")
             if self.speech_recognition_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
                 time.sleep(0.1) 
                 self.speech_recognition_thread.stop()
@@ -355,6 +357,7 @@ class FaceChatWindow(QDialog):
 
         else :
             self.htt_toggle = 0
+            self.HTT.setStyleSheet("QPushButton { background-color: rgb(98, 160, 234); }")
             if self.mediapipe_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
                 time.sleep(0.1) 
                 self.mediapipe_thread.stop()
@@ -364,6 +367,8 @@ class FaceChatWindow(QDialog):
     def STT_option(self):
         if self.stt_toggle == 0:
             self.stt_toggle = 1
+            self.STT.setStyleSheet("QPushButton { background-color: rgb(248, 228, 92); }")
+            self.HTT.setStyleSheet("QPushButton { background-color: rgb(98, 160, 234); }")
             if self.mediapipe_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
                 time.sleep(0.1) 
                 self.mediapipe_thread.stop()
@@ -376,6 +381,7 @@ class FaceChatWindow(QDialog):
                 self.speech_recognition_thread.start()
         else :
             self.stt_toggle = 0
+            self.STT.setStyleSheet("QPushButton { background-color: rgb(98, 160, 234); }")
             if self.speech_recognition_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
                 time.sleep(0.1) 
                 self.speech_recognition_thread.stop()
@@ -383,8 +389,10 @@ class FaceChatWindow(QDialog):
     def TTS_option(self):
         if self.tts_toggle == 0:
             self.tts_toggle = 1
+            self.tts_btn.setStyleSheet("QPushButton { background-color: rgb(248, 228, 92); }")
         else:
             self.tts_toggle = 0
+            self.tts_btn.setStyleSheet("QPushButton { background-color: rgb(98, 160, 234); }")
     
     def reset_sub_2(self):
         # 마지막 입력된 단어가 없거나 마지막 입력 시간이 3초 이상 경과하면 sub 초기화

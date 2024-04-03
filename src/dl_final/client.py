@@ -3,7 +3,8 @@ from PyQt6.QtWidgets import *
 from PyQt6 import uic
 from PyQt6.QtGui import QPixmap, QIcon, QImage, QFont
 from PyQt6.QtCore import Qt, QObject, pyqtSignal, QThread, QTimer
-from vidstream import StreamingServer, AudioReceiver, CameraClient, AudioSender
+from vidstream import StreamingServer, AudioReceiver, AudioSender
+from camera_client import CameraClient
 import socket
 import subprocess
 import re
@@ -216,8 +217,9 @@ class FaceChatWindow(QDialog):
         super().__init__()
         uic.loadUi(os.path.join(current_dir, "facechat.ui"), self)
         
-        self.setFixedSize(725, 750)
+        self.setFixedSize(725, 760)
         self.btnGuide.clicked.connect(self.change_guide)
+        self.comboFilter.currentTextChanged.connect(self.setFilter)
         
         zzoom = QPixmap(os.path.join(current_dir, "facechatui_data/label.png"))
         self.zzoomLabel.setPixmap(zzoom)
@@ -333,12 +335,17 @@ class FaceChatWindow(QDialog):
         self.speed_label.setText(str(self.speed))       
 
         self.sub_label_2.textChanged.connect(self.handle_sub_label_2_changed)  # 시그널과 슬롯 연결
+       
+        
+    def setFilter(self):
+        text= self.comboFilter.currentText()
+        self.camera_client.condition = text
 
     def change_guide(self):
         if self.width()== 725 and self.height() == 750 :
-            self.setFixedSize(1547, 750)
+            self.setFixedSize(1547, 760)
         else :
-            self.setFixedSize(725, 750)
+            self.setFixedSize(725, 760)
 
     def HTT_option(self):
         if self.htt_toggle == 0:
@@ -816,10 +823,6 @@ class StreamingServerModified(QObject):
             qImg = QImage(frame.data, frame.shape[1], frame.shape[0], frame.strides[0], QImage.Format.Format_BGR888)
             pixmap = QPixmap.fromImage(qImg)
             self.frame_updated.emit(pixmap)
-            if cv2.waitKey(1) == ord(self.__quit_key):
-                connection.close()
-                self.__used_slots -= 1
-                break
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

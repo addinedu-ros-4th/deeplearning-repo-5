@@ -57,9 +57,9 @@ padding: 5px;</string>
   <widget class="QPushButton" name="HTT">
    <property name="geometry">
     <rect>
-     <x>440</x>
+     <x>390</x>
      <y>560</y>
-     <width>61</width>
+     <width>71</width>
      <height>61</height>
     </rect>
    </property>
@@ -80,9 +80,9 @@ padding: 5px;</string>
   <widget class="QPushButton" name="STT">
    <property name="geometry">
     <rect>
-     <x>510</x>
+     <x>470</x>
      <y>560</y>
-     <width>61</width>
+     <width>71</width>
      <height>61</height>
     </rect>
    </property>
@@ -103,9 +103,9 @@ padding: 5px;</string>
   <widget class="QPushButton" name="tts_btn">
    <property name="geometry">
     <rect>
-     <x>580</x>
+     <x>550</x>
      <y>560</y>
-     <width>61</width>
+     <width>71</width>
      <height>61</height>
     </rect>
    </property>
@@ -126,9 +126,9 @@ padding: 5px;</string>
   <widget class="QPushButton" name="btnGuide">
    <property name="geometry">
     <rect>
-     <x>650</x>
+     <x>630</x>
      <y>560</y>
-     <width>61</width>
+     <width>71</width>
      <height>61</height>
     </rect>
    </property>
@@ -149,9 +149,9 @@ padding: 5px;</string>
   <widget class="QPushButton" name="gestureButton">
    <property name="geometry">
     <rect>
-     <x>370</x>
-     <y>560</y>
-     <width>61</width>
+     <x>380</x>
+     <y>640</y>
+     <width>101</width>
      <height>61</height>
     </rect>
    </property>
@@ -182,19 +182,23 @@ padding: 5px;</string>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>370</x>
-     <y>630</y>
+     <x>400</x>
+     <y>700</y>
      <width>61</width>
      <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Saab</family>
+     <family>Ubuntu</family>
+     <pointsize>12</pointsize>
      <weight>75</weight>
      <italic>false</italic>
      <bold>true</bold>
     </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font-family: Ubuntu; font-weight: bold; font-size: 12pt;</string>
    </property>
    <property name="text">
     <string>화면공유</string>
@@ -206,19 +210,23 @@ padding: 5px;</string>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>440</x>
+     <x>390</x>
      <y>630</y>
-     <width>61</width>
+     <width>71</width>
      <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Saab</family>
+     <family>Ubuntu</family>
+     <pointsize>12</pointsize>
      <weight>75</weight>
      <italic>false</italic>
      <bold>true</bold>
     </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font-family: Ubuntu; font-weight: bold; font-size: 12pt;</string>
    </property>
    <property name="text">
     <string>수어모드</string>
@@ -230,20 +238,23 @@ padding: 5px;</string>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>510</x>
+     <x>490</x>
      <y>630</y>
-     <width>61</width>
+     <width>31</width>
      <height>20</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Saab</family>
-     <pointsize>10</pointsize>
+     <family>Ubuntu</family>
+     <pointsize>12</pointsize>
      <weight>75</weight>
      <italic>false</italic>
      <bold>true</bold>
     </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font-family: Ubuntu; font-weight: bold; font-size: 12pt;</string>
    </property>
    <property name="text">
     <string>STT</string>
@@ -255,20 +266,23 @@ padding: 5px;</string>
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
-     <x>580</x>
+     <x>570</x>
      <y>630</y>
-     <width>61</width>
+     <width>31</width>
      <height>20</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Saab</family>
-     <pointsize>10</pointsize>
+     <family>Ubuntu</family>
+     <pointsize>12</pointsize>
      <weight>75</weight>
      <italic>false</italic>
      <bold>true</bold>
     </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font-family: Ubuntu; font-weight: bold; font-size: 12pt;</string>
    </property>
    <property name="text">
     <string>TTS</string>
@@ -280,20 +294,23 @@ padding: 5px;</string>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>650</x>
+     <x>640</x>
      <y>630</y>
-     <width>61</width>
+     <width>51</width>
      <height>20</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Saab</family>
-     <pointsize>10</pointsize>
+     <family>Ubuntu</family>
+     <pointsize>12</pointsize>
      <weight>75</weight>
      <italic>false</italic>
      <bold>true</bold>
     </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font-family: Ubuntu; font-weight: bold; font-size: 12pt;</string>
    </property>
    <property name="text">
     <string>Guide</string>
@@ -305,9 +322,9 @@ padding: 5px;</string>
   <widget class="QPushButton" name="btn_reset">
    <property name="geometry">
     <rect>
-     <x>300</x>
+     <x>310</x>
      <y>560</y>
-     <width>61</width>
+     <width>71</width>
      <height>61</height>
     </rect>
    </property>
@@ -328,20 +345,23 @@ padding: 5px;</string>
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
-     <x>300</x>
+     <x>320</x>
      <y>630</y>
-     <width>61</width>
+     <width>51</width>
      <height>21</height>
     </rect>
    </property>
    <property name="font">
     <font>
-     <family>Saab</family>
-     <pointsize>10</pointsize>
+     <family>Ubuntu</family>
+     <pointsize>12</pointsize>
      <weight>75</weight>
      <italic>false</italic>
      <bold>true</bold>
     </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font-family: Ubuntu; font-weight: bold; font-size: 12pt;</string>
    </property>
    <property name="text">
     <string>Clear</string>
@@ -508,24 +528,38 @@ QSlider::handle:horizontal {
   <widget class="QLabel" name="sub_label">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>750</y>
+     <x>20</x>
+     <y>500</y>
      <width>581</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>Text</string>
+    <string/>
    </property>
   </widget>
   <widget class="QLineEdit" name="sub_label_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>630</y>
-     <width>281</width>
+     <x>30</x>
+     <y>450</y>
+     <width>521</width>
      <height>25</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>15</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(0, 0, 0, 0); </string>
+   </property>
+   <property name="frame">
+    <bool>false</bool>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="text_label">

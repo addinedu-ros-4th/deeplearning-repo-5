@@ -216,8 +216,41 @@ class ClientUI(QDialog, from_class_client):
 class FaceChatWindow(QDialog):
     def __init__(self, ip_address,port_number, my_port):
         super().__init__()
-        uic.loadUi("facechat_demo.ui", self)
+        uic.loadUi("facechatui/facechat_demo.ui", self)
         
+        self.setFixedSize(725, 750)
+        self.btnGuide.clicked.connect(self.change_guide)
+        
+        zzoom = QPixmap("facechatui/label.png")
+        self.zzoomLabel.setPixmap(zzoom)
+        scaled_zzoom = zzoom.scaled(self.zzoomLabel.size(), aspectRatioMode=Qt.AspectRatioMode.IgnoreAspectRatio)
+        self.zzoomLabel.setPixmap(scaled_zzoom)
+        guide = QPixmap("facechatui/guide.png")
+        self.guideLabel.setPixmap(guide)
+        scaled_guide = guide.scaled(self.guideLabel.size(), aspectRatioMode=Qt.AspectRatioMode.IgnoreAspectRatio)
+        self.guideLabel.setPixmap(scaled_guide)
+
+        self.input.setVisible(False)
+        self.HTT.setVisible(False)
+        self.STT.setVisible(False)
+        self.tts_btn.setVisible(False)
+        self.sub_label.setVisible(False)
+        self.sub_label_2.setVisible(False)
+        self.sub_label_3.setVisible(False)
+        self.sub_label_4.setVisible(False)
+        self.btn_reset.setVisible(False)
+        self.label_6.setVisible(False)
+        self.label_2.setVisible(False)
+        self.label_3.setVisible(False)
+        self.label_4.setVisible(False)
+        self.btnGuide.setVisible(False)
+        self.label_5.setVisible(False)
+        self.gestureButton.setVisible(True)
+        self.label.setVisible(True)
+        self.btnExit.setVisible(False)
+        self.groupBox_2.setVisible(False)
+        self.groupBox.setVisible(False)
+
         # Port number configuration
         self.hostIP = get_ip_address("wlo1")
         self.local_ip_address = self.hostIP
@@ -302,32 +335,50 @@ class FaceChatWindow(QDialog):
 
         self.sub_label_2.textChanged.connect(self.handle_sub_label_2_changed)  # 시그널과 슬롯 연결
 
+    def change_guide(self):
+        if self.width()== 725 and self.height() == 750 :
+            self.setFixedSize(1547, 750)
+        else :
+            self.setFixedSize(725, 750)
+
     def HTT_option(self):
         if self.htt_toggle == 0:
             self.htt_toggle = 1
             if self.speech_recognition_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
+                time.sleep(0.1) 
                 self.speech_recognition_thread.stop()
+                time.sleep(0.1) 
             self.stt_toggle = 0
-            time.sleep(0.1)                         #delay를 줘서 인식 속도를 맞춘다
             if not self.mediapipe_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
+                time.sleep(0.1) 
                 self.mediapipe_thread.start()
+                self.groupBox.setVisible(True)
+
         else :
             self.htt_toggle = 0
             if self.mediapipe_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
+                time.sleep(0.1) 
                 self.mediapipe_thread.stop()
+                self.groupBox.setVisible(False)
+
 
     def STT_option(self):
         if self.stt_toggle == 0:
             self.stt_toggle = 1
             if self.mediapipe_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
+                time.sleep(0.1) 
                 self.mediapipe_thread.stop()
+                time.sleep(0.1) 
+                self.groupBox.setVisible(False)
+
             self.htt_toggle = 0
-            time.sleep(0.1)
             if not self.speech_recognition_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
+                time.sleep(0.1)
                 self.speech_recognition_thread.start()
         else :
             self.stt_toggle = 0
             if self.speech_recognition_thread.isRunning():  # 이미 실행 중인 경우 다시 시작하지 않음
+                time.sleep(0.1) 
                 self.speech_recognition_thread.stop()
                 
     def TTS_option(self):
@@ -521,7 +572,12 @@ class FaceChatWindow(QDialog):
         
         for word in self.words:
             self.trie.insert(word)
-            
+        if self.text == "":
+            self.autoword_1.setVisible(False)
+            self.autoword_2.setVisible(False)
+            self.autoword_3.setVisible(False)
+            self.autoword_4.setVisible(False)
+            self.autoword_5.setVisible(False)
         if self.text.strip():  # 입력이 공백이 아닌 경우에만 처리
             if self.text[-1] == " ":
                 if len(self.text.split(" ")) >= 3:
@@ -606,6 +662,26 @@ class FaceChatWindow(QDialog):
             self.sub_label_2.setText(sub_text)
 
     def set_up_sender(self):
+        self.input.setVisible(True)
+        self.HTT.setVisible(True)
+        self.STT.setVisible(True)
+        self.tts_btn.setVisible(True)
+        self.sub_label.setVisible(True)
+        self.sub_label_2.setVisible(True)
+        self.sub_label_3.setVisible(True)
+        self.sub_label_4.setVisible(True)
+        self.btn_reset.setVisible(True)
+        self.label_6.setVisible(True)
+        self.label_2.setVisible(True)
+        self.label_3.setVisible(True)
+        self.label_4.setVisible(True)
+        self.btnGuide.setVisible(True)
+        self.label_5.setVisible(True)
+        self.gestureButton.setVisible(False)
+        self.label.setVisible(False)
+        self.btnExit.setVisible(True)
+        self.groupBox_2.setVisible(True)
+        
         stream_send_thread = threading.Thread(target=self.camera_client.start_stream)
         stream_send_thread.daemon = True
         time.sleep(0.1)
@@ -627,7 +703,11 @@ class FaceChatWindow(QDialog):
     def sendMessage(self, message):
         # 현재 메시지를 보내고 입력창 비우기
         self.text_sender.send(message.encode())
-        
+        self.autoword_1.setVisible(False)
+        self.autoword_2.setVisible(False)
+        self.autoword_3.setVisible(False)
+        self.autoword_4.setVisible(False)
+        self.autoword_5.setVisible(False)
     def update_pixmap(self, pixmap):
 
         self.receive_screen.setPixmap(pixmap)

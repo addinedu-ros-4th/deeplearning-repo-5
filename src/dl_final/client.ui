@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>853</width>
-    <height>592</height>
+    <width>839</width>
+    <height>549</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,13 +17,24 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>190</y>
+     <y>170</y>
      <width>821</width>
-     <height>381</height>
+     <height>371</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">font-weight: bold;
+</string>
+   </property>
    <property name="title">
-    <string>현재 접속중인 클라이언트 정보</string>
+    <string>현재 접속중인 클라이언트</string>
    </property>
    <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
@@ -34,9 +45,12 @@
       <height>331</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
     <column>
      <property name="text">
-      <string>IP Address</string>
+      <string>IP</string>
      </property>
     </column>
     <column>
@@ -46,7 +60,7 @@
     </column>
     <column>
      <property name="text">
-      <string>Host name</string>
+      <string>User</string>
      </property>
     </column>
     <column>
@@ -80,48 +94,43 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>20</y>
+     <y>90</y>
      <width>511</width>
-     <height>161</height>
+     <height>81</height>
     </rect>
    </property>
-   <property name="title">
-    <string>정보 가져오기</string>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
    </property>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>11</x>
-      <y>40</y>
-      <width>71</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Server IP</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="serverip">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>36</y>
-      <width>161</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="readOnly">
-     <bool>true</bool>
-    </property>
-   </widget>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="title">
+    <string/>
+   </property>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>11</x>
-      <y>80</y>
+      <x>10</x>
+      <y>10</y>
       <width>71</width>
       <height>17</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight: bold;
+</string>
     </property>
     <property name="text">
      <string>상대방 IP</string>
@@ -130,52 +139,219 @@
    <widget class="QLineEdit" name="clientip">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>77</y>
+      <x>100</x>
+      <y>10</y>
       <width>161</width>
       <height>25</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight: bold;
+</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QPushButton" name="callButton">
     <property name="geometry">
      <rect>
       <x>280</x>
-      <y>40</y>
+      <y>10</y>
       <width>201</width>
-      <height>51</height>
+      <height>61</height>
      </rect>
     </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(143, 240, 164);</string>
+     <string notr="true">background-color: rgb(143, 240, 164);
+font-weight: bold;
+</string>
     </property>
     <property name="text">
-     <string>화상 전화 시작하기</string>
+     <string> 화상 전화 </string>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>../../deeplearning-repo-5/src/dl_final/facechatui_data/icons/phone_in_talk_FILL0_wght400_GRAD0_opsz24.svg</normaloff>../../deeplearning-repo-5/src/dl_final/facechatui_data/icons/phone_in_talk_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>30</width>
+      <height>30</height>
+     </size>
     </property>
    </widget>
    <widget class="QLineEdit" name="clientport">
     <property name="geometry">
      <rect>
-      <x>90</x>
-      <y>116</y>
+      <x>100</x>
+      <y>50</y>
       <width>161</width>
       <height>25</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight: bold;
+</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>120</y>
+      <y>50</y>
       <width>81</width>
       <height>17</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">font-weight: bold;
+</string>
     </property>
     <property name="text">
      <string>상대방 Port</string>
     </property>
    </widget>
+  </widget>
+  <widget class="QLabel" name="labelMark">
+   <property name="geometry">
+    <rect>
+     <x>530</x>
+     <y>100</y>
+     <width>291</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>16</y>
+     <width>811</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Waree</family>
+     <pointsize>25</pointsize>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">
+background-color: rgb(64, 191, 173);
+border: 2px solid rgb(100, 100, 100);
+border-radius: 5px;
+padding: 5px;</string>
+   </property>
+   <property name="text">
+    <string>Hyun ZZoom</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>20</y>
+     <width>261</width>
+     <height>62</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_4">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;
+</string>
+      </property>
+      <property name="text">
+       <string>Time</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font-weight: bold;
+</string>
+      </property>
+      <property name="text">
+       <string>Server IP</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="timeEdit">
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(64, 191, 173);
+font-weight: bold;
+</string>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="serverip">
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(64, 191, 173);
+font-weight: bold;
+</string>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

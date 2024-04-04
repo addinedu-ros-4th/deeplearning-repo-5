@@ -138,7 +138,8 @@ class MediapipeThread(QThread):
 
     def left_hand_command(self, landmarks):
         result = None
-        left_hand_data_dict = {31 : "backspace", 32 : "question", 33 : "shift", 34 : "space"}
+        left_hand_data_dict = {31 : "backspace", 32 : "1", 33 : "2", 34 : "3", 35 : "4",
+                               36 : "5", 37 : "question", 38 : "shift", 39 : "space"}
         xyz_list = []
         for landmark in landmarks.landmark:
             row = [landmark.x - landmarks.landmark[0].x, landmark.y - landmarks.landmark[0].y, landmark.z - landmarks.landmark[0].z]
@@ -187,8 +188,6 @@ class MediapipeThread(QThread):
         command2 = None
         mp_hands = mp.solutions.hands
         mp_pose = mp.solutions.pose
-        mp_drawing = mp.solutions.drawing_utils
-        mp_drawing_styles = mp.solutions.drawing_styles
         with mp_hands.Hands(
             model_complexity=0,
             min_detection_confidence=0.7,

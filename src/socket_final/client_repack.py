@@ -27,7 +27,7 @@ from gtts import gTTS
 import pandas as pd
 import os 
 
-SERVER_IP = '192.168.0.18'
+SERVER_IP = '192.168.0.33'
 SERVER_PORT = 15032
 PATH = os.path.dirname(os.path.realpath(__file__)) + "/"
 
@@ -270,7 +270,7 @@ class FaceChatWindow(QDialog):
         
         self.speech_recognition_thread = SpeechRecognitionThread()
         self.speech_recognition_thread.recognition_result.connect(self.on_recognition_result)
-        self.mediapipe_thread = MediapipeThread(PATH + 'handModel.h5')
+        self.mediapipe_thread = MediapipeThread(PATH + 'handModel_mini.h5')
         self.mediapipe_thread.update_word_signal.connect(self.update_word_label)
         
         self.csv_path = PATH + "autocorrect.csv"           #id 별로 DB 저장

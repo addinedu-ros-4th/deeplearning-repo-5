@@ -39,7 +39,7 @@
    <widget class="QTableWidget" name="tableWidget">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>20</x>
       <y>30</y>
       <width>791</width>
       <height>331</height>
@@ -158,7 +158,7 @@
      <rect>
       <x>280</x>
       <y>10</y>
-      <width>201</width>
+      <width>101</width>
       <height>61</height>
      </rect>
     </property>
@@ -175,11 +175,11 @@ font-weight: bold;
 </string>
     </property>
     <property name="text">
-     <string> 화상 전화 </string>
+     <string> Call</string>
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>../../deeplearning-repo-5/src/dl_final/facechatui_data/icons/phone_in_talk_FILL0_wght400_GRAD0_opsz24.svg</normaloff>../../deeplearning-repo-5/src/dl_final/facechatui_data/icons/phone_in_talk_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+      <normaloff>facechatui_data/icons/phone_in_talk_FILL0_wght400_GRAD0_opsz24.svg</normaloff>facechatui_data/icons/phone_in_talk_FILL0_wght400_GRAD0_opsz24.svg</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -229,6 +229,41 @@ font-weight: bold;
      <string>상대방 Port</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="delButton">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>10</y>
+      <width>101</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(246, 97, 81);
+font-weight: bold;
+</string>
+    </property>
+    <property name="text">
+     <string>Del</string>
+    </property>
+    <property name="icon">
+     <iconset>
+      <normaloff>facechatui_data/icons/backspace_FILL0_wght400_GRAD0_opsz24.svg</normaloff>facechatui_data/icons/backspace_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>30</width>
+      <height>30</height>
+     </size>
+    </property>
+   </widget>
   </widget>
   <widget class="QLabel" name="labelMark">
    <property name="geometry">
@@ -275,7 +310,7 @@ padding: 5px;</string>
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>550</x>

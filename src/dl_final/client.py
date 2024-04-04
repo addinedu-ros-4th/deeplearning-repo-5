@@ -29,7 +29,7 @@ import pandas as pd
 import os 
 
 SERVER_IP = '192.168.0.31'
-SERVER_PORT = 15033
+SERVER_PORT = 15034
 
 # 실행파일의 경로를 가져옴.
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -147,6 +147,7 @@ class ClientUI(QDialog, from_class_client):
         """)
         
         self.callButton.clicked.connect(self.openFaceChatWindow)
+        self.delButton.clicked.connect(self.deletePeer)
 
     def setTime(self):
         current_time = QDateTime.currentDateTime()
@@ -214,16 +215,23 @@ class ClientUI(QDialog, from_class_client):
             print("Some information is missing for this row.")
 
     def openFaceChatWindow(self):
+            ip_address = self.clientip.text()
+            port_number = self.clientport.text()
 
-        ip_address = self.clientip.text()
-        port_number = int(self.clientport.text())
+            if ip_address.strip() and port_number:
+                port_number = int(port_number)
+                string_data = f"Connected|{port_number}"
+                self.sock.send(string_data.encode())
+                self.facechat_window = FaceChatWindow(ip_address, port_number, self.myport)
+                self.facechat_window.show()
+            else:
+                QMessageBox.critical(self, "Error", "Please enter valid ip and port number.")
 
-        string_data = f"Connected|{port_number}"
+    def deletePeer(self):
+        self.clientip.setText('')
+        self.clientport.setText('')
 
-        self.sock.send(string_data.encode())
 
-        self.facechat_window = FaceChatWindow(ip_address, port_number, self.myport)
-        self.facechat_window.show()
 
 class FaceChatWindow(QDialog):
     def __init__(self, ip_address,port_number, my_port):

@@ -16,7 +16,7 @@ import os
 
 # 서버 ip/port 설정
 SERVER_IP = "192.168.0.31"
-SERVER_PORT = 15033
+SERVER_PORT = 15034
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -109,6 +109,7 @@ class WindowClass(QDialog):
         # Start listening for incoming connections in a separate thread
         server_thread = Thread(target=self.AcceptClients)
         server_thread.start()
+        self.btnOpen.setEnabled(False)
 
 
     def StopServer(self):

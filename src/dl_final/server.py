@@ -109,6 +109,7 @@ class WindowClass(QDialog):
         # Start listening for incoming connections in a separate thread
         server_thread = Thread(target=self.AcceptClients)
         server_thread.start()
+        self.btnOpen.setEnabled(False)
 
 
     def StopServer(self):

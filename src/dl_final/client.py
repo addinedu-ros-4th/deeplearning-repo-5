@@ -2,7 +2,7 @@ import sys
 from PyQt6.QtWidgets import *
 from PyQt6 import uic
 from PyQt6.QtGui import QPixmap, QIcon, QImage, QFont
-from PyQt6.QtCore import Qt, QObject, pyqtSignal, QThread, QTimer
+from PyQt6.QtCore import Qt, QObject, pyqtSignal, QThread, QTimer, QDateTime
 from vidstream import StreamingServer, AudioReceiver, AudioSender
 from camera_client import CameraClient
 import socket
@@ -29,7 +29,7 @@ import pandas as pd
 import os 
 
 SERVER_IP = '192.168.0.31'
-SERVER_PORT = 15033
+SERVER_PORT = 15034
 
 # 실행파일의 경로를 가져옴.
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -119,6 +119,14 @@ class ClientUI(QDialog, from_class_client):
         self.serverip.setText(self.server_ip)
         _, self.myport= sock.getsockname()
 
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.setTime)
+        self.timer.start(10)  # 10 milliseconds
+        zzoom = QPixmap(os.path.join(current_dir, "facechatui_data/label.png"))
+        self.labelMark.setPixmap(zzoom)
+        scaled_zzoom = zzoom.scaled(self.labelMark.size(), aspectRatioMode=Qt.AspectRatioMode.IgnoreAspectRatio)
+        self.labelMark.setPixmap(scaled_zzoom)
+
         # 서버에서 전송한 데이터를 받기 위한 스레드 시작
         self.receive_thread = Thread(target=self.receiveServerData)
         self.receive_thread.daemon = True
@@ -139,6 +147,12 @@ class ClientUI(QDialog, from_class_client):
         """)
         
         self.callButton.clicked.connect(self.openFaceChatWindow)
+        self.delButton.clicked.connect(self.deletePeer)
+
+    def setTime(self):
+        current_time = QDateTime.currentDateTime()
+        current_time = current_time.toString("yyyy-MM-dd hh:mm:ss")
+        self.timeEdit.setText(current_time)
 
     def receiveServerData(self):
         while True:
@@ -201,16 +215,23 @@ class ClientUI(QDialog, from_class_client):
             print("Some information is missing for this row.")
 
     def openFaceChatWindow(self):
+            ip_address = self.clientip.text()
+            port_number = self.clientport.text()
 
-        ip_address = self.clientip.text()
-        port_number = int(self.clientport.text())
+            if ip_address.strip() and port_number:
+                port_number = int(port_number)
+                string_data = f"Connected|{port_number}"
+                self.sock.send(string_data.encode())
+                self.facechat_window = FaceChatWindow(ip_address, port_number, self.myport)
+                self.facechat_window.show()
+            else:
+                QMessageBox.critical(self, "Error", "Please enter valid ip and port number.")
 
-        string_data = f"Connected|{port_number}"
+    def deletePeer(self):
+        self.clientip.setText('')
+        self.clientport.setText('')
 
-        self.sock.send(string_data.encode())
 
-        self.facechat_window = FaceChatWindow(ip_address, port_number, self.myport)
-        self.facechat_window.show()
 
 class FaceChatWindow(QDialog):
     def __init__(self, ip_address,port_number, my_port):
@@ -343,10 +364,10 @@ class FaceChatWindow(QDialog):
         self.camera_client.condition = text
 
     def change_guide(self):
-        if self.width()== 725 and self.height() == 760 :
-            self.setFixedSize(1547, 760)
+        if self.width()== 725 and self.height() == 780 :
+            self.setFixedSize(1547, 780)
         else :
-            self.setFixedSize(725, 760)
+            self.setFixedSize(725, 780)
 
     def HTT_option(self):
         if self.htt_toggle == 0:

@@ -71,7 +71,7 @@ padding: 5px;</string>
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>icons/pan_tool_FILL0_wght400_GRAD0_opsz24.svg</normaloff>icons/pan_tool_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+     <normaloff>facechatui_data/icons/pan_tool_FILL0_wght400_GRAD0_opsz24.svg</normaloff>facechatui_data/icons/pan_tool_FILL0_wght400_GRAD0_opsz24.svg</iconset>
    </property>
    <property name="iconSize">
     <size>

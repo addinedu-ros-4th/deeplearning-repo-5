@@ -28,7 +28,7 @@ from gtts import gTTS
 import pandas as pd
 import os 
 
-SERVER_IP = '192.168.0.18'
+SERVER_IP = '192.168.0.31'
 SERVER_PORT = 15033
 
 # 실행파일의 경로를 가져옴.
@@ -251,6 +251,7 @@ class FaceChatWindow(QDialog):
         self.btnExit.setVisible(False)
         self.groupBox_2.setVisible(False)
         self.groupBox.setVisible(False)
+        self.comboFilter.setVisible(False)
 
         # Port number configuration
         self.hostIP = get_ip_address("wlo1")
@@ -695,6 +696,7 @@ class FaceChatWindow(QDialog):
         self.label.setVisible(False)
         self.btnExit.setVisible(True)
         self.groupBox_2.setVisible(True)
+        self.comboFilter.setVisible(True)
         
         stream_send_thread = threading.Thread(target=self.camera_client.start_stream)
         stream_send_thread.daemon = True

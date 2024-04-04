@@ -28,8 +28,8 @@ from gtts import gTTS
 import pandas as pd
 import os 
 
-SERVER_IP = '192.168.0.15'
-SERVER_PORT = 14002
+SERVER_IP = '192.168.0.33'
+SERVER_PORT = 15032
 
 # 실행파일의 경로를 가져옴.
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -130,6 +130,7 @@ class ClientUI(QDialog, from_class_client):
         # 서버에서 전송한 데이터를 받기 위한 스레드 시작
         self.receive_thread = Thread(target=self.receiveServerData)
         self.receive_thread.daemon = True
+        self.receiveServer_status = True
         self.receive_thread.start()
         self.data_received.connect(self.updateTableWidget)
 
@@ -161,6 +162,8 @@ class ClientUI(QDialog, from_class_client):
                 if data:
                     # Emit the signal with the received data
                     self.data_received.emit(data)
+                if self.receiveServer_status != True :
+                    break
             except Exception as e:
                 print(f"Error receiving data: {e}")
                 break
@@ -222,6 +225,7 @@ class ClientUI(QDialog, from_class_client):
                 port_number = int(port_number)
                 string_data = f"Connected|{port_number}"
                 self.sock.send(string_data.encode())
+                self.receiveServer_status = False
                 self.facechat_window = FaceChatWindow(ip_address, port_number, self.myport)
                 self.facechat_window.show()
             else:
@@ -663,22 +667,23 @@ class FaceChatWindow(QDialog):
         self.stream_recv.frame_updated.connect(self.update_pixmap)
         self.stream_recv_thread = QThread()
         self.stream_recv.moveToThread(self.stream_recv_thread)
-        self.stream_recv_thread.started.connect(self.stream_recv.start_server)
-        self.stream_recv_thread.start()
+        self.stream_recv.start_server()
+        # self.stream_recv_thread.started.connect(self.stream_recv.start_server)
+        # self.stream_recv_thread.start()
 
         # audio recv (서버설정)
         self.audio_recv = AudioReceiver(self.local_ip_address, self.aud_recv_port)   
-        self.audio_recv_thread = threading.Thread(target=self.audio_recv.start_server)
-        self.audio_recv_thread.daemon = True
+        self.audio_recv.start_server()
+        # self.audio_recv_thread = threading.Thread(target=self.audio_recv.start_server)
+        # self.audio_recv_thread.daemon = True
         time.sleep(0.1) 
-        self.audio_recv_thread.start()
+        # self.audio_recv_thread.start()
 
         # text recv (서버설정)
         self.text_recv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.text_recv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.text_recv.bind((self.local_ip_address, self.text_recv_port))
         self.text_recv.listen(True)
-
+        
         text_recv_thread = threading.Thread(target=self.text_socket)
         text_recv_thread.daemon = True
         text_recv_thread.start()
@@ -719,22 +724,23 @@ class FaceChatWindow(QDialog):
         self.label.setVisible(False)
         self.btnExit.setVisible(True)
         self.groupBox_2.setVisible(True)
-        self.comboFilter.setVisible(True)
         
-        stream_send_thread = threading.Thread(target=self.camera_client.start_stream)
-        stream_send_thread.daemon = True
+        self.camera_client.start_stream()
+        # stream_send_thread = threading.Thread(target=self.camera_client.start_stream)
+        # stream_send_thread.daemon = True
         time.sleep(0.1)
-        stream_send_thread.start()
+        # stream_send_thread.start()
         time.sleep(0.1)
         self.camera_thread.start()
         self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)  
         
         # audio send
-        self.audio_sender = AudioSender(self.client_ip, self.aud_send_port)
-        audio_sender_thread = threading.Thread(target=self.audio_sender.start_stream)
-        audio_sender_thread.daemon = True
+        audio_sender = AudioSender(self.client_ip, self.aud_send_port)
+        audio_sender.start_stream()
+        # audio_sender_thread = threading.Thread(target=audio_sender.start_stream)
+        # audio_sender_thread.daemon = True
         time.sleep(0.1)  # 1초 지연
-        audio_sender_thread.start()
+        # audio_sender_thread.start()
 
         self.text_sender = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.text_sender.connect((self.client_ip, self.text_send_port))

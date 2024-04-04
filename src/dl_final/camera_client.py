@@ -27,14 +27,16 @@ class StreamingClient:
         cv2.destroyAllWindows()
 
     def __client_streaming(self):
-
         self.__client_socket.connect((self.__host, self.__port))
         while self.__running:
             frame = self._get_frame()
-            result, frame = cv2.imencode('.jpg', frame, self.__encoding_parameters)
-            data = pickle.dumps(frame, 0)
-            size = len(data)
-
+            try :
+                result, frame = cv2.imencode('.jpg', frame, self.__encoding_parameters)
+                data = pickle.dumps(frame, 0)
+                size = len(data)
+            except :
+                print("None_img")
+                continue
             try:
                 self.__client_socket.sendall(struct.pack('>L', size) + data)
             except ConnectionResetError:

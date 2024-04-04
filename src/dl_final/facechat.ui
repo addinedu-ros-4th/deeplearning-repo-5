@@ -97,7 +97,7 @@ padding: 5px;</string>
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>icons/speech_to_text_FILL0_wght400_GRAD0_opsz24.svg</normaloff>icons/speech_to_text_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+     <normaloff>facechatui_data/icons/speech_to_text_FILL0_wght400_GRAD0_opsz24.svg</normaloff>facechatui_data/icons/speech_to_text_FILL0_wght400_GRAD0_opsz24.svg</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -126,7 +126,7 @@ padding: 5px;</string>
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>icons/text_to_speech_FILL0_wght400_GRAD0_opsz24.svg</normaloff>icons/text_to_speech_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+     <normaloff>facechatui_data/icons/text_to_speech_FILL0_wght400_GRAD0_opsz24.svg</normaloff>facechatui_data/icons/text_to_speech_FILL0_wght400_GRAD0_opsz24.svg</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -153,7 +153,7 @@ background-color: rgb(205, 171, 143);</string>
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>icons/contact_support_FILL0_wght400_GRAD0_opsz24.svg</normaloff>icons/contact_support_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+     <normaloff>facechatui_data/icons/contact_support_FILL0_wght400_GRAD0_opsz24.svg</normaloff>facechatui_data/icons/contact_support_FILL0_wght400_GRAD0_opsz24.svg</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -179,7 +179,7 @@ background-color: rgb(205, 171, 143);</string>
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>icons/phone_in_talk_FILL0_wght400_GRAD0_opsz24.svg</normaloff>icons/phone_in_talk_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+     <normaloff>facechatui_data/icons/phone_in_talk_FILL0_wght400_GRAD0_opsz24.svg</normaloff>facechatui_data/icons/phone_in_talk_FILL0_wght400_GRAD0_opsz24.svg</iconset>
    </property>
    <property name="iconSize">
     <size>
@@ -593,7 +593,7 @@ QSlider::handle:horizontal {
     </property>
     <property name="icon">
      <iconset>
-      <normaloff>icons/restart_alt_FILL0_wght400_GRAD0_opsz24.svg</normaloff>icons/restart_alt_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+      <normaloff>facechatui_data/icons/restart_alt_FILL0_wght400_GRAD0_opsz24.svg</normaloff>facechatui_data/icons/restart_alt_FILL0_wght400_GRAD0_opsz24.svg</iconset>
     </property>
     <property name="iconSize">
      <size>
@@ -633,7 +633,7 @@ QSlider::handle:horizontal {
    </property>
    <property name="icon">
     <iconset>
-     <normaloff>icons/phone_disabled_FILL0_wght400_GRAD0_opsz24.svg</normaloff>icons/phone_disabled_FILL0_wght400_GRAD0_opsz24.svg</iconset>
+     <normaloff>facechatui_data/icons/phone_disabled_FILL0_wght400_GRAD0_opsz24.svg</normaloff>facechatui_data/icons/phone_disabled_FILL0_wght400_GRAD0_opsz24.svg</iconset>
    </property>
    <property name="iconSize">
     <size>

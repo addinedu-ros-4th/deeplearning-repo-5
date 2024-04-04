@@ -12,10 +12,9 @@ import select
 import time
 
 # 서버 ip/port 설정
-SERVER_IP = "192.168.0.159"
+SERVER_IP = "192.168.0.33"
 SERVER_PORT = 15035
-path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src/ljh/socket/"
-
+path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src/ljh/socket_final/"
 class WindowClass(QDialog):
     def __init__(self):
         super().__init__()

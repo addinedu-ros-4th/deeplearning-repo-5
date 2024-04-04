@@ -29,6 +29,7 @@ import os
 
 SERVER_IP = '192.168.0.18'
 SERVER_PORT = 15032
+PATH = os.path.dirname(os.path.realpath(__file__)) + "/"
 
 def recvall(sock, count):
     buf = b''
@@ -57,7 +58,7 @@ def get_ip_address(interface):
         return None
 
 # Login UI
-from_class_login = uic.loadUiType("login.ui")[0]
+from_class_login = uic.loadUiType(PATH + "login.ui")[0]
 
 class LoginUI(QMainWindow, from_class_login):
     def __init__(self):
@@ -68,12 +69,12 @@ class LoginUI(QMainWindow, from_class_login):
         self.hostIP = get_ip_address("wlo1")
         self.labelIP.setText(str(self.hostIP))
 
-        self.setWindowIcon(QIcon('data/addinedu.png'))
+        self.setWindowIcon(QIcon(PATH + 'data/addinedu.png'))
 
-        pixmap = QPixmap('data/background.jpg')
+        pixmap = QPixmap(PATH + 'data/background.jpg')
         self.labelpixmap.setPixmap(pixmap)
 
-        pixmap2 = QPixmap('data/client.png')
+        pixmap2 = QPixmap(PATH + 'data/client.png')
         scaled_pixmap2 = pixmap2.scaled(self.label3.size(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio)
         self.label3.setPixmap(scaled_pixmap2)
 
@@ -104,7 +105,7 @@ class LoginUI(QMainWindow, from_class_login):
             QMessageBox.critical(self, "Error", "Please enter a username.")
 
 # Client UI
-from_class_client = uic.loadUiType("client.ui")[0]
+from_class_client = uic.loadUiType(PATH + "client.ui")[0]
 
 # Inside your ClientUI class
 class ClientUI(QDialog, from_class_client):
@@ -216,16 +217,16 @@ class ClientUI(QDialog, from_class_client):
 class FaceChatWindow(QDialog):
     def __init__(self, ip_address,port_number, my_port):
         super().__init__()
-        uic.loadUi("facechatui/facechat_demo.ui", self)
+        uic.loadUi(PATH + "facechatui/facechat_demo.ui", self)
         
         self.setFixedSize(725, 750)
         self.btnGuide.clicked.connect(self.change_guide)
         
-        zzoom = QPixmap("facechatui/label.png")
+        zzoom = QPixmap(PATH + "facechatui/label.png")
         self.zzoomLabel.setPixmap(zzoom)
         scaled_zzoom = zzoom.scaled(self.zzoomLabel.size(), aspectRatioMode=Qt.AspectRatioMode.IgnoreAspectRatio)
         self.zzoomLabel.setPixmap(scaled_zzoom)
-        guide = QPixmap("facechatui/guide.png")
+        guide = QPixmap(PATH + "facechatui/guide.png")
         self.guideLabel.setPixmap(guide)
         scaled_guide = guide.scaled(self.guideLabel.size(), aspectRatioMode=Qt.AspectRatioMode.IgnoreAspectRatio)
         self.guideLabel.setPixmap(scaled_guide)
@@ -269,10 +270,10 @@ class FaceChatWindow(QDialog):
         
         self.speech_recognition_thread = SpeechRecognitionThread()
         self.speech_recognition_thread.recognition_result.connect(self.on_recognition_result)
-        self.mediapipe_thread = MediapipeThread('handModel.h5')
+        self.mediapipe_thread = MediapipeThread(PATH + 'handModel.h5')
         self.mediapipe_thread.update_word_signal.connect(self.update_word_label)
         
-        self.csv_path = "autocorrect.csv"           #id 별로 DB 저장
+        self.csv_path = PATH + "autocorrect.csv"           #id 별로 DB 저장
         self.last_word_time = 0
         self.autoword_1.setVisible(False)
         self.autoword_2.setVisible(False)
@@ -288,7 +289,7 @@ class FaceChatWindow(QDialog):
         self.sub = []
         self.sub_2 = []
         self.prefix = ""
-        self.file_name = "text_to_speech.mp3"
+        self.file_name = PATH + "text_to_speech.mp3"
         self.trie = Trie()
         self.cons = cons
         self.vowels = vowels
@@ -437,7 +438,7 @@ class FaceChatWindow(QDialog):
             self.save_csv()
             # PyQt6 애플리케이션 종료
             self.close()
-            file_path = "text_to_speech.mp3"
+            file_path = PATH + "text_to_speech.mp3"
             if os.path.exists(file_path):
                 os.remove(file_path)
         else:

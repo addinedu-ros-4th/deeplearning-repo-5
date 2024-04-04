@@ -112,15 +112,11 @@
   <widget class="QPushButton" name="btn_reset">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>470</y>
-     <width>111</width>
-     <height>41</height>
+     <x>100</x>
+     <y>480</y>
+     <width>89</width>
+     <height>25</height>
     </rect>
-   </property>
-   <property name="styleSheet">
-    <string notr="true">background-color: rgb(210, 241, 194);
-border-color: rgb(38, 162, 105);</string>
    </property>
    <property name="text">
     <string>Reset</string>
@@ -181,8 +177,8 @@ border-color: rgb(38, 162, 105);</string>
   <widget class="QLabel" name="sub_label">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>580</y>
+     <x>10</x>
+     <y>590</y>
      <width>611</width>
      <height>17</height>
     </rect>
@@ -321,8 +317,8 @@ padding: 5px;</string>
   <widget class="QLabel" name="sub_label_2">
    <property name="geometry">
     <rect>
-     <x>50</x>
-     <y>390</y>
+     <x>40</x>
+     <y>450</y>
      <width>611</width>
      <height>17</height>
     </rect>

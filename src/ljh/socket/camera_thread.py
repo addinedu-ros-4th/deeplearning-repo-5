@@ -11,37 +11,36 @@ camera_image_queue = Queue(maxsize=1)  # 이미지를 저장하는 이미지 큐
 class CameraThread(QThread):
     change_pixmap_signal = pyqtSignal(QImage)
 
-    def __init__(self, HTT, camera_client):
+    def __init__(self, camera_sender):
         super().__init__()
-        self.HTT = HTT  # HTT 객체를 CameraThread의 속성으로 전달받음
-        self.camera_client = camera_client
-
+        self.camera_sender = camera_sender
+        
     def run(self):
-        # cap = cv2.VideoCapture(0)
+        
         last_image_time = time.time()
 
         while True:
-            cv_img = self.camera_client._get_frame()
-            try :
-                current_time = time.time()
-                if not camera_image_queue.empty():
-                    camera_image_queue.get()
-                if current_time - last_image_time >= 0.05:
-                    camera_image_queue.put(cv_img)
-                    last_image_time = current_time
+            cv_img = self.camera_sender._get_frame()
+            if cv_img is None:
+                continue
 
-                cv_img = cv2.flip(cv_img, 1)
-                cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
-                
-                height, width, channel = cv_img.shape
+            current_time = time.time()
+            if not camera_image_queue.empty():
+                camera_image_queue.get()
+            if current_time - last_image_time >= 0.05:
+                camera_image_queue.put(cv_img)
+                last_image_time = current_time
 
-                aspect_ratio = 160 / width
-                resized_img = cv2.resize(cv_img, (160, int(height * aspect_ratio)))
+            cv_img = cv2.flip(cv_img, 1)
+            cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
+            
+            height, width, channel = cv_img.shape
 
-                qt_img = QImage(resized_img.data, 160, int(height * aspect_ratio), QImage.Format.Format_RGB888)
-                self.change_pixmap_signal.emit(qt_img)
-            except : 
-                pass
-                
+            aspect_ratio = 160 / width
+            resized_img = cv2.resize(cv_img, (160, int(height * aspect_ratio)))
+
+            qt_img = QImage(resized_img.data, 160, int(height * aspect_ratio), QImage.Format.Format_RGB888)
+            self.change_pixmap_signal.emit(qt_img)
+            
     def stop(self):
         self._is_running = False

@@ -17,7 +17,7 @@ camera_image_queue = Queue(maxsize=1)  # 이미지를 저장하는 이미지 큐
 
 class CameraThread(QThread):
     change_pixmap_signal = pyqtSignal(QImage)
-    time.sleep(0.5)
+    time.sleep(0.2)
 
     def __init__(self, camera_sender):
         super().__init__()
@@ -42,12 +42,7 @@ class CameraThread(QThread):
             cv_img = cv2.flip(cv_img, 1)
             cv_img = cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB)
             
-            height, width, channel = cv_img.shape
-
-            aspect_ratio = 160 / width
-            resized_img = cv2.resize(cv_img, (160, int(height * aspect_ratio)))
-
-            qt_img = QImage(resized_img.data, 160, int(height * aspect_ratio), QImage.Format.Format_RGB888)
+            qt_img = QImage(cv_img.data, cv_img.shape[1], cv_img.shape[0],QImage.Format.Format_RGB888)
             self.change_pixmap_signal.emit(qt_img)
             
     def stop(self):

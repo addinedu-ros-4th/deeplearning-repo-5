@@ -15,7 +15,7 @@ class SpeechRecognitionThread(QThread):
         while self.is_running:
             with self.audio_source as source:
                 print("듣고있어요")
-                audio = self.r.listen(source, phrase_time_limit=5)
+                audio = self.r.listen(source, phrase_time_limit=3)
 
             try:
                 text = self.r.recognize_google(audio, language='ko')

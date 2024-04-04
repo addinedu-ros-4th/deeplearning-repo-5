@@ -25,11 +25,11 @@ from mediapipe_thread import *
 from speech_recognition_thread import *
 from gtts import gTTS
 import pandas as pd
+import os 
 
+SERVER_IP = '192.168.0.18'
+SERVER_PORT = 15032
 
-SERVER_IP = '192.168.0.33'
-SERVER_PORT = 15035
-path = "/home/rds/Desktop/git_ws/deeplearning-repo-5/src/ljh/socket_final/"
 
 def recvall(sock, count):
     buf = b''
@@ -58,7 +58,7 @@ def get_ip_address(interface):
         return None
 
 # Login UI
-from_class_login = uic.loadUiType(path + "login.ui")[0]
+from_class_login = uic.loadUiType("login.ui")[0]
 
 class LoginUI(QMainWindow, from_class_login):
     def __init__(self):
@@ -71,10 +71,10 @@ class LoginUI(QMainWindow, from_class_login):
 
         self.setWindowIcon(QIcon('data/addinedu.png'))
 
-        pixmap = QPixmap(path + 'data/background.jpg')
+        pixmap = QPixmap('data/background.jpg')
         self.labelpixmap.setPixmap(pixmap)
 
-        pixmap2 = QPixmap(path + 'data/client.png')
+        pixmap2 = QPixmap('data/client.png')
         scaled_pixmap2 = pixmap2.scaled(self.label3.size(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio)
         self.label3.setPixmap(scaled_pixmap2)
 
@@ -106,7 +106,7 @@ class LoginUI(QMainWindow, from_class_login):
 
 
 # Client UI
-from_class_client = uic.loadUiType(path + "client.ui")[0]
+from_class_client = uic.loadUiType("client.ui")[0]
 
 # Inside your ClientUI class
 class ClientUI(QDialog, from_class_client):
@@ -222,7 +222,7 @@ class ClientUI(QDialog, from_class_client):
 class FaceChatWindow(QDialog):
     def __init__(self, ip_address,port_number, my_port):
         super().__init__()
-        uic.loadUi(path + "drl_demo.ui", self)
+        uic.loadUi("drl_demo.ui", self)
         # Port number configuration
         self.hostIP = get_ip_address("wlo1")
         self.local_ip_address = self.hostIP
@@ -234,9 +234,9 @@ class FaceChatWindow(QDialog):
         self.text_recv_port = port_number + 3
         self.text_send_port = my_port + 3
        
-        
-        
-        # 이벤트 설정
+
+        self.camera_client = CameraClient(self.client_ip, self.vid_send_port, x_res=540, y_res=540)
+        self.camera_thread = CameraThread(self.camera_client)        
         self.gestureButton.clicked.connect(self.startCommunication)
 
         # vid recv (서버 설정)
@@ -251,7 +251,7 @@ class FaceChatWindow(QDialog):
         audio_recv = AudioReceiver(self.local_ip_address, self.aud_recv_port)   
         t2 = threading.Thread(target=audio_recv.start_server)
         t2.daemon = True
-        time.sleep(0.1)  # 1초 지연
+        time.sleep(0.1) 
         t2.start()
 
         # text recv (서버설정)
@@ -263,17 +263,14 @@ class FaceChatWindow(QDialog):
         t_accept.daemon = True
         t_accept.start()
                 
-        self.csv_path = path + "autocorrect.csv"
         
         self.speech_recognition_thread = SpeechRecognitionThread()
         self.speech_recognition_thread.recognition_result.connect(self.on_recognition_result)
-        self.mediapipe_thread = MediapipeThread(path + 'handModel.h5')
+        self.mediapipe_thread = MediapipeThread('handModel.h5')
         self.mediapipe_thread.update_word_signal.connect(self.update_word_label)
-
-        self.toggle = 0  
-        if self.toggle == 1 :     
-            self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)  
-
+        
+        
+        self.csv_path = "autocorrect.csv"           #ip, id 별로 DB 저장
         self.last_word_time = 0
         self.autoword_1.setVisible(False)
         self.autoword_2.setVisible(False)
@@ -394,11 +391,13 @@ class FaceChatWindow(QDialog):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key.Key_F1:
             self.save_csv()
-            # MediapipeThread 스레드 종료
-            self.camera_thread.stop()
-            self.mediapipe_thread.stop()
             # PyQt6 애플리케이션 종료
             self.close()
+            
+            # text_to_speech.mp3 파일 삭제
+            file_path = "text_to_speech.mp3"
+            if os.path.exists(file_path):
+                os.remove(file_path)
         else:
             # 다른 키가 눌렸을 때의 동작
             pass
@@ -505,7 +504,19 @@ class FaceChatWindow(QDialog):
         # 마지막 입력된 단어가 없거나 마지막 입력 시간이 3초 이상 경과하면 sub 초기화
             self.sub = []
             self.sub_label.setText("")
+    # def add_word(self, input_word):                 #method 분리
+    #     time.sleep(0.1)
+    #     if input_word.strip():  # 입력된 단어가 공백이 아닌지 확인
+    #         word_df = pd.read_csv(self.csv_name)  # 여기서 CSV 파일 경로 수정
+    #         if input_word in word_df['word'].values:
+    #             index = word_df.index[word_df['word'] == input_word].tolist()
+    #             word_df['frequency'][index] += 1
+    #             print("fre")
+    #         else:
+    #             word_df.loc[len(word_df)] = [input_word, 1]
+    #             print("word")
 
+    #         word_df.to_csv(self.csv_name, index=False)
     
     def changeText_1(self) :
         word = self.text.split()
@@ -627,14 +638,20 @@ class FaceChatWindow(QDialog):
 
     def startCommunication(self):
 
-        self.camera_client = CameraClient(self.client_ip, self.vid_send_port)
-        # vid send
+        # self.camera_client = CameraClient(self.client_ip, self.vid_send_port, x_res=320, y_res=240)
+        # self.toggle = 1
+        # self.camera_thread = CameraThread(self.camera_client)
+
         #camera_client = CameraClient(self.client_ip, self.vid_send_port)
         t3 = threading.Thread(target=self.camera_client.start_stream)
         t3.daemon = True
         time.sleep(0.1)  # 1초 지연
         t3.start()
-
+        time.sleep(0.1)
+        self.camera_thread.start()
+        self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)  
+        # self.camera_client.start_stream()
+        
         # audio send
         audio_sender = AudioSender(self.client_ip, self.aud_send_port)
         t4 = threading.Thread(target=audio_sender.start_stream)
@@ -644,13 +661,6 @@ class FaceChatWindow(QDialog):
 
         self.text_sender = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.text_sender.connect((self.client_ip, self.text_send_port))
-
-        self.toggle = 1
-      
-        self.camera_thread = CameraThread(self.camera_client)
-        time.sleep(0.1)
-        self.camera_thread.start()
-
 
     def update_pixmap(self, pixmap):
         self.recive_screen.setPixmap(pixmap)

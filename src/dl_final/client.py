@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import *
 from PyQt6 import uic
 from PyQt6.QtGui import QPixmap, QIcon, QImage, QFont
 from PyQt6.QtCore import Qt, QObject, pyqtSignal, QThread, QTimer, QDateTime
-from vidstream import StreamingServer, AudioReceiver, AudioSender
+from audio import AudioReceiver, AudioSender
 from camera_client import CameraClient
 import socket
 import subprocess
@@ -28,8 +28,8 @@ from gtts import gTTS
 import pandas as pd
 import os 
 
-SERVER_IP = '192.168.0.31'
-SERVER_PORT = 15034
+SERVER_IP = '192.168.0.15'
+SERVER_PORT = 14002
 
 # 실행파일의 경로를 가져옴.
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -238,9 +238,10 @@ class FaceChatWindow(QDialog):
         super().__init__()
         uic.loadUi(os.path.join(current_dir, "facechat.ui"), self)
         
-        self.setFixedSize(725, 760)
+        self.setFixedSize(725, 780)
         self.btnGuide.clicked.connect(self.change_guide)
         self.comboFilter.currentTextChanged.connect(self.setFilter)
+        self.btnExit.clicked.connect(self.closeEvent)
         
         zzoom = QPixmap(os.path.join(current_dir, "facechatui_data/label.png"))
         self.zzoomLabel.setPixmap(zzoom)
@@ -674,6 +675,7 @@ class FaceChatWindow(QDialog):
 
         # text recv (서버설정)
         self.text_recv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.text_recv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.text_recv.bind((self.local_ip_address, self.text_recv_port))
         self.text_recv.listen(True)
 
@@ -728,8 +730,8 @@ class FaceChatWindow(QDialog):
         self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)  
         
         # audio send
-        audio_sender = AudioSender(self.client_ip, self.aud_send_port)
-        audio_sender_thread = threading.Thread(target=audio_sender.start_stream)
+        self.audio_sender = AudioSender(self.client_ip, self.aud_send_port)
+        audio_sender_thread = threading.Thread(target=self.audio_sender.start_stream)
         audio_sender_thread.daemon = True
         time.sleep(0.1)  # 1초 지연
         audio_sender_thread.start()
@@ -752,8 +754,17 @@ class FaceChatWindow(QDialog):
         self.receive_screen.setPixmap(scaled_pixmap)
 
     def closeEvent(self, event):
+        self.audio_sender.stop_stream()
+        self.text_sender.close()
+        self.camera_client.start_stream()
         self.client_socket.close()
 
+        self.stream_recv.stop_server()
+        self.text_recv.close()
+        self.audio_recv.stop_server()
+        self.close()
+        
+        
 class StreamingServerModified(QObject):
     
     frame_updated = pyqtSignal(QPixmap)
@@ -768,6 +779,7 @@ class StreamingServerModified(QObject):
         self.__quit_key = quit_key
         self.__block = threading.Lock()
         self.__server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.__init_socket()
 
     def __init_socket(self):
@@ -858,3 +870,4 @@ if __name__ == "__main__":
     loop = qasync.QEventLoop(app)           #종료 권한 관리
 
     loop.run_forever() 
+

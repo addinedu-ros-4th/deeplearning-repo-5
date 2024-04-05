@@ -235,7 +235,6 @@ class WindowClass(QDialog):
                     username = client_socket.recv(1024).decode("utf-8")
                     # 클라이언트 정보를 딕셔너리에 추가
                     self.clients_info[client_socket] = [ip, port, username, "ON", datetime.now()]
-                    # print(self.clients_info)
                     # 테이블에 클라이언트 정보 추가
                     self.AddClientToTable(ip, port, username, state='ON')
                     self.infolabel.setText(f"{username}님이 입장하셨습니다 (ू˃o˂ू)")
@@ -260,6 +259,11 @@ class WindowClass(QDialog):
                             table_toggle = 2
                             self.ModifyClientFromTable(table_toggle, ip, port, message)
                             self.updateDatabase(ip, port, username, message, state='Connected', table_toggle=2)
+
+                        elif id == 'ON':
+                            table_toggle = 3
+                            self.ModifyClientFromTable(table_toggle, ip, port, message='')
+                            self.updateDatabase(ip, port, username, message='', state='ON', table_toggle=3)
 
                         else:
                             pass

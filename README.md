@@ -51,7 +51,8 @@ ex) 2024.03.14 ~ 2023.04.11 (중 10일)
 ## 📋시스템 설계
 
 ### 기능리스트
-![Screenshot from 2024-04-05 11-51-19](https://github.com/AUTO-KKYU/TEST/assets/118419026/2d389cf4-a88d-4d34-a5c0-6bbfd9ca6c4b)
+![Screenshot from 2024-04-05 15-00-15](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/020585cf-1c59-4dbe-8508-4e0e64971c63)
+
 
 ### 전체 알고리즘 과정 흐름도
 ![DL_system-Page-7 drawio](https://github.com/AUTO-KKYU/TEST/assets/118419026/e5f3254e-e4eb-422a-9b40-5744ddfbe1e9)

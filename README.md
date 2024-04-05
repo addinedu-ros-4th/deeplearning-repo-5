@@ -1,7 +1,7 @@
 # 딥러닝 기반의 실시간 수어 번역 화상 통신 시스템
 <div align="center">
   
-![Screenshot from 2024-04-04 14-16-34](https://github.com/AUTO-KKYU/TEST/assets/118419026/cac31317-e82b-4bce-91b0-f781a907524c)
+![스크린샷 2024-04-05 224224](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/8b1319ae-25a8-454b-8eca-042dcdacbcb7)
 <h3 align="middle">AI 실시간 화상 수어 번역 서비스</h3>
 
 <div align="left">
@@ -31,7 +31,7 @@
 - 청인과 농인간 원활한 의사소통을 위한 AI 실시간 수어 번역 서비스
 - 양방향 소통 개선을 위해 서로가 표현하는 언어에 대해 이해하고 파악할 수 있도록 하나의 아이디어를 제시
 - 프로젝트 기간 : 2024.03.14 ~ 2024.04.11 (중 10일)
-![Screenshot from 2024-04-04 15-07-27](https://github.com/AUTO-KKYU/TEST/assets/118419026/51121f1c-0e5d-4ae5-a587-6f0ba8735240)
+![스크린샷 2024-04-05 223615](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/c298e370-710e-457d-8a85-d29256313275)
 
 <br>
 
@@ -39,7 +39,7 @@
 
 | **윤현준** | **김동규** | **송용탁** | **유윤하** | **이재혁** |
 | :------: |  :------: | :------: | :------: | :------: |
-| [![download_image_1712199366284](https://github.com/AUTO-KKYU/TEST/assets/118419026/d2fad8ee-46ac-49e1-b011-ccf0a9914f98) <br/> @YoonHJ97](https://github.com/YoonHJ97) | [![스크린샷 2024-04-04 194216](https://github.com/AUTO-KKYU/TEST/assets/118419026/1ee1f96a-19b9-4088-87a7-522d418a6320) <br/> @AUTO-KKYU](https://github.com/AUTO-KKYU) | [![download_image_1712198928013](https://github.com/AUTO-KKYU/TEST/assets/118419026/11f16474-eae6-405f-82e6-cf8bafd7fbcf) <br/> @okotak99](https://github.com/okotak99) | [![download_image_1712200424618 (1)](https://github.com/AUTO-KKYU/TEST/assets/118419026/8b2ff8ff-01e9-4af8-b18e-179b73b963c9) <br/> @yoonha-ryu-96](https://github.com/yoonha-ryu-96) | [![image-Photoroom png-Photoroom](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/bd36e538-bdb0-4716-ac97-e16e7c5f54fa) <br/> @RedStones-112](https://github.com/RedStones-112)
+| [![download_image_1712199366284](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/870dcf89-bf3f-4190-9423-c3bf4e21783f) <br/> @YoonHJ97](https://github.com/YoonHJ97) | [![download_image_1712199283923-Photoroom png-Photoroom](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/e0bb91be-be3a-4eee-922c-473c43958cf4) <br/> @AUTO-KKYU](https://github.com/AUTO-KKYU) | [![download_image_1712200407678](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/3e44828c-a5aa-4940-8874-27a27e030a61) <br/> @okotak99](https://github.com/okotak99) | [![download_image_1712200424618](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/3b0cd60d-4903-4dae-b183-828ffadd352d) <br/> @yoonha-ryu-96](https://github.com/yoonha-ryu-96) | [![image-Photoroom png-Photoroom](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/bd36e538-bdb0-4716-ac97-e16e7c5f54fa) <br/> @RedStones-112](https://github.com/RedStones-112)
 
 |팀원|역할| 
 |:---:|:---|
@@ -68,10 +68,10 @@
 ![Screenshot from 2024-04-05 15-00-15](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/020585cf-1c59-4dbe-8508-4e0e64971c63)
 
 ### 3-4. 전체 알고리즘 과정 흐름도
-![DL_system-Page-7 drawio](https://github.com/AUTO-KKYU/TEST/assets/118419026/e5f3254e-e4eb-422a-9b40-5744ddfbe1e9)
+![Screenshot from 2024-04-05 11-42-03](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/d8438ffc-88be-48cf-98cb-e799fc99afaa)
 
 ### 3-5. 수어 인식 모델 딥러닝 학습 흐름도
-![DL_system-Page-5 drawio](https://github.com/AUTO-KKYU/TEST/assets/118419026/884ed9af-47c5-4820-a261-23a0287fe5c3)
+![DL_system-Page-5 drawio](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/144f8132-3071-421a-a60a-af4a59c1be22)
 
 ### 3-6. 수어 검출 다이어그램
 ![DL_system-Page-2 drawio (1)](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/c8ad47d8-a674-496b-9d52-32c719fdd31c)
@@ -84,7 +84,7 @@
 
 ## 4. 🎐GUI
 ### 4-1. SERVER GUI
-![스크린샷 2024-04-04 210406](https://github.com/AUTO-KKYU/TEST/assets/118419026/dd7d0872-4a83-4eb5-8a05-d11c214d3807)
+![스크린샷 2024-04-05 223343](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/a38462e3-1bce-407c-8e19-bb115368d0dc)
 
 - Start Button : 서버 활성화
 - Stop Button : 서버 비활성화

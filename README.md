@@ -23,9 +23,9 @@
 |:---:|:---|
 |팀장 윤현준|- 프로젝트 팀장 <br> - Mediapipe <br>- PyQt <br>- 딥러닝 수어인식 모델 학습 <br>- 자동생성기 및 STT,TTS,지문자 출력 및 속도 조절 기능 개발  |
 |김동규|- 파이썬 소켓 통신 기반 통신 시스템 구현<br> - PyQt6 기반 서버 및 각종 클라이언트 GUI 개발 <br>- 클라이언트 접속 이력 DB 관리 <br> - 프로젝트 진행 사항 및 협업을 위한 자료 정리 총괄|
-|송용탁|역할을 작성하시오|
-|유윤하|역할을 작성하시오|
-|이재혁|역할을 작성하시오|
+|송용탁|역할을 작성하시오 - |
+|유윤하| - 개발 계획 총괄<br> - 수어인식 모델(LSTM) 학습<br> 추후 추가 바람|
+|이재혁|- MediaPipe, 인식모델 파트 총괄<br> - 수어인식 모델 학습<br> - 통신, DeepLearning 파트 통합<br> - 프로그램 조율 |
 
 <br>
 
@@ -80,7 +80,8 @@ ex) 2024.03.14 ~ 2023.04.11 (중 10일)
 
 ![스크린샷 2024-04-04 213131](https://github.com/AUTO-KKYU/TEST/assets/118419026/bde7b91f-a674-464a-a89b-e0d215cca17c)
 ![Screenshot from 2024-04-05 14-12-45](https://github.com/AUTO-KKYU/TEST/assets/118419026/47963982-b9e4-4d1b-88bb-d432039f5628)
-![Screenshot from 2024-04-05 14-34-23](https://github.com/AUTO-KKYU/TEST/assets/118419026/ae4c3179-361a-4b94-923d-cd0fecbb1802)
+![image](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/dc519b32-2507-4a6b-ad0e-10f3c5a4ed9a)
+
 
 
 

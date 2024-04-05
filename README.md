@@ -84,6 +84,7 @@
 
 ## 4. 🎐GUI
 ### 4-1. SERVER GUI
+
 ![스크린샷 2024-04-05 223343](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/a38462e3-1bce-407c-8e19-bb115368d0dc)
 
 - Start Button : 서버 활성화

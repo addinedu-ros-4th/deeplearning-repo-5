@@ -24,8 +24,8 @@
 |팀장 윤현준|- 프로젝트 팀장 <br> - Mediapipe <br>- PyQt <br>- 딥러닝 수어인식 모델 학습 <br>- 자동생성기 및 STT,TTS,지문자 출력 및 속도 조절 기능 개발  |
 |김동규|- 파이썬 소켓 통신 기반 통신 시스템 구현<br> - PyQt6 기반 서버 및 각종 클라이언트 GUI 개발 <br>- 클라이언트 접속 이력 DB 관리 <br> - 프로젝트 진행 사항 및 협업을 위한 자료 정리 총괄|
 |송용탁|역할을 작성하시오 - |
-|유윤하| - 비동기 프로세스 처리<br> - Tread 관리<br> - 개발 계획 총괄<br> - 수어인식 모델(LSTM) 학습|
-|이재혁|- MediaPipe, 인식모델 파트 총괄<br> - 수어인식 모델 학습<br> - 통신, DeepLearning 파트 통합<br> - 프로그램 조율 |
+|유윤하| - 비동기 프로세스 처리<br> - Thread 관리<br> - 개발 계획 총괄<br> - 수어인식 모델(LSTM) 학습 - 딥러닝 수어인식 모델 학습 <br>|
+|이재혁|- MediaPipe, 인식모델 파트 총괄<br> - 딥러닝 수어인식 모델 학습<br> - 통신, DeepLearning 파트 통합<br> - 프로그램 조율 |
 
 <br>
 
@@ -80,7 +80,7 @@ ex) 2024.03.14 ~ 2023.04.11 (중 10일)
 - Facechat GUI
 
 ![스크린샷 2024-04-04 213131](https://github.com/AUTO-KKYU/TEST/assets/118419026/bde7b91f-a674-464a-a89b-e0d215cca17c)
-![Screenshot from 2024-04-05 14-12-45](https://github.com/AUTO-KKYU/TEST/assets/118419026/47963982-b9e4-4d1b-88bb-d432039f5628)
+![Screenshot from 2024-04-05 15-03-31](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/5f1f1308-ee7e-465a-a465-c278bdda54ed)
 ![Screenshot from 2024-04-05 14-50-53](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/42cd4223-316c-4194-8e84-813ea1ef1411)
 
 

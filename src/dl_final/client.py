@@ -225,6 +225,7 @@ class ClientUI(QDialog, from_class_client):
                 self.sock.send(string_data.encode())
                 
                 self.facechat_window = FaceChatWindow(ip_address, port_number, self.myport)
+                self.facechat_window.closed.connect(self.deletePeer)
                 self.facechat_window.show()
             else:
                 QMessageBox.critical(self, "Error", "Please enter valid ip and port number.")
@@ -232,10 +233,19 @@ class ClientUI(QDialog, from_class_client):
     def deletePeer(self):
         self.clientip.setText('')
         self.clientport.setText('')
+        string_data = 'ON|'
+        try:
+            self.sock.send(string_data.encode())
+            print(string_data)
+        
+        except Exception as e:
+            print(f"Error sending data to server: {e}")
 
 
 
 class FaceChatWindow(QDialog):
+    closed = pyqtSignal() 
+
     def __init__(self, ip_address,port_number, my_port):
         super().__init__()
         uic.loadUi(os.path.join(current_dir, "facechat.ui"), self)
@@ -774,6 +784,7 @@ class FaceChatWindow(QDialog):
         self.receive_screen.setPixmap(scaled_pixmap)
 
     def closeEvent(self, event):
+        self.closed.emit()
         self.audio_sender.stop_stream()
         self.text_sender.close()
         self.camera_client.start_stream()

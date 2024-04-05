@@ -261,6 +261,12 @@ class WindowClass(QDialog):
                             self.ModifyClientFromTable(table_toggle, ip, port, message)
                             # self.updateDatabase(ip, port, username, message, state='Connected', table_toggle=2)
 
+                        elif id == 'ON':
+                            table_toggle = 3
+                            self.ModifyClientFromTable(table_toggle, ip, port, message='')
+
+
+
                         else:
                             pass
                     
@@ -330,7 +336,16 @@ class WindowClass(QDialog):
                             host = self.tableWidget.item(row, 3).text() 
                             self.infolabel.setText(f"{host}님과 {name}님이 연결되었습니다.")
 
-                return
+                            return
+                    
+            elif table_toggle == 3:
+                for row in range(self.tableWidget.rowCount()):
+                    if (self.tableWidget.item(row, 1).text() == ip and
+                        self.tableWidget.item(row, 2).text() == str(port)):
+                        self.tableWidget.setItem(row, 4, QTableWidgetItem("ON"))
+                        self.SendTableUpdateToClients()
+
+                        return
 
 
                 

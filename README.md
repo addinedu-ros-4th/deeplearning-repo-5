@@ -80,7 +80,8 @@ ex) 2024.03.14 ~ 2023.04.11 (중 10일)
 
 ![스크린샷 2024-04-04 213131](https://github.com/AUTO-KKYU/TEST/assets/118419026/bde7b91f-a674-464a-a89b-e0d215cca17c)
 ![Screenshot from 2024-04-05 14-12-45](https://github.com/AUTO-KKYU/TEST/assets/118419026/47963982-b9e4-4d1b-88bb-d432039f5628)
-![image](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/dc519b32-2507-4a6b-ad0e-10f3c5a4ed9a)
+![Screenshot from 2024-04-05 13-21-05](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/58eba6df-6176-411e-9740-0502fe012dac)
+
 
 
 

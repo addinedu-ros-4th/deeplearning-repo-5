@@ -75,11 +75,11 @@
 ![DL_system-Page-5 drawio](https://github.com/AUTO-KKYU/TEST/assets/118419026/884ed9af-47c5-4820-a261-23a0287fe5c3)
 
 ### 3-6. 수어 검출 다이어그램
-![DL_system-Page-2 drawio](https://github.com/AUTO-KKYU/TEST/assets/118419026/e06b22bf-e1ad-4109-a435-99fe669942b3)
+![DL_system-Page-2 drawio (1)](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/c8ad47d8-a674-496b-9d52-32c719fdd31c)
 
 
 ### 3-7. TCP/IP 소켓 통신 시나리오 
-![Untitled](https://github.com/AUTO-KKYU/TEST/assets/118419026/2c0ab405-f856-4f85-a3cf-e484ab353f68)
+![DL_system-Page-8 drawio](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/374fa25c-6db5-4ba0-8bb6-446a6b04f8d6)
 
 ## 4. 🎐GUI
 ### 4-1. SERVER GUI

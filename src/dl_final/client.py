@@ -748,6 +748,7 @@ class FaceChatWindow(QDialog):
         self.label.setVisible(False)
         self.btnExit.setVisible(True)
         self.groupBox_2.setVisible(True)
+        self.comboFilter.setVisible(True)
         
         self.camera_client.start_stream()
         # stream_send_thread = threading.Thread(target=self.camera_client.start_stream)

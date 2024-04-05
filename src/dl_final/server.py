@@ -15,7 +15,7 @@ import mysql.connector
 import os 
 
 # 서버 ip/port 설정
-SERVER_IP = "192.168.0.15"
+SERVER_IP = "192.168.0.33"
 SERVER_PORT = 14000
 
 current_dir = os.path.dirname(os.path.abspath(__file__))

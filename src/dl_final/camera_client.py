@@ -13,6 +13,7 @@ class StreamingClient:
         self._configure()
         self.__running = False
         self.__client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.disconnect_count = 0
 
     def _configure(self):
 
@@ -34,8 +35,10 @@ class StreamingClient:
                 result, frame = cv2.imencode('.jpg', frame, self.__encoding_parameters)
                 data = pickle.dumps(frame, 0)
                 size = len(data)
+                self.disconnect_count = 0
             except :
-                print("None_img")
+                self.disconnect_count += 1
+                print(f"Disconnect : {self.disconnect_count}...")
                 continue
             try:
                 self.__client_socket.sendall(struct.pack('>L', size) + data)

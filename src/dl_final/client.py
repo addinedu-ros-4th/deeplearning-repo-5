@@ -29,7 +29,7 @@ import pandas as pd
 import os 
 
 SERVER_IP = '192.168.0.33'
-SERVER_PORT = 15032
+SERVER_PORT = 14001
 
 # 실행파일의 경로를 가져옴.
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -297,7 +297,7 @@ class FaceChatWindow(QDialog):
         
         self.speech_recognition_thread = SpeechRecognitionThread()
         self.speech_recognition_thread.recognition_result.connect(self.on_recognition_result)
-        self.mediapipe_thread = MediapipeThread(os.path.join(current_dir, "handModel.h5"))
+        self.mediapipe_thread = MediapipeThread(os.path.join(current_dir, "handModel_mini.h5"))
         self.mediapipe_thread.update_word_signal.connect(self.update_word_label)
         
         self.csv_path = os.path.join(current_dir, "autocorrect.csv")           #id 별로 DB 저장
@@ -508,11 +508,24 @@ class FaceChatWindow(QDialog):
                         self.autoword_3.setVisible(False)
                         self.autoword_4.setVisible(False)
                         self.autoword_5.setVisible(False)
+
                 elif output == "shift":
                     self.flag = 1
 
                 elif output == "question":
                     self.text += "?"
+
+                elif output == "1" :
+                    self.changeText(self.autoword_1)
+                elif output == "2" :
+                    self.changeText(self.autoword_2)
+                elif output == "3" :
+                    self.changeText(self.autoword_3)
+                elif output == "4" :
+                    self.changeText(self.autoword_4)
+                elif output == "5" :
+                    self.changeText(self.autoword_5)
+                
                 # QLineEdit에 텍스트 업데이트
                 elif self.flag == 1 and output in ["ㄱ", "ㄷ", "ㅂ", "ㅅ", "ㅈ"]:
                     # 적절한 된소리로 변경하는 처리를 수행합니다.
@@ -735,12 +748,12 @@ class FaceChatWindow(QDialog):
         self.camera_thread.change_pixmap_signal.connect(self.update_camera_screen)  
         
         # audio send
-        audio_sender = AudioSender(self.client_ip, self.aud_send_port)
-        audio_sender.start_stream()
-        # audio_sender_thread = threading.Thread(target=audio_sender.start_stream)
-        # audio_sender_thread.daemon = True
+        self.audio_sender = AudioSender(self.client_ip, self.aud_send_port)
+        self.audio_sender.start_stream()
+        # self.audio_sender_thread = threading.Thread(target=self.audio_sender.start_stream)
+        # self.audio_sender_thread.daemon = True
         time.sleep(0.1)  # 1초 지연
-        # audio_sender_thread.start()
+        # self.audio_sender_thread.start()
 
         self.text_sender = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.text_sender.connect((self.client_ip, self.text_send_port))

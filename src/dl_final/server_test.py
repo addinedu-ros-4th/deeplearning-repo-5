@@ -15,8 +15,8 @@ import csv
 import os 
 
 # 서버 ip/port 설정
-SERVER_IP = "192.168.0.31"
-SERVER_PORT = 15034
+SERVER_IP = "192.168.0.33"
+SERVER_PORT = 14001
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 

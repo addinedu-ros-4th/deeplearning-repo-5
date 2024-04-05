@@ -94,8 +94,10 @@ ex) 2024.03.14 ~ 2023.04.11 (중 10일)
   - 수어 모드 : 손동작 인식을 활성화 시켜 지문자 출력 모드 ON, 한번 더 클릭 시, OFF 됩니다
   - STT : 음성을 인식하여 단어 혹은 문장을 출력합니다
   - TTS : 수신받은 단어 혹은 문장을 출력합니다
+  - Filter : 화면에 필터 효과를 줄 수 있습니다
+  - Guide : 지문자 사전을 보여줍니다
   - 연결 종료 : 상대방과의 연결을 끊습니다
-  - Guide : 지문자 사전을 보여줍니다  
+
 ![Screenshot from 2024-04-05 15-03-31](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/5f1f1308-ee7e-465a-a465-c278bdda54ed)
 ![Screenshot from 2024-04-05 14-50-53](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/42cd4223-316c-4194-8e84-813ea1ef1411)
 

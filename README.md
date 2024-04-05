@@ -90,12 +90,12 @@
 - Search Button : 각 콤보박스에 대한 쿼리 실행
 
 ### 4-2. CLIENT GUI 
-- Login GUI
+- **Login GUI**
   - 사용자명을 입력하고 로그인 버튼 클릭 시, 클라이언트 창으로 넘어갑니다
   - 단, 서버가 활성화 된 상태에서만 서버로 접속가능합니다
 ![스크린샷 2024-04-04 213131](https://github.com/AUTO-KKYU/TEST/assets/118419026/bde7b91f-a674-464a-a89b-e0d215cca17c)
 
-- client GUI
+- **client GUI**
   - 해당 인터페이스에서 현재 서버에 접속중인 사용자를 확인할 수 있습니다
   - 현재 접속중인 클라이언트 테이블에서 연결하고 싶은 특정 대상에 대해 Connect버튼을 클릭 하게 되면, 해당 사용자의 ip와 port를 불러옵니다
   - 불러온 정보를 확인하고 Call버튼을 클릭 하게 되면 화상채팅 창으로 넘어갑니다
@@ -103,7 +103,7 @@
       ※ **단, 상대방도 동일한 조건으로 실행해줘야 합니다**
 ![Screenshot from 2024-04-05 15-03-31](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/5f1f1308-ee7e-465a-a465-c278bdda54ed)
 
-- Facechat GUI
+- **Facechat GUI**
   - 화상채팅 창에서 화면 공유 버튼 클릭 시, 나의 화면을 상대방에게 보냅니다
     - 상대방도 동일한 조건으로 실행 시, 자신의 화면을 상대방에게 공유합니다
   - 수어 모드 : 손동작 인식을 활성화 시켜 지문자 출력 모드 ON, 한번 더 클릭 시, OFF 됩니다

@@ -30,8 +30,10 @@
 - 🤞 이것은 손짓이 아니라, THIS IS COMMUNICATION
 - 청인과 농인간 원활한 의사소통을 위한 AI 실시간 수어 번역 서비스
 - 양방향 소통 개선을 위해 서로가 표현하는 언어에 대해 이해하고 파악할 수 있도록 하나의 아이디어를 제시
-- 프로젝트 기간 : 2024.03.14 ~ 2023.04.11 (중 10일)
+- 프로젝트 기간 : 2024.03.14 ~ 2024.04.11 (중 10일)
 ![Screenshot from 2024-04-04 15-07-27](https://github.com/AUTO-KKYU/TEST/assets/118419026/51121f1c-0e5d-4ae5-a587-6f0ba8735240)
+
+<br>
 
 ## 2. 👨‍👨‍👦‍👦팀원 소개
 
@@ -43,7 +45,7 @@
 |:---:|:---|
 |팀장 윤현준|- 프로젝트 팀장 <br> - Mediapipe <br>- PyQt <br>- 딥러닝 수어인식 모델 학습 <br>- 자동생성기 및 STT,TTS,지문자 출력 및 속도 조절 기능 개발  |
 |김동규|- 파이썬 소켓 통신 기반 통신 시스템 구현<br> - PyQt6 기반 서버 및 각종 클라이언트 GUI 개발 <br>- 클라이언트 접속 이력 DB 관리 <br> - 프로젝트 진행 사항 및 협업을 위한 자료 정리 총괄|
-|송용탁|- 파이썬 소켓 통신 기반 통신 시스템 구현<br> - PyQt6 기반 서버 및 각종 클라이언트 GUI 개발 <br> - 프로젝트 진행 사항 및 협업을 위한 자료 정리 <br> - 통신관련 버그 해결|
+|송용탁|- 파이썬 소켓 통신 기반 통신 시스템 구현<br> - PyQt6 기반 서버 및 각종 클라이언트 GUI 개발 <br>- 통신관련 버그 해결 <br> - 프로젝트 진행 사항 및 협업을 위한 자료 정리|
 |유윤하| - 비동기 프로세스 처리<br> - Thread 관리<br> - 개발 계획 총괄<br> - 수어인식 모델(LSTM) 학습<br> - 딥러닝 수어인식 모델 학습 <br>|
 |이재혁|- MediaPipe, 인식모델 파트 총괄<br> - 딥러닝 수어인식 모델 학습<br> - 통신, DeepLearning 파트 통합<br> - 프로그램 조율 |
 
@@ -60,13 +62,10 @@
 |COMMUNICATION|<img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=Slack&logoColor=white"> <img src="https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white"> <img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">|
 
 ### 3-2. 주요 기술
-![스크린샷 2024-04-04 193538](https://github.com/AUTO-KKYU/TEST/assets/118419026/2d34c3f1-aaf6-49f7-9484-8eaec2fbbd53)
-
-<br>
+![그림1](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/9f6f4d28-15f1-4454-841d-c6204e54d777)
 
 ### 3-3. 기능리스트
 ![Screenshot from 2024-04-05 15-00-15](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/020585cf-1c59-4dbe-8508-4e0e64971c63)
-
 
 ### 3-4. 전체 알고리즘 과정 흐름도
 ![DL_system-Page-7 drawio](https://github.com/AUTO-KKYU/TEST/assets/118419026/e5f3254e-e4eb-422a-9b40-5744ddfbe1e9)
@@ -80,6 +79,8 @@
 
 ### 3-7. TCP/IP 소켓 통신 시나리오 
 ![DL_system-Page-8 drawio](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/374fa25c-6db5-4ba0-8bb6-446a6b04f8d6)
+
+<br>
 
 ## 4. 🎐GUI
 ### 4-1. SERVER GUI
@@ -105,16 +106,18 @@
 
 - **Facechat GUI**
   - 화상채팅 창에서 화면 공유 버튼 클릭 시, 나의 화면을 상대방에게 보냅니다
-    - 상대방도 동일한 조건으로 실행 시, 자신의 화면을 상대방에게 공유합니다
-  - 수어 모드 : 손동작 인식을 활성화 시켜 지문자 출력 모드 ON, 한번 더 클릭 시, OFF 됩니다
-  - STT : 음성을 인식하여 단어 혹은 문장을 출력합니다
-  - TTS : 수신받은 단어 혹은 문장을 출력합니다
-  - Filter : 화면에 필터 효과를 줄 수 있습니다
-  - Guide : 지문자 사전을 보여줍니다
-  - 연결 종료 : 상대방과의 연결을 끊습니다
+  - 상대방도 동일한 조건으로 실행 시, 자신의 화면을 상대방에게 공유합니다
+  - **세부기능**
+    - 수어 모드 : 손동작 인식을 활성화 시켜 지문자 출력 모드 ON, 한번 더 클릭 시, OFF 됩니다
+    - STT : 음성을 인식하여 단어 혹은 문장을 출력합니다
+    - TTS : 수신받은 단어 혹은 문장을 출력합니다
+    - Filter : 화면에 필터 효과를 줄 수 있습니다
+    - Guide : 지문자 사전을 보여줍니다
+    - reset Button : 텍스트 초기화
+    - 연결 종료 : 상대방과의 연결을 끊습니다
 
-![Screenshot from 2024-04-05 15-03-31](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/5f1f1308-ee7e-465a-a465-c278bdda54ed)
 ![Screenshot from 2024-04-05 14-50-53](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/42cd4223-316c-4194-8e84-813ea1ef1411)
+![스크린샷 2024-04-05 211439](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/3dfedd46-2293-4bf6-bdc2-e45896224a6a)
 
 <br>
 

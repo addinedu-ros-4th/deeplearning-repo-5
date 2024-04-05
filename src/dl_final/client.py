@@ -130,7 +130,7 @@ class ClientUI(QDialog, from_class_client):
         # 서버에서 전송한 데이터를 받기 위한 스레드 시작
         self.receive_thread = Thread(target=self.receiveServerData)
         self.receive_thread.daemon = True
-        self.receiveServer_status = True
+        
         self.receive_thread.start()
         self.data_received.connect(self.updateTableWidget)
 
@@ -162,8 +162,6 @@ class ClientUI(QDialog, from_class_client):
                 if data:
                     # Emit the signal with the received data
                     self.data_received.emit(data)
-                if self.receiveServer_status != True :
-                    break
             except Exception as e:
                 print(f"Error receiving data: {e}")
                 break
@@ -225,7 +223,7 @@ class ClientUI(QDialog, from_class_client):
                 port_number = int(port_number)
                 string_data = f"Connected|{port_number}"
                 self.sock.send(string_data.encode())
-                self.receiveServer_status = False
+                
                 self.facechat_window = FaceChatWindow(ip_address, port_number, self.myport)
                 self.facechat_window.show()
             else:
@@ -343,7 +341,7 @@ class FaceChatWindow(QDialog):
         self.btn_reset.clicked.connect(self.reset_line)
         self.HTT.clicked.connect(self.HTT_option)
         self.STT.clicked.connect(self.STT_option)
-               
+        
         self.sub_timer = QTimer()
         self.sub_timer.setSingleShot(True)
         self.sub_timer.timeout.connect(self.reset_sub)  # 타임아웃 시그널에 연결할 함수 설정
@@ -515,17 +513,20 @@ class FaceChatWindow(QDialog):
                 elif output == "question":
                     self.text += "?"
 
-                elif output == "1" :
+                elif output == "1" and self.autoword_1.isVisible() :
                     self.changeText(self.autoword_1)
-                elif output == "2" :
+                elif output == "2" and self.autoword_2.isVisible() :
                     self.changeText(self.autoword_2)
-                elif output == "3" :
+                elif output == "3" and self.autoword_3.isVisible() :
                     self.changeText(self.autoword_3)
-                elif output == "4" :
+                elif output == "4" and self.autoword_4.isVisible() :
                     self.changeText(self.autoword_4)
-                elif output == "5" :
+                elif output == "5" and self.autoword_5.isVisible() :
                     self.changeText(self.autoword_5)
                 
+                elif output in ["1", "2", "3", "4", "5"] :
+                    pass
+
                 # QLineEdit에 텍스트 업데이트
                 elif self.flag == 1 and output in ["ㄱ", "ㄷ", "ㅂ", "ㅅ", "ㅈ"]:
                     # 적절한 된소리로 변경하는 처리를 수행합니다.

@@ -95,8 +95,7 @@
 - **Login GUI**
   - 사용자명을 입력하고 로그인 버튼 클릭 시, 클라이언트 창으로 넘어갑니다
   - 단, 서버가 활성화 된 상태에서만 서버로 접속가능합니다
-![스크린샷 2024-04-04 213131](https://github.com/AUTO-KKYU/TEST/assets/118419026/bde7b91f-a674-464a-a89b-e0d215cca17c)
-
+![스크린샷 2024-04-05 225013](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/82969ddf-e2d6-43d3-930c-739cfcb89266)
 - **client GUI**
   - 해당 인터페이스에서 현재 서버에 접속중인 사용자를 확인할 수 있습니다
   - 현재 접속중인 클라이언트 테이블에서 연결하고 싶은 특정 대상에 대해 Connect버튼을 클릭 하게 되면, 해당 사용자의 ip와 port를 불러옵니다

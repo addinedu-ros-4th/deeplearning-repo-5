@@ -32,9 +32,7 @@
 - 청인과 농인간 원활한 의사소통을 위한 AI 실시간 수어 번역 서비스
 - 양방향 소통 개선을 위해 서로가 표현하는 언어에 대해 이해하고 파악할 수 있도록 하나의 아이디어를 제시
 - 프로젝트 기간 : 2024.03.14 ~ 2024.04.11 (중 10일)
-![스크린샷 2024-04-05 223615](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/c298e370-710e-457d-8a85-d29256313275)
-
-<br>
+![Screenshot from 2024-04-08 16-45-19](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/7419adfe-6a0a-47e2-954e-25ff1057a8e7)
 
 ## 2. 👨‍👨‍👦‍👦팀원 소개
 
@@ -48,7 +46,7 @@
 |김동규|- Socket 통신 기반 영상통화 시스템 구현<br> - PyQt6 기반 영상통화 GUI 개발(서버 및 클라이언트) <br>- 클라이언트 접속 이력 DB 관리 <br> - 프로젝트 산출물 정리 총괄|
 |송용탁|- Socket 통신 기반 영상통화 시스템 구현<br> - PyQt6 기반 영상통화 GUI 개발(서버 및 클라이언트) <br>- 통신부 코드 최적화 <br> - 프로젝트 산출물 정리|
 |유윤하| - 비동기 프로세스 및 Thread 관리 <br> - 지문자 인식, Server 연동 PM <br> - 수어인식 모델(LSTM) 학습<br> - Data 전처리  <br>|
-|이재혁|- MediaPipe, 딤러닝 인식모델 학습 및 검증 <br>- 지문자 인식 Server 연동 <br>- 프로그램 코드 최적화 및 구성도 작성|
+|이재혁|- MediaPipe, 딥러닝 인식모델 학습 및 검증 <br>- 지문자 인식 Server 연동 <br>- 프로그램 코드 최적화 및 구성도 작성|
 
 <br>
 

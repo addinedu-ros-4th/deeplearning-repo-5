@@ -53,8 +53,10 @@ class AudioSender:
         self.__sending_socket.connect((self.__host, self.__port))
         self.__stream = self.__audio.open(format=self.__audio_format, channels=self.__channels, rate=self.__rate, input=True, frames_per_buffer=self.__frame_chunk)
         while self.__running:
-            self.__sending_socket.send(self.__stream.read(self.__frame_chunk))
-
+            try :
+                self.__sending_socket.send(self.__stream.read(self.__frame_chunk))
+            except :
+                break
 
 class AudioReceiver:
 

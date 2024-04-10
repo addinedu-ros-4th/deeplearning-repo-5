@@ -11,13 +11,10 @@
   * [2. 👨‍👨‍👦‍👦팀원 소개](#2-팀원-소개)
   * [3. 📋시스템 설계](#3-시스템-설계)
     + [3-1. 기술 스택](#3-1-기술-스택)
-    + [3-2. 주요 기술](#3-2-주요-기술)
-    + [3-3. 기능리스트](#3-3-기능리스트)
-    + [3-4. 전체 알고리즘 과정 흐름도](#3-4-전체-알고리즘-과정-흐름도)
-    + [3-5. 수어 인식 모델 딥러닝 학습 흐름도](#3-5-수어-인식-모델-딥러닝-학습-흐름도)
-    + [3-6. 수어 검출 다이어그램](#3-6-수어-검출-다이어그램)
-    + [3-7. TCP/IP 소켓 통신 시나리오](#3-7-tcpip-소켓-통신-시나리오)
-    + [3-8. 서버 프로세스 다이어그램](#3-8-서버-프로세스-다이어그램)
+    + [3-2. 기능리스트](#3-2-기능리스트)
+    + [3-3. 전체 알고리즘 과정 흐름도](#3-4-전체-알고리즘-과정-흐름도)
+    + [3-4. 수어 인식 모델 딥러닝 학습 흐름도](#3-5-수어-인식-모델-딥러닝-학습-흐름도)
+    + [3-5. 네트워크 구성도](#3-7-네트워크-구성도)
   * [🎐4. GUI](#4-gui)
     + [4-1. SERVER GUI](#4-1-server-gui)
     + [4-2. CLIENT GUI](#4-2-client-gui)
@@ -32,7 +29,9 @@
 - 청인과 농인간 원활한 의사소통을 위한 AI 실시간 수어 번역 서비스
 - 양방향 소통 개선을 위해 서로가 표현하는 언어에 대해 이해하고 파악할 수 있도록 하나의 아이디어를 제시
 - 프로젝트 기간 : 2024.03.14 ~ 2024.04.11 (중 10일)
-![Screenshot from 2024-04-08 16-45-19](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/7419adfe-6a0a-47e2-954e-25ff1057a8e7)
+<div align="left">
+
+![스크린샷 2024-04-10 214946](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/bd8c837c-505d-40ca-9f20-7f98703d2a36)
 
 ## 2. 👨‍👨‍👦‍👦팀원 소개
 
@@ -60,27 +59,18 @@
 |기술|<img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54"> <img src="https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white"> <img src = "https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white"> <img src="https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white"> <img src="https://img.shields.io/badge/Qt-5C3EE8?style=for-the-badge&logo=Qt&logoColor=#41CD52"> <img src="https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white"> <img src = "https://img.shields.io/badge/Keras-%23D00000.svg?style=for-the-badge&logo=Keras&logoColor=white"> <img src ="https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=for-the-badge&logo=TensorFlow&logoColor=white"> |
 |COMMUNICATION|<img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=Slack&logoColor=white"> <img src="https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white"> <img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">|
 
-### 3-2. 주요 기술
-![그림1](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/9f6f4d28-15f1-4454-841d-c6204e54d777)
+### 3-2. 기능리스트
+![스크린샷 2024-04-10 220346](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/d9df4b2c-3f30-4d3f-ab4b-69a5b1c2e826)
 
-### 3-3. 기능리스트
-![Screenshot from 2024-04-05 15-00-15](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/61307553/020585cf-1c59-4dbe-8508-4e0e64971c63)
+### 3-3. 전체 알고리즘 과정 흐름도
+![DL_system-페이지-15 drawio (2)](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/6f77c3b8-b9d5-40cf-9afd-f5d6278ea71b)
 
-### 3-4. 전체 알고리즘 과정 흐름도
-![Screenshot from 2024-04-05 11-42-03](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/d8438ffc-88be-48cf-98cb-e799fc99afaa)
+### 3-4. 수어 인식 모델 딥러닝 학습 흐름도
+![DL_system-페이지-14 drawio](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/5ace9f8e-ff35-4642-8553-cd5e7481ce33)
 
-### 3-5. 수어 인식 모델 딥러닝 학습 흐름도
-![DL_system-Page-5 drawio](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/144f8132-3071-421a-a60a-af4a59c1be22)
+### 3-5. 네트워크 구성도
+![Untitled (8)](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/b12e6312-3622-4c96-93cc-3b1b41479414)
 
-### 3-6. 수어 검출 다이어그램
-![DL_system-Page-2 drawio (1)](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/c8ad47d8-a674-496b-9d52-32c719fdd31c)
-
-
-### 3-7. TCP/IP 소켓 통신 시나리오 
-![DL_system-Page-8 drawio](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/374fa25c-6db5-4ba0-8bb6-446a6b04f8d6)
-
-### 3-8. 서버 프로세스 다이어그램
-![스크린샷 2024-04-06 121935](https://github.com/AUTO-KKYU/PythonTCP_IP_Socket_Communication/assets/118419026/77af2701-bfd3-419c-af31-f8bf1d20b0ff)
 
 <br>
 

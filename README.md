@@ -12,17 +12,21 @@
   * [3. 📋시스템 설계](#3-시스템-설계)
     + [3-1. 기술 스택](#3-1-기술-스택)
     + [3-2. 기능리스트](#3-2-기능리스트)
-    + [3-3. 전체 알고리즘 과정 흐름도](#3-4-전체-알고리즘-과정-흐름도)
-    + [3-4. 수어 인식 모델 딥러닝 학습 흐름도](#3-5-수어-인식-모델-딥러닝-학습-흐름도)
-    + [3-5. 네트워크 구성도](#3-7-네트워크-구성도)
-  * [🎐4. GUI](#4-gui)
+    + [3-3. 전체 알고리즘 과정 흐름도](#3-3-전체-알고리즘-과정-흐름도)
+    + [3-4. 실시간 영상 처리 프로세스](#3-4-실시간-영상-처리-프로세스)
+      - [3-4-1. Camera Manager](#3-4-1-camera-manager)
+      - [3-4-2. Audio Manager](#3-4-2-audio-manager)
+      - [3-4-3. Auto Correct](#3-4-3-auto-correct)
+    + [3-5. 수어 인식 모델 딥러닝 학습 흐름도](#3-5-수어-인식-모델-딥러닝-학습-흐름도)
+    + [3-6. 네트워크 구성도](#3-6-네트워크-구성도)
+  * [4. 🎐GUI](#4-🎐gui)
     + [4-1. SERVER GUI](#4-1-server-gui)
     + [4-2. CLIENT GUI](#4-2-client-gui)
-  * [5. 📸구현 영상](#5-구현-영상)
-  * [6. 📖회고](#6-회고)
-
+  * [5. 📸구현 영상](#5-📸구현-영상)
+  * [6. 📖회고](#6-📖회고)
 
 - 워크 스페이스 : https://zrr.kr/M2br
+- 발표자료 : 
   
 ## 1. 🤖프로젝트 소개
 - 🤞 이것은 손짓이 아니라, THIS IS COMMUNICATION
@@ -57,20 +61,29 @@
 |:---:|:---|
 |개발환경|<img src="https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=Ubuntu&logoColor=white"> <img src="https://img.shields.io/badge/VISUAL STUDIO CODE-007ACC?style=for-the-badge&logo=VisualStudioCode&logoColor=white"> <img src="https://img.shields.io/badge/Google%20Colab-F9AB00?style=for-the-badge&logo=Google%20Colab&logoColor=orange">|
 |기술|<img src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54"> <img src="https://img.shields.io/badge/numpy-%23013243.svg?style=for-the-badge&logo=numpy&logoColor=white"> <img src = "https://img.shields.io/badge/pandas-%23150458.svg?style=for-the-badge&logo=pandas&logoColor=white"> <img src="https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white"> <img src="https://img.shields.io/badge/Qt-5C3EE8?style=for-the-badge&logo=Qt&logoColor=#41CD52"> <img src="https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white"> <img src = "https://img.shields.io/badge/Keras-%23D00000.svg?style=for-the-badge&logo=Keras&logoColor=white"> <img src ="https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=for-the-badge&logo=TensorFlow&logoColor=white"> |
-|COMMUNICATION|<img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=Slack&logoColor=white"> <img src="https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white"> <img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">|
+|COMMUNICATION|<img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=Slack&logoColor=white"> <img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white"> <img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white">|
 
 ### 3-2. 기능리스트
 ![스크린샷 2024-04-10 220346](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/d9df4b2c-3f30-4d3f-ab4b-69a5b1c2e826)
 
 ### 3-3. 전체 알고리즘 과정 흐름도
-![DL_system-페이지-15 drawio (2)](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/6f77c3b8-b9d5-40cf-9afd-f5d6278ea71b)
+![DL_system-페이지-15 drawio (3)](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/80ef5b1c-5e7e-4f55-86df-f8e7e19c2767)
 
-### 3-4. 수어 인식 모델 딥러닝 학습 흐름도
+### 3-4. 실시간 영상 처리 프로세스
+#### 3-4-1. Camera Manager
+![DL_system-페이지-11 drawio](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/c3d7e58a-c771-4ab8-99ff-aa51d3d905b7)
+
+#### 3-4-2. Audio Manager
+![DL_system-페이지-11 drawio (1)](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/f773d99a-c9ed-4255-bbb9-6283e7622f10)
+
+#### 3-4-3. Auto Correct
+![DL_system-페이지-11 drawio (2)](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/094bca5c-1fe3-4f78-bda5-396e9feaa91f)
+
+### 3-5. 수어 인식 모델 딥러닝 학습 흐름도
 ![DL_system-페이지-14 drawio](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/5ace9f8e-ff35-4642-8553-cd5e7481ce33)
 
-### 3-5. 네트워크 구성도
+### 3-6. 네트워크 구성도
 ![Untitled (8)](https://github.com/addinedu-ros-4th/deeplearning-repo-5/assets/118419026/b12e6312-3622-4c96-93cc-3b1b41479414)
-
 
 <br>
 

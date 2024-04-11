@@ -26,7 +26,7 @@
   * [6. 📖회고](#6-📖회고)
 
 - 워크 스페이스 : https://zrr.kr/M2br
-- 발표자료 : 
+- 발표자료 : https://zrr.kr/QMWA
   
 ## 1. 🤖프로젝트 소개
 - 🤞 이것은 손짓이 아니라, THIS IS COMMUNICATION
@@ -127,6 +127,7 @@
 <br>
 
 ## 5. 📸구현 영상
+[![Video](https://img.youtube.com/vi/OCahwtk-_Q0/sddefault.jpg)](https://www.youtube.com/watch?v=OCahwtk-_Q0&t=21s)
 
 
 <br>

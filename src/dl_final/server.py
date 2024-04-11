@@ -15,7 +15,7 @@ import mysql.connector
 import os 
 
 # 서버 ip/port 설정
-SERVER_IP = "192.168.0.33"
+SERVER_IP = "192.168.0.25"
 SERVER_PORT = 14000
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -334,10 +334,18 @@ class WindowClass(QDialog):
                             host = self.tableWidget.item(row, 3).text() 
                             self.infolabel.setText(f"{host}님과 {name}님이 연결되었습니다.")
 
-                return
+                            return
+                    
+            elif table_toggle == 3:
+                for row in range(self.tableWidget.rowCount()):
+                    if (self.tableWidget.item(row, 1).text() == ip and
+                        self.tableWidget.item(row, 2).text() == str(port)):
+                        self.tableWidget.setItem(row, 4, QTableWidgetItem("ON"))
+                        self.SendTableUpdateToClients()
+
+                        return
 
 
-                
     def SendTableUpdateToClients(self):
         time.sleep(0.2)
         data = []
